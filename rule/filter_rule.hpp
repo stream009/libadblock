@@ -24,8 +24,7 @@ protected:
     void parse(const StringRange&);
 
 private:
-    //std::unique_ptr<Pattern> m_pattern;
-    std::shared_ptr<Pattern> m_pattern;
+    std::unique_ptr<Pattern> m_pattern;
 };
 
 #endif // FILTER_RULE_HPP

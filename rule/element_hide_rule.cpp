@@ -1,64 +1,55 @@
 #include "element_hide_rule.hpp"
 
-#include <boost/xpressive/regex_actions.hpp>
-#include <boost/xpressive/xpressive.hpp>
-
-namespace xp = boost::xpressive;
-
-struct emplace_back_impl {
-    using result_type = void;
-
-    template<typename Seq, typename... Args>
-    void operator()(Seq &seq, Args&&... args) const {
-        seq.emplace_back(std::forward<Args>(args)...);
-    }
-};
-static xp::function<emplace_back_impl>::type const emplace_back = {{}};
-
-static const xp::sregex &
-subdomain()
+ElementHideRule::
+ElementHideRule(const String &selector,
+                const boost::optional<std::vector<Domain>> &domains)
+    : Base { "" },
+      m_cssSelector { selector }
 {
-    namespace xp = boost::xpressive;
+    struct Visitor : boost::static_visitor<> {
+        Visitor(std::vector<IncludeDomain> &includes_,
+                std::vector<ExcludeDomain> &excludes_)
+            : includes { includes_ },
+              excludes { excludes_ }
+        {}
 
-    static xp::sregex letter, digit, let_dig, let_dig_hyp,
-                      ldh_str, label, subdomain;
+        void operator()(const IncludeDomain &domain) {
+            includes.push_back(domain);
+        }
 
-    if (subdomain.regex_id() != 0) return subdomain;
+        void operator()(const ExcludeDomain &domain) {
+            excludes.push_back(domain);
+        }
 
-    // Domain name specification from RFC 1035
-    letter      = xp::alpha;
-    digit       = xp::digit;
-    let_dig     = letter | digit;
-    let_dig_hyp = let_dig | "-";
-    ldh_str     = +let_dig_hyp;
-    label       = letter >> !(!ldh_str >> let_dig);
-    subdomain   = label >> *("." >> label);
-    // static const xp::sregex domain = subdomain | " ";
+        std::vector<IncludeDomain> &includes;
+        std::vector<ExcludeDomain> &excludes;
 
-    return subdomain;
+    } visitor { m_includeDomains, m_excludeDomains };
+
+    if (domains) {
+        for (const auto &domain: domains.get()) {
+            boost::apply_visitor(visitor, domain);
+        }
+    }
 }
 
-void ElementHideRule::
-parseDomain(const StringRange &range)
+std::ostream &
+operator<<(std::ostream &os, const ElementHideRule &rule)
 {
-    namespace xp = boost::xpressive;
-
-    if (range.empty()) return;
-
-    xp::sregex include_domain, exclude_domain, domain, domains;
-    const auto &subdomain = ::subdomain();
-
-    include_domain = subdomain
-                     [ emplace_back(xp::ref(m_includeDomains),
-                                    xp::first(xp::_), xp::second(xp::_)) ];
-    exclude_domain = "~" >> subdomain
-                     [ emplace_back(xp::ref(m_excludeDomains),
-                                    xp::first(xp::_), xp::second(xp::_)) ];
-    domain         = include_domain | exclude_domain;
-    domains        = domain >> *(","  >> domain);
-
-    xp::smatch what;
-    if (!xp::regex_match(range, what, domains)) {
-        assert(false && "wrong domain"); //TODO more
+    os << "CSS selector: " << rule.m_cssSelector << "\n";
+    if (!rule.m_includeDomains.empty()) {
+        os << "Include domains: ";
+        for (const auto domain: rule.m_includeDomains) {
+            os << domain << ' ';
+        }
+        os << "\n";
     }
+    if (!rule.m_excludeDomains.empty()) {
+        os << "Exclude domains: ";
+        for (const auto domain: rule.m_excludeDomains) {
+            os << domain << ' ';
+        }
+        os << "\n";
+    }
+    return os;
 }

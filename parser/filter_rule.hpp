@@ -1,8 +1,11 @@
 #ifndef PARSER_FILTER_RULE_HPP
 #define PARSER_FILTER_RULE_HPP
 
-#include "variant_rule.hpp"
 #include "domain.hpp"
+
+#include "rule/rule.hpp"
+
+#include <memory>
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -11,14 +14,14 @@ namespace adblock { namespace parser {
 namespace qi = boost::spirit::qi;
 
 template<typename Iterator>
-struct FilterRule : qi::grammar<Iterator, VariantRule()>
+struct FilterRule : qi::grammar<Iterator, std::shared_ptr<Rule>()>
 {
     FilterRule();
 
-    qi::rule<Iterator, VariantRule()> filter_rule;
+    qi::rule<Iterator, std::shared_ptr<Rule>()> filter_rule;
 
-    qi::rule<Iterator, ::BasicFilterRule()> basic_filter_rule;
-    qi::rule<Iterator, ::ExceptionFilterRule()> exception_filter_rule;
+    qi::rule<Iterator, std::shared_ptr<Rule>()> basic_filter_rule;
+    qi::rule<Iterator, std::shared_ptr<Rule>()> exception_filter_rule;
 
     qi::rule<Iterator, std::string()>
         pattern, basic_match_pattern, begin_match_pattern,

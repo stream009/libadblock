@@ -7,31 +7,22 @@ class ExceptionElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
 public:
-    ExceptionElementHideRule() = default;
+    using Base::String;
+    using Base::Domain;
 
-    template<typename Str>
-    ExceptionElementHideRule(Str&&);
+public:
+    ExceptionElementHideRule(const String &selector,
+            const boost::optional<std::vector<Domain>> &domains);
 
     template<typename Str>
     static bool matchFormat(Str&&);
 };
 
+std::ostream &operator<<(std::ostream&, const ExceptionElementHideRule&);
+
 #include <utility>
 
 #include <boost/regex.hpp>
-
-template<typename Str>
-ExceptionElementHideRule::
-ExceptionElementHideRule(Str &&line)
-    : Base { std::forward<Str>(line) }
-{
-    //TODO assert line
-    //TODO split domain part and selector part
-#if 0
-    this->parseDomain(domainR);
-    this->setCssSelector(selectorR);
-#endif
-}
 
 template<typename Str>
 bool ExceptionElementHideRule::

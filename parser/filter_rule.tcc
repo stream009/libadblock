@@ -1,6 +1,8 @@
 #include "filter_rule.hpp"
 
-#include <boost/phoenix.hpp>
+#include "make_shared.hpp"
+#include "rule/basic_filter_rule.hpp"
+#include "rule/exception_filter_rule.hpp"
 
 namespace phx = boost::phoenix;
 
@@ -13,10 +15,17 @@ FilterRule()
 {
     filter_rule = exception_filter_rule | basic_filter_rule;
 
-    basic_filter_rule = (pattern >> -("$" >> options))
-                [qi::_val = phx::construct<BasicFilterRule>(qi::_1)];
-    exception_filter_rule = ("@@" >> pattern >> -('$' >> options))
-                [qi::_val = phx::construct<ExceptionFilterRule>(qi::_1)];
+    basic_filter_rule =
+        (pattern >> -("$" >> options))
+        [
+            qi::_val = phx::make_shared<BasicFilterRule>(qi::_1)
+        ];
+
+    exception_filter_rule =
+        ("@@" >> pattern >> -('$' >> options))
+        [
+            qi::_val = phx::make_shared<ExceptionFilterRule>(qi::_1)
+        ];
 
     pattern = regex_pattern
             | domain_match_pattern

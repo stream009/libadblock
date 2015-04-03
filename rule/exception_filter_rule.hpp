@@ -7,8 +7,6 @@ class ExceptionFilterRule : public FilterRule
 {
     using Base = FilterRule;
 public:
-    ExceptionFilterRule() = default;
-
     template<typename Str>
     ExceptionFilterRule(Str&&);
 

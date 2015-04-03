@@ -12,32 +12,18 @@ public:
     using Base::String;
 
 public:
-    CommentRule() = default;
-    CommentRule(const std::string &);
+    CommentRule(const String &comment);
 
-    CommentRule(const CommentRule&) = default;
-    CommentRule &operator=(const CommentRule&) = default;
-#if 0
-    template<typename Str>
-    CommentRule(Str&&);
-#endif
     template<typename Str>
     static bool matchFormat(Str&&);
+
+    friend std::ostream &operator<<(std::ostream&, const CommentRule&);
+
+private:
+    String m_comment;
 };
 
 #include <utility>
-
-#if 0
-template<typename Str>
-inline CommentRule::
-CommentRule(Str &&line)
-    : Base { std::forward<Str>(line) }
-{}
-#endif
-inline CommentRule::
-CommentRule(const std::string &line)
-    : Base { line }
-{}
 
 template<typename Str>
 bool CommentRule::

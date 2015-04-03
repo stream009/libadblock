@@ -1,4 +1,5 @@
+#include <memory>
 #include <string>
 
-void parse(const std::string&);
+std::shared_ptr<Rule> parse(const std::string&);
 

@@ -7,34 +7,20 @@ class BasicElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
 public:
-    BasicElementHideRule() = default;
+    using Base::String;
+    using Base::Domain;
 
-    template<typename Str>
-    BasicElementHideRule(Str&&);
+public:
+    BasicElementHideRule(const String &selector,
+            const boost::optional<std::vector<Domain>> &domains);
 
     template<typename Str>
     static bool matchFormat(Str&&);
 };
 
-#include <cassert>
-#include <utility>
+std::ostream &operator<<(std::ostream&, const BasicElementHideRule&);
 
 #include <boost/regex.hpp>
-
-template<typename Str>
-BasicElementHideRule::
-BasicElementHideRule(Str &&line)
-    : Base { std::forward<Str>(line) }
-{
-    const auto &l = this->line();
-    assert(matchFormat(l));
-    //TODO split domain part and selector part
-#if 0
-    this->parseDomain(domainR);
-    this->setCssSelector(selectorR);
-#endif
-    std::cout << "*** " << l << " ***\n";
-}
 
 template<typename Str>
 bool BasicElementHideRule::

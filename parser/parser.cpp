@@ -1,19 +1,30 @@
 #include "grammar.hpp"
 
-#include <boost/variant/polymorphic_get.hpp>
+#include "rule/element_hide_rule.hpp"
 
-void
+#include <memory>
+
+std::shared_ptr<Rule>
 parse(const std::string &line)
 {
     adblock::parser::Grammar<std::string::const_iterator> grammar;
-    adblock::parser::VariantRule rule;
+    std::shared_ptr<Rule> rule;
 
     const auto rv = parse(line.begin(), line.end(), grammar, rule);
     if (rv) {
-        std::cout << rule.type().name() << "\n";
-        std::cout << boost::polymorphic_get<Rule>(rule).line() << "\n";
+        const auto &aRule = *rule;
+        std::cout << typeid(aRule).name() << "\n";
+        std::cout << rule->line() << "\n";
+
+        const auto &elementHideRule =
+                std::dynamic_pointer_cast<ElementHideRule>(rule);
+        if (elementHideRule) {
+            std::cout << *elementHideRule;
+        }
     }
     else {
         std::cout << "Couldn't parse.";
     }
+
+    return rule;
 }

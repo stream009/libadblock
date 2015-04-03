@@ -15,7 +15,9 @@ find_package(Boost 1.57 REQUIRED COMPONENTS regex system)
 set(SRCS main.cpp 
 	 rule/filter_rule.cpp
 	 rule/element_hide_rule.cpp
-	 rule/rule_factory.cpp
+	 rule/basic_element_hide_rule.cpp
+	 rule/exception_element_hide_rule.cpp
+	 rule/comment_rule.cpp
          pattern/basic_match_pattern.cpp
 	 pattern/begin_match_pattern.cpp
 	 pattern/end_match_pattern.cpp

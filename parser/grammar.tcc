@@ -1,6 +1,7 @@
 #include "grammar.hpp"
 
-#include <boost/phoenix.hpp>
+#include "make_shared.hpp"
+#include "rule/comment_rule.hpp"
 
 namespace adblock { namespace parser {
 
@@ -16,7 +17,7 @@ Grammar()
          | filter_rule;
 
     comment_rule = qi::as_string[qi::char_('!') >> *qi::char_]
-                    [qi::_val = phx::construct<CommentRule>(qi::_1)];
+                    [qi::_val = phx::make_shared<CommentRule>(qi::_1)];
 }
 
 }} // namespace adblock::parser

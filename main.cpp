@@ -1,6 +1,7 @@
 #include "rule/rule.hpp"
-#include "rule/rule_factory.hpp"
 #include "parser/parser.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <iomanip>
 #include <iostream>
@@ -9,16 +10,14 @@
 int main()
 {
     std::string line;
-    std::unique_ptr<Rule> rule;
-    RuleFactory factory;
+    std::shared_ptr<Rule> rule;
     do {
         std::cout << "rule: ";
         std::getline(std::cin, line);
         if (line.empty()) continue;
 
-        rule = factory.create(line);
+        rule = parse(line);
 
-        parse(line);
     } while (!rule);
 
     do {

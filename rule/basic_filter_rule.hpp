@@ -7,8 +7,6 @@ class BasicFilterRule : public FilterRule
 {
     using Base = FilterRule;
 public:
-    BasicFilterRule() = default;
-
     template<typename Str>
     BasicFilterRule(Str&&);
 

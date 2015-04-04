@@ -16,23 +16,8 @@ public:
 
 public:
     virtual ~Rule() = default;
-
-    const String &line() const { return m_line; }
-
-protected:
-    template<typename Str>
-    Rule(Str&&);
-
-private:
-    String m_line;
 };
 
 #include <utility>
-
-template<typename Str>
-inline Rule::
-Rule(Str &&line)
-    : m_line { std::forward<Str>(line) }
-{}
 
 #endif // RULE_HPP

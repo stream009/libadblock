@@ -2,7 +2,7 @@
 
 CommentRule::
 CommentRule(const String &comment)
-    : Base { "" }, m_comment { comment }
+    : m_comment { comment }
 {}
 
 std::ostream &

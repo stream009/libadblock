@@ -5,6 +5,11 @@
 #include "pattern/pattern.hpp"
 
 #include <memory>
+#include <vector>
+
+#include <boost/optional.hpp>
+
+class Option;
 
 class FilterRule : public Rule
 {
@@ -19,12 +24,12 @@ public:
     virtual bool match(const Uri&, const Context&) const;
 
 protected:
-    using Base::Base;
-
-    void parse(const StringRange&);
+    FilterRule(const std::shared_ptr<Pattern>&,
+               const boost::optional<std::vector<std::shared_ptr<Option>>>&);
 
 private:
-    std::unique_ptr<Pattern> m_pattern;
+    std::shared_ptr<Pattern> m_pattern;
+    boost::optional<std::vector<std::shared_ptr<Option>>> m_options;
 };
 
 #endif // FILTER_RULE_HPP

@@ -1,12 +1,21 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
+#include <string>
+
+#include <boost/network/uri.hpp>
+
 class Option
 {
 public:
-    virtual bool match(const Uri&, const Context&) const = 0;
+    using Uri = boost::network::uri::uri;
+    using Context = std::string;
+
+public:
+    virtual bool match(const Uri&, const Context&) const { return false; } // = 0;
 };
 
+#if 0
 class ScriptOption : public Option
 {
 public:
@@ -141,5 +150,6 @@ public:
         //TODO
     }
 };
+#endif
 
 #endif // OPTION_HPP

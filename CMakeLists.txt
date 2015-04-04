@@ -28,6 +28,8 @@ set(SRCS main.cpp
 	 parser/filter_rule.cpp
 	 parser/element_hide_rule.cpp
 	 parser/grammar.cpp
+	 parser/filter_pattern.cpp
+	 parser/filter_option.cpp
 )
 
 add_executable(${MAIN} ${SRCS})

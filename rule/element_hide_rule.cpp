@@ -3,8 +3,7 @@
 ElementHideRule::
 ElementHideRule(const String &selector,
                 const boost::optional<std::vector<Domain>> &domains)
-    : Base { "" },
-      m_cssSelector { selector }
+    : m_cssSelector { selector }
 {
     struct Visitor : boost::static_visitor<> {
         Visitor(std::vector<IncludeDomain> &includes_,

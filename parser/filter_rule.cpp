@@ -2,6 +2,6 @@
 
 namespace adblock { namespace parser {
 
-template struct FilterRule<std::string::const_iterator>;
+template class FilterRule<std::string::const_iterator>;
 
 }} // namespace adblock::parser

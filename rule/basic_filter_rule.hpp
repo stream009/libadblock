@@ -3,38 +3,20 @@
 
 #include "filter_rule.hpp"
 
+#include <memory>
+#include <vector>
+
+#include <boost/optional.hpp>
+
 class BasicFilterRule : public FilterRule
 {
     using Base = FilterRule;
 public:
-    template<typename Str>
-    BasicFilterRule(Str&&);
-
-    template<typename Str>
-    static bool matchFormat(Str&&);
+    BasicFilterRule(const std::shared_ptr<Pattern> &pattern,
+                    const boost::optional<
+                          std::vector<std::shared_ptr<Option>>> &options)
+        : Base { pattern, options }
+    {}
 };
-
-#include <iterator>
-#include <utility>
-
-#include <boost/algorithm/string/predicate.hpp>
-
-template<typename Str>
-inline BasicFilterRule::
-BasicFilterRule(Str &&line)
-    : Base { std::forward<Str>(line) }
-{
-    const auto &l = this->line();
-    assert(matchFormat(l));
-
-    Base::parse(Base::StringRange { std::begin(l), std::end(l) });
-}
-
-template<typename Str>
-inline bool BasicFilterRule::
-matchFormat(Str &&line)
-{
-    return !boost::algorithm::starts_with(line, "@@");
-}
 
 #endif // BASIC_FILTER_RULE_HPP

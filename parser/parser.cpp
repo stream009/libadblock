@@ -14,7 +14,6 @@ parse(const std::string &line)
     if (rv) {
         const auto &aRule = *rule;
         std::cout << typeid(aRule).name() << "\n";
-        std::cout << rule->line() << "\n";
 
         const auto &elementHideRule =
                 std::dynamic_pointer_cast<ElementHideRule>(rule);

@@ -31,7 +31,6 @@ add_executable(${MAIN} ${SRCS})
 include_directories(${CMAKE_SOURCE_DIR})
 target_link_libraries(${MAIN} cppnetlib-uri)
 target_link_libraries(${MAIN} ${Boost_LIBRARIES})
-add_definitions(-DBOOST_SPIRIT_DEBUG)
 
 add_precompiled_header(${MAIN} stable.hpp FORCEINCLUDE)
 

@@ -23,6 +23,9 @@ public:
 public:
     virtual bool match(const Uri&, const Context&) const;
 
+    const Pattern &pattern() const
+    { assert(m_pattern); return *m_pattern; } //TODO temporary
+
 protected:
     FilterRule(const std::shared_ptr<Pattern>&,
                const boost::optional<std::vector<std::shared_ptr<Option>>>&);

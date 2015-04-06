@@ -12,11 +12,11 @@ parse(const std::string &line)
 
     const auto rv = parse(line.begin(), line.end(), grammar, rule);
     if (rv) {
-        const auto &aRule = *rule;
-        std::cout << aRule << "\n";
+        //const auto &aRule = *rule;
+        //std::cout << aRule << "\n";
     }
     else {
-        std::cout << "Couldn't parse.";
+        std::cout << "Couldn't parse: " << line << "\n";
     }
 
     return rule;

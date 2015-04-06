@@ -2,6 +2,7 @@
 
 #include "make_shared.hpp"
 #include "parser/domain.hpp"
+#include "parser/filter_option.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/begin_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
@@ -20,9 +21,12 @@ struct FilterPattern::Impl
         pattern, regex_pattern, domain_match_pattern, begin_match_pattern,
         end_match_pattern, basic_match_pattern;
 
-    Domain subdomain;
+    qi::rule<iterator> options, end_of_pattern;
 
-    rule<std::string()> pattern_string;
+    Domain subdomain;
+    FilterOption option;
+
+    rule<std::string()> pattern_string, escaped_regex_char;
     rule<char()> url_char;
 
     Impl()
@@ -57,14 +61,30 @@ struct FilterPattern::Impl
                 qi::_val = phx::make_shared<DomainMatchPattern>(qi::_1)
             ];
 
+        using qi::char_;
+
         regex_pattern =
-            qi::as_string[('/' >> -+(qi::char_ - '/') >> '/')]
+            qi::as_string
+            [
+                    '/'
+                 >> *(
+                          ~char_('/')
+                        | (char_('/') >> !&(end_of_pattern))
+                     )
+                 >> '/'
+            ]
             [
                 qi::_val = phx::make_shared<RegexPattern>(qi::_1)
             ];
 
-        pattern_string = +(url_char | qi::char_("^*"));
-        //url_char = qi::alnum | qi::char_("%~&/:$#=_,."); //TODO think through
+        end_of_pattern
+            = qi::eoi | options >> qi::eoi;
+
+        options
+            = '$' >> option % ',';
+
+        pattern_string = +(url_char | char_("^*"));
+        //url_char = qi::alnum | char_("%~&/:$#=_,."); //TODO think through
         url_char = qi::graph - '$';
     }
 };

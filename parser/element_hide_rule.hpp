@@ -2,26 +2,21 @@
 #define PARSER_ELEMENT_HIDE_RULE_HPP
 
 #include "domain.hpp"
-
+#include "type.hpp"
 #include "rule/rule.hpp"
 
 #include <memory>
 
-#include <boost/spirit/include/qi.hpp>
-
 namespace adblock { namespace parser {
 
-namespace qi = boost::spirit::qi;
-
-template<typename Iterator>
-class ElementHideRule : public qi::grammar<Iterator, std::shared_ptr<Rule>()>
+class ElementHideRule : public grammar<std::shared_ptr<Rule>()>
 {
 public:
     ElementHideRule();
     ~ElementHideRule();
 
 private:
-    qi::rule<Iterator, std::shared_ptr<Rule>()> start;
+    rule<std::shared_ptr<Rule>()> start;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

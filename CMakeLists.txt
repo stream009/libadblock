@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 
 find_package(Boost 1.57 REQUIRED COMPONENTS regex system)
+include(PrecompiledHeader)
 
 set(SRCS main.cpp 
 	 rule/filter_rule.cpp
@@ -23,13 +24,6 @@ set(SRCS main.cpp
 	 pattern/end_match_pattern.cpp
 	 pattern/domain_match_pattern.cpp
 	 pattern/regex_pattern.cpp
-	 parser/parser.cpp
-	 parser/domain.cpp
-	 parser/filter_rule.cpp
-	 parser/element_hide_rule.cpp
-	 parser/grammar.cpp
-	 parser/filter_pattern.cpp
-	 parser/filter_option.cpp
 )
 
 add_executable(${MAIN} ${SRCS})
@@ -39,5 +33,7 @@ target_link_libraries(${MAIN} cppnetlib-uri)
 target_link_libraries(${MAIN} ${Boost_LIBRARIES})
 add_definitions(-DBOOST_SPIRIT_DEBUG)
 
-include(PrecompiledHeader)
 add_precompiled_header(${MAIN} stable.hpp FORCEINCLUDE)
+
+add_subdirectory(parser)
+target_link_libraries(${MAIN} parser)

@@ -29,7 +29,8 @@ protected:
     ElementHideRule(const String &selector,
             const boost::optional<std::vector<Domain>> &domains);
 private:
-    friend std::ostream &operator<<(std::ostream&, const ElementHideRule&);
+    // @override Rule
+    void print(std::ostream&) const override;
 
 private:
     String m_cssSelector;

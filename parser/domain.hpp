@@ -1,24 +1,21 @@
 #ifndef PARSER_DOMAIN_HPP
 #define PARSER_DOMAIN_HPP
 
+#include "type.hpp"
+
 #include <memory>
 #include <string>
 
-#include <boost/spirit/include/qi.hpp>
-
 namespace adblock { namespace parser {
 
-namespace qi = boost::spirit::qi;
-
-template<typename Iterator>
-class Domain : public qi::grammar<Iterator, std::string()>
+class Domain : public grammar<std::string()>
 {
 public:
     Domain();
     ~Domain();
 
 private:
-    qi::rule<Iterator, std::string()> start;
+    rule<std::string()> start;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

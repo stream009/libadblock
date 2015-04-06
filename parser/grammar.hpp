@@ -3,27 +3,25 @@
 
 #include "element_hide_rule.hpp"
 #include "filter_rule.hpp"
+#include "type.hpp"
 
 #include <memory>
 
-#include <boost/spirit/include/qi.hpp>
+class Rule;
 
 namespace adblock { namespace parser {
 
-namespace qi = boost::spirit::qi;
-
-template<typename Iterator>
-struct Grammar : qi::grammar<Iterator, std::shared_ptr<Rule>()>
+struct Grammar : grammar<std::shared_ptr<Rule>()>
 {
 public:
     Grammar();
 
 private:
-    qi::rule<Iterator, std::shared_ptr<Rule>()> rule;
+    rule<std::shared_ptr<Rule>()> start;
 
-    FilterRule<Iterator> filter_rule;
-    ElementHideRule<Iterator> element_hide_rule;
-    qi::rule<Iterator, std::shared_ptr<Rule>()> comment_rule;
+    FilterRule filter_rule;
+    ElementHideRule element_hide_rule;
+    rule<std::shared_ptr<Rule>()> comment_rule;
 };
 
 }} // namespace adblock::parser

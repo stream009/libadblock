@@ -30,6 +30,9 @@ protected:
 private:
     std::shared_ptr<Pattern> m_pattern;
     boost::optional<std::vector<std::shared_ptr<Option>>> m_options;
+
+    // @override Rule
+    void print(std::ostream&) const override;
 };
 
 #endif // FILTER_RULE_HPP

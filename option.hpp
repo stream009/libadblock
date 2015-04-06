@@ -1,7 +1,9 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
+#include <ostream>
 #include <string>
+#include <typeinfo>
 
 #include <boost/network/uri.hpp>
 
@@ -12,144 +14,155 @@ public:
     using Context = std::string;
 
 public:
-    virtual bool match(const Uri&, const Context&) const { return false; } // = 0;
+    bool match(const Uri &uri, const Context &context) const
+    {
+        return doMatch(uri, context);
+    }
+
+protected:
+    virtual bool doMatch(const Uri&, const Context&) const// = 0;
+    { return false; }
 };
 
-#if 0
-class ScriptOption : public Option
+inline std::ostream &
+operator<<(std::ostream &os, const Option &option)
+{
+    return os << typeid(option).name() << " ";
+}
+
+class InversibleOption : public Option
 {
 public:
-    bool match(const Uri&, const Context &context) const override
+    InversibleOption(const bool inverse)
+        : m_inverse { inverse }
+    {}
+
+    // @overload Option
+    bool match(const Uri &uri, const Context &context) const
     {
-        return context.fromScriptTag();
+        return m_inverse ? !doMatch(uri, context) : doMatch(uri, context);
     }
+
+    bool inverse() { return m_inverse; }
+
+private:
+    bool m_inverse;
 };
 
-class ImageOption : public Option
+class ScriptOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromImageTag();
-    }
+    using Base::Base;
 };
 
-class StyleSheetOption : public Option
+class ImageOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromLinkTagToStyleSheet();
-    }
+    using Base::Base;
 };
 
-class ObjectOption : public Option
+class StyleSheetOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromObjectTag();
-    }
+    using Base::Base;
 };
 
-class XmlHttpRequestOption : public Option
+class ObjectOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromXmlHttpRequest();
-    }
+    using Base::Base;
 };
 
-class ObjectSubRequestOption : public Option
+class XmlHttpRequestOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromPluginObject();
-    }
+    using Base::Base;
 };
 
-class SubDocumentOption : public Option
+class ObjectSubRequestOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        return context.fromPluginObject();
-    }
+    using Base::Base;
 };
 
-class DocumentOption : public Option
+class SubDocumentOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    using Base::Base;
 };
 
-class ElemHideOption : public Option
+class DocumentOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    using Base::Base;
 };
 
-class ThirdPartyOption : public Option
+class ElemHideOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    using Base::Base;
+};
+
+class OtherOption : public InversibleOption
+{
+    using Base = InversibleOption;
+public:
+    using Base::Base;
+};
+
+class ThirdPartyOption : public InversibleOption
+{
+    using Base = InversibleOption;
+public:
+    using Base::Base;
 };
 
 class DomainOption : public Option
 {
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    DomainOption(const std::vector<std::string> &domains)
+        : m_domains { domains } //TODO split incude and exclude domain
+    {}
+
+private:
+    std::vector<std::string> m_domains;
 };
 
 class SiteKeyOption : public Option
 {
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    SiteKeyOption(const std::string &siteKey)
+        : m_siteKey { siteKey }
+    {}
+
+private:
+    std::string m_siteKey;
 };
 
-class CollapseOption : public Option
+class MatchCaseOption : public Option
 {
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
 };
 
-class CollapseOption : public Option
+class CollapseOption : public InversibleOption
 {
+    using Base = InversibleOption;
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
+    using Base::Base;
 };
 
 class DoNotTrackOption : public Option
 {
 public:
-    bool match(const Uri&, const Context &context) const override
-    {
-        //TODO
-    }
 };
-#endif
 
 #endif // OPTION_HPP

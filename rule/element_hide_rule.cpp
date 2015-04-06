@@ -32,23 +32,22 @@ ElementHideRule(const String &selector,
     }
 }
 
-std::ostream &
-operator<<(std::ostream &os, const ElementHideRule &rule)
+void ElementHideRule::
+print(std::ostream &os) const
 {
-    os << "CSS selector: " << rule.m_cssSelector << "\n";
-    if (!rule.m_includeDomains.empty()) {
+    os << "CSS selector: " << m_cssSelector << "\n";
+    if (!m_includeDomains.empty()) {
         os << "Include domains: ";
-        for (const auto domain: rule.m_includeDomains) {
+        for (const auto domain: m_includeDomains) {
             os << domain << ' ';
         }
         os << "\n";
     }
-    if (!rule.m_excludeDomains.empty()) {
+    if (!m_excludeDomains.empty()) {
         os << "Exclude domains: ";
-        for (const auto domain: rule.m_excludeDomains) {
+        for (const auto domain: m_excludeDomains) {
             os << domain << ' ';
         }
         os << "\n";
     }
-    return os;
 }

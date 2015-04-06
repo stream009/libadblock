@@ -3,6 +3,7 @@
 
 #include "rule.hpp"
 
+#include <iosfwd>
 #include <memory>
 
 class CommentRule : public Rule
@@ -14,22 +15,13 @@ public:
 public:
     CommentRule(const String &comment);
 
-    template<typename Str>
-    static bool matchFormat(Str&&);
-
-    friend std::ostream &operator<<(std::ostream&, const CommentRule&);
+    // @override Rule
+    void print(std::ostream&) const override;
 
 private:
     String m_comment;
 };
 
 #include <utility>
-
-template<typename Str>
-bool CommentRule::
-matchFormat(Str &&line)
-{
-    return !line.empty() && line.front() == '!';
-}
 
 #endif // COMMENT_RULE_HPP

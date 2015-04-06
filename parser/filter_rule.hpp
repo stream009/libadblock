@@ -2,26 +2,21 @@
 #define PARSER_FILTER_RULE_HPP
 
 #include "domain.hpp"
-
+#include "type.hpp"
 #include "rule/rule.hpp"
 
 #include <memory>
 
-#include <boost/spirit/include/qi.hpp>
-
 namespace adblock { namespace parser {
 
-namespace qi = boost::spirit::qi;
-
-template<typename Iterator>
-class FilterRule : public qi::grammar<Iterator, std::shared_ptr<Rule>()>
+class FilterRule : public grammar<std::shared_ptr<Rule>()>
 {
 public:
     FilterRule();
     ~FilterRule();
 
 private:
-    qi::rule<Iterator, std::shared_ptr<Rule>()> m_start;
+    rule<std::shared_ptr<Rule>()> m_start;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

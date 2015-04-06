@@ -50,7 +50,8 @@ private:
 
     void init();
 
-    friend std::ostream &operator<<(std::ostream&, BasicMatchPattern&);
+    // @override Pattern
+    void print(std::ostream&) const override;
 
 private:
     std::string m_str;

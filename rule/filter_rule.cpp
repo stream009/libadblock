@@ -15,3 +15,16 @@ match(const Uri &url, const Context&) const
 {
     return m_pattern->match(url);
 }
+
+void FilterRule::
+print(std::ostream &os) const
+{
+    os << "Pattern: " << *m_pattern << "\n";
+    if (m_options) {
+        const auto &options = m_options.get();
+        os << "Option: ";
+        for (const auto option: options) {
+            os << *option << " ";
+        }
+    }
+}

@@ -1,12 +1,14 @@
 #include "comment_rule.hpp"
 
+#include <ostream>
+
 CommentRule::
 CommentRule(const String &comment)
     : m_comment { comment }
 {}
 
-std::ostream &
-operator<<(std::ostream &os, const CommentRule &rule)
+void CommentRule::
+print(std::ostream &os) const
 {
-    return os << rule.m_comment;
+    os << m_comment;
 }

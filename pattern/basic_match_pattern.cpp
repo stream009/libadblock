@@ -71,9 +71,8 @@ init()
     ba::split(m_tokens, range, ba::is_any_of("*"), ba::token_compress_on);
 }
 
-std::ostream &
-operator<<(std::ostream &os, BasicMatchPattern &pattern)
+void BasicMatchPattern::
+print(std::ostream &os) const
 {
-    os << pattern.m_str;
-    return os;
+    os << m_str;
 }

@@ -7,7 +7,7 @@
 std::shared_ptr<Rule>
 parse(const std::string &line)
 {
-    adblock::parser::Grammar grammar;
+    static const adblock::parser::Grammar grammar;
     std::shared_ptr<Rule> rule;
 
     const auto rv = parse(line.begin(), line.end(), grammar, rule);

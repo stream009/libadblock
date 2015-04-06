@@ -26,6 +26,8 @@ set(SRCS main.cpp
 	 pattern/regex_pattern.cpp
 )
 
+#add_definitions(-D_GLIBCXX_PROFILE)
+
 add_executable(${MAIN} ${SRCS})
 
 include_directories(${CMAKE_SOURCE_DIR})

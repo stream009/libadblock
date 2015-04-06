@@ -17,8 +17,14 @@ Grammar()
             | element_hide_rule
             | filter_rule;
 
-    comment_rule = qi::as_string[qi::char_('!') >> *qi::char_]
-                    [qi::_val = phx::make_shared<CommentRule>(qi::_1)];
+    comment_rule
+        = qi::as_string
+          [
+            qi::char_('!') >> *qi::char_
+          ]
+          [
+            qi::_val = phx::make_shared<CommentRule>(qi::_1)
+          ];
 }
 
 }} // namespace adblock::parser

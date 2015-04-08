@@ -1,20 +1,15 @@
 #ifndef PATTERN_HPP
 #define PATTERN_HPP
 
+#include "type.hpp"
+
 #include <ostream>
-#include <string>
 #include <typeinfo>
 
-#include <boost/network/uri/uri.hpp>
-#include <boost/range/iterator_range.hpp>
+namespace adblock {
 
 class Pattern
 {
-protected:
-    using String = std::string;
-    using Range = boost::iterator_range<String::const_iterator>;
-    using Uri = boost::network::uri::uri;
-
 public:
     virtual ~Pattern() = default;
 
@@ -30,5 +25,7 @@ private:
         return os;
     }
 };
+
+} // namespace
 
 #endif // PATTERN_HPP

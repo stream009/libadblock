@@ -1,53 +1,60 @@
 #include "element_hide_rule.hpp"
 
+namespace adblock {
+
 ElementHideRule::
-ElementHideRule(const String &selector,
-                const boost::optional<std::vector<Domain>> &domains)
+ElementHideRule(const StringRange &selector,
+                const boost::optional<std::vector<StringRange>> &domains)
     : m_cssSelector { selector }
 {
-    struct Visitor : boost::static_visitor<> {
-        Visitor(std::vector<IncludeDomain> &includes_,
-                std::vector<ExcludeDomain> &excludes_)
-            : includes { includes_ },
-              excludes { excludes_ }
-        {}
-
-        void operator()(const IncludeDomain &domain) {
-            includes.push_back(domain);
-        }
-
-        void operator()(const ExcludeDomain &domain) {
-            excludes.push_back(domain);
-        }
-
-        std::vector<IncludeDomain> &includes;
-        std::vector<ExcludeDomain> &excludes;
-
-    } visitor { m_includeDomains, m_excludeDomains };
-
     if (domains) {
-        for (const auto &domain: domains.get()) {
-            boost::apply_visitor(visitor, domain);
+        for (const auto &domain: *domains) {
+            if (domain.front() != '~') {
+                includeDomains().push_back(domain);
+            }
+            else {
+                excludeDomains().push_back(domain);
+            }
         }
     }
+}
+
+std::vector<StringRange> &ElementHideRule::
+includeDomains()
+{
+    if (m_includeDomains == boost::none) {
+        m_includeDomains.emplace();
+    }
+    return *m_includeDomains;
+}
+
+std::vector<StringRange> &ElementHideRule::
+excludeDomains()
+{
+    if (m_excludeDomains == boost::none) {
+        m_excludeDomains.emplace();
+    }
+    return *m_excludeDomains;
 }
 
 void ElementHideRule::
 print(std::ostream &os) const
 {
     os << "CSS selector: " << m_cssSelector << "\n";
-    if (!m_includeDomains.empty()) {
+    if (m_includeDomains) {
         os << "Include domains: ";
-        for (const auto domain: m_includeDomains) {
+        for (const auto domain: *m_includeDomains) {
             os << domain << ' ';
         }
         os << "\n";
     }
-    if (!m_excludeDomains.empty()) {
+    if (m_excludeDomains) {
         os << "Exclude domains: ";
-        for (const auto domain: m_excludeDomains) {
+        for (const auto domain: *m_excludeDomains) {
             os << domain << ' ';
         }
         os << "\n";
     }
 }
+
+} // namespace adblock

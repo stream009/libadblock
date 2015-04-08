@@ -9,8 +9,9 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
-find_package(Boost 1.57 REQUIRED COMPONENTS regex system)
+find_package(Boost 1.57 REQUIRED COMPONENTS iostreams regex system)
 include(PrecompiledHeader)
 
 set(SRCS main.cpp 

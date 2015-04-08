@@ -2,8 +2,10 @@
 
 #include <ostream>
 
+namespace adblock {
+
 RegexPattern::
-RegexPattern(const Range &range)
+RegexPattern(const StringRange &range)
     : m_regEx { range.begin(), range.end() }
 {}
 
@@ -18,3 +20,5 @@ print(std::ostream &os) const
 {
     os << m_regEx.str();
 }
+
+} // namespace adblock

@@ -2,8 +2,10 @@
 
 #include <ostream>
 
+namespace adblock {
+
 CommentRule::
-CommentRule(const String &comment)
+CommentRule(const StringRange &comment)
     : m_comment { comment }
 {}
 
@@ -12,3 +14,5 @@ print(std::ostream &os) const
 {
     os << m_comment;
 }
+
+} // namespace adblock

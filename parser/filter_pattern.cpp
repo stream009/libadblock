@@ -21,12 +21,12 @@ struct FilterPattern::Impl
         pattern, regex_pattern, domain_match_pattern, begin_match_pattern,
         end_match_pattern, basic_match_pattern;
 
-    qi::rule<iterator> options, end_of_pattern;
+    rule<> options, end_of_pattern;
 
     Domain subdomain;
     FilterOption option;
 
-    rule<std::string()> pattern_string, escaped_regex_char;
+    rule<StringRange()> pattern_string;
     rule<char()> url_char;
 
     Impl()
@@ -64,7 +64,7 @@ struct FilterPattern::Impl
         using qi::char_;
 
         regex_pattern =
-            qi::as_string
+            qi::raw
             [
                     '/'
                  >> *(
@@ -83,7 +83,12 @@ struct FilterPattern::Impl
         options
             = '$' >> option % ',';
 
-        pattern_string = +(url_char | char_("^*"));
+        pattern_string
+            = qi::raw
+              [
+                +(url_char | char_("^*"))
+              ];
+
         //url_char = qi::alnum | char_("%~&/:$#=_,."); //TODO think through
         url_char = qi::graph - '$';
     }

@@ -10,11 +10,23 @@ struct Domain::Impl
         const auto &letter = qi::alpha;
 
         // Domain name specification from RFC 1035
-        subdomain   = label >> +(qi::char_('.') >> label);
-        // domain = subdomain | " ";
+        subdomain
+            = qi::raw
+              [
+                label >> +(qi::char_('.') >> label)
+              ];
 
-        label       = letter >> -(label_body >> let_dig);
-        label_body  = qi::raw[*(let_dig_hyp >> &let_dig)];
+        label
+            = qi::raw
+              [
+                letter >> -(label_body >> let_dig)
+              ];
+
+        label_body
+            = qi::raw
+              [
+                *(let_dig_hyp >> &let_dig)
+              ];
 
         let_dig_hyp = let_dig | '-';
         let_dig     = letter | qi::digit;
@@ -27,8 +39,10 @@ struct Domain::Impl
 #endif
     }
 
-    rule<std::string()>
-        subdomain, label, label_body, let_dig, let_dig_hyp;
+    rule<StringRange()>
+        subdomain, label, label_body;
+    rule<char()>
+        let_dig, let_dig_hyp;
 };
 
 Domain::

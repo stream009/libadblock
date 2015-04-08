@@ -1,17 +1,17 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
+#include "type.hpp"
+
 #include <ostream>
-#include <string>
 #include <typeinfo>
 
-#include <boost/network/uri.hpp>
+namespace adblock {
 
 class Option
 {
 public:
-    using Uri = boost::network::uri::uri;
-    using Context = std::string;
+    using Context = size_t;
 
 public:
     bool match(const Uri &uri, const Context &context) const
@@ -129,23 +129,23 @@ public:
 class DomainOption : public Option
 {
 public:
-    DomainOption(const std::vector<std::string> &domains)
+    DomainOption(const std::vector<StringRange> &domains)
         : m_domains { domains } //TODO split incude and exclude domain
     {}
 
 private:
-    std::vector<std::string> m_domains;
+    std::vector<StringRange> m_domains;
 };
 
 class SiteKeyOption : public Option
 {
 public:
-    SiteKeyOption(const std::string &siteKey)
+    SiteKeyOption(const StringRange &siteKey)
         : m_siteKey { siteKey }
     {}
 
 private:
-    std::string m_siteKey;
+    StringRange m_siteKey;
 };
 
 class MatchCaseOption : public Option
@@ -164,5 +164,7 @@ class DoNotTrackOption : public Option
 {
 public:
 };
+
+} // namespace adblock
 
 #endif // OPTION_HPP

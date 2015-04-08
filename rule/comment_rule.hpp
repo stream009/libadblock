@@ -2,26 +2,26 @@
 #define COMMENT_RULE_HPP
 
 #include "rule.hpp"
+#include "type.hpp"
 
 #include <iosfwd>
 #include <memory>
+
+namespace adblock {
 
 class CommentRule : public Rule
 {
     using Base = Rule;
 public:
-    using Base::String;
-
-public:
-    CommentRule(const String &comment);
+    CommentRule(const StringRange &comment);
 
     // @override Rule
     void print(std::ostream&) const override;
 
 private:
-    String m_comment;
+    StringRange m_comment;
 };
 
-#include <utility>
+} // namespace adblock
 
 #endif // COMMENT_RULE_HPP

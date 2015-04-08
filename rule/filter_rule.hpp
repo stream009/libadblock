@@ -2,6 +2,7 @@
 #define FILTER_RULE_HPP
 
 #include "rule.hpp"
+#include "type.hpp"
 #include "pattern/pattern.hpp"
 
 #include <memory>
@@ -9,16 +10,15 @@
 
 #include <boost/optional.hpp>
 
+namespace adblock {
+
 class Option;
 
 class FilterRule : public Rule
 {
     using Base = Rule;
 public:
-    using Base::String;
-    using Base::StringRange;
-    using Base::Uri;
-    using Context = String; //TODO
+    using Context = size_t; //TODO
 
 public:
     virtual bool match(const Uri&, const Context&) const;
@@ -37,5 +37,7 @@ private:
     // @override Rule
     void print(std::ostream&) const override;
 };
+
+} // namespace adblock
 
 #endif // FILTER_RULE_HPP

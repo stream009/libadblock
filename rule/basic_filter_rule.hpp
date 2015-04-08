@@ -8,6 +8,8 @@
 
 #include <boost/optional.hpp>
 
+namespace adblock {
+
 class BasicFilterRule : public FilterRule
 {
     using Base = FilterRule;
@@ -18,5 +20,7 @@ public:
         : Base { pattern, options }
     {}
 };
+
+} // namespace adblock
 
 #endif // BASIC_FILTER_RULE_HPP

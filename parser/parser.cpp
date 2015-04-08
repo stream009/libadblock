@@ -1,23 +1,21 @@
+#include "parser.hpp"
+
 #include "grammar.hpp"
 
-#include "rule/element_hide_rule.hpp"
-
-#include <memory>
+namespace adblock { namespace parser {
 
 std::shared_ptr<Rule>
-parse(const std::string &line)
+parse(const StringRange &line)
 {
-    static const adblock::parser::Grammar grammar;
+    static const Grammar grammar;
     std::shared_ptr<Rule> rule;
 
     const auto rv = parse(line.begin(), line.end(), grammar, rule);
-    if (rv) {
-        //const auto &aRule = *rule;
-        //std::cout << aRule << "\n";
-    }
-    else {
+    if (!rv) {
         std::cout << "Couldn't parse: " << line << "\n";
     }
 
     return rule;
 }
+
+}} // namespace adblock::parser

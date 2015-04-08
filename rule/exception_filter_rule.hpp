@@ -8,6 +8,8 @@
 
 #include <boost/optional.hpp>
 
+namespace adblock {
+
 class ExceptionFilterRule : public FilterRule
 {
     using Base = FilterRule;
@@ -26,5 +28,7 @@ match(const Uri &url, const Context &context) const
 {
     return !Base::match(url, context);
 }
+
+} // namespace adblock
 
 #endif // EXCEPTION_FILTER_RULE_HPP

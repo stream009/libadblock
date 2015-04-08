@@ -1,6 +1,7 @@
 #ifndef PARSER_FILTER_OPTION_HPP
 #define PARSER_FILTER_OPTION_HPP
 
+#include "option.hpp"
 #include "type.hpp"
 
 #include <memory>

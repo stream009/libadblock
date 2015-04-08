@@ -18,7 +18,7 @@ Grammar()
             | filter_rule;
 
     comment_rule
-        = qi::as_string
+        = qi::raw
           [
             qi::char_('!') >> *qi::char_
           ]

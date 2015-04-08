@@ -2,40 +2,37 @@
 #define ELEMENT_HIDE_RULE_HPP
 
 #include "rule.hpp"
+#include "type.hpp"
 
 #include <vector>
 
 #include <boost/optional.hpp>
-#include <boost/serialization/strong_typedef.hpp>
-#include <boost/variant.hpp>
+
+namespace adblock {
 
 class ElementHideRule : public Rule
 {
     using Base = Rule;
 public:
-    using Base::String;
-    using Base::Uri;
-    //BOOST_STRONG_TYPEDEF(std::string, IncludeDomain);
-    //BOOST_STRONG_TYPEDEF(std::string, ExcludeDomain);
-    struct IncludeDomain : std::string {};
-    struct ExcludeDomain : std::string {};
-    using Domain = boost::variant<IncludeDomain, ExcludeDomain>;
-
-public:
     bool match(const Uri&) const;
-    const String &cssSelector();
+    const StringRange &cssSelector();
 
 protected:
-    ElementHideRule(const String &selector,
-            const boost::optional<std::vector<Domain>> &domains);
+    ElementHideRule(const StringRange &selector,
+            const boost::optional<std::vector<StringRange>> &domains);
 private:
     // @override Rule
     void print(std::ostream&) const override;
 
+    std::vector<StringRange> &includeDomains();
+    std::vector<StringRange> &excludeDomains();
+
 private:
-    String m_cssSelector;
-    std::vector<IncludeDomain> m_includeDomains;
-    std::vector<ExcludeDomain> m_excludeDomains;
+    StringRange m_cssSelector;
+    boost::optional<std::vector<StringRange>> m_includeDomains;
+    boost::optional<std::vector<StringRange>> m_excludeDomains;
 };
+
+} // namespace adblock
 
 #endif // ELEMENT_HIDE_RULE_HPP

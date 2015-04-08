@@ -8,12 +8,17 @@
 #include <iosfwd>
 #include <vector>
 
+#include <boost/range/iterator_range.hpp>
+
+namespace adblock {
+
 class BasicMatchPattern : public Pattern
 {
 protected:
-    using Token = Range;
+    using Token = StringRange;
     using Tokens = std::vector<Token>;
     using TokenRange = boost::iterator_range<Tokens::const_iterator>;
+    using UriRange = Uri::const_range_type;
 
     struct Compare {
         bool operator()(const char left, const char right) const;
@@ -23,7 +28,7 @@ public:
     template<typename Str>
     BasicMatchPattern(Str &&str);
 
-    BasicMatchPattern(const Range &range);
+    BasicMatchPattern(const StringRange &range);
 
     bool match(const Uri &url) const override
     {
@@ -34,7 +39,7 @@ protected:
     const Tokens &tokens() const { return m_tokens; }
 
     virtual bool doMatchUrl(const Uri&) const;
-    virtual bool doMatch(const Range&, const TokenRange&) const;
+    virtual bool doMatch(const UriRange&, const TokenRange&) const;
 
 private:
     void validate() const
@@ -54,7 +59,7 @@ private:
     void print(std::ostream&) const override;
 
 private:
-    std::string m_str;
+    StringRange m_str;
     Tokens m_tokens;
 };
 
@@ -67,5 +72,7 @@ BasicMatchPattern(Str &&str)
 
     validate();
 }
+
+} // namespace adblock
 
 #endif // BASIC_MATCH_PATTERN_HPP

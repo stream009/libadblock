@@ -6,9 +6,11 @@
 #include <boost/algorithm/string/compare.hpp>
 #include <boost/algorithm/string/find.hpp>
 #include <boost/algorithm/string/finder.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/range/iterator_range.hpp>
+
+namespace adblock {
 
 bool BasicMatchPattern::Compare::
 operator()(const char left, const char right) const
@@ -27,7 +29,7 @@ operator()(const char left, const char right) const
 }
 
 BasicMatchPattern::
-BasicMatchPattern(const Range &range)
+BasicMatchPattern(const StringRange &range)
     : m_str { range.begin(), range.end() }
 {
     init();
@@ -36,7 +38,7 @@ BasicMatchPattern(const Range &range)
 }
 
 bool BasicMatchPattern::
-doMatch(const Range &target, const TokenRange &tokens) const
+doMatch(const UriRange &target, const TokenRange &tokens) const
 {
     namespace ba = boost::algorithm;
     static const auto &compare = Compare {};
@@ -55,7 +57,7 @@ doMatch(const Range &target, const TokenRange &tokens) const
 bool BasicMatchPattern::
 doMatchUrl(const Uri &uri) const
 {
-    const auto &range = boost::make_iterator_range(uri.begin(), uri.end());
+    const UriRange range { uri.begin(), uri.end() };
     return doMatch(range, m_tokens);
 }
 
@@ -65,7 +67,8 @@ init()
     namespace ba = boost::algorithm;
 
     // trim leading and trailing "*"
-    auto &&range = boost::make_iterator_range(m_str);
+    //auto &&range = boost::make_iterator_range(m_str);
+    auto range = m_str;
     range = ba::trim_copy_if(range, ba::is_any_of("*"));
 
     ba::split(m_tokens, range, ba::is_any_of("*"), ba::token_compress_on);
@@ -76,3 +79,5 @@ print(std::ostream &os) const
 {
     os << m_str;
 }
+
+} // namespace adblock

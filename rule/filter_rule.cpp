@@ -2,6 +2,8 @@
 
 #include "option.hpp"
 
+namespace adblock {
+
 FilterRule::
 FilterRule(const std::shared_ptr<Pattern> &pattern,
            const boost::optional<
@@ -28,3 +30,5 @@ print(std::ostream &os) const
         }
     }
 }
+
+} // namespace adblock

@@ -6,6 +6,8 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
+namespace adblock {
+
 bool DomainMatchPattern::
 doMatchUrl(const Uri &url) const
 {
@@ -58,3 +60,5 @@ doMatchUrl(const Uri &url) const
 
     return Base::doMatch(remaining, remainingTokens);
 }
+
+} // namespace adblock

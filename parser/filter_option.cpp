@@ -95,8 +95,17 @@ struct FilterOption::Impl
         donottrack_option =
             lit("donottrack") [ _val = make_shared<DoNotTrackOption>() ];
 
-        domain_option_domain =  -qi::char_('~') >> subdomain;
-        base64_public_key = +(qi::alnum | qi::char_("/+="));
+        domain_option_domain
+            = qi::raw
+              [
+                -qi::char_('~') >> subdomain
+              ];
+
+        base64_public_key
+            = qi::raw
+              [
+                +(qi::alnum | qi::char_("/+="))
+              ];
     }
 
     rule<std::shared_ptr<Option>()>
@@ -108,7 +117,7 @@ struct FilterOption::Impl
         document_option, elemhide_option, other_option,
         third_party_option, collapse_option;
 
-    rule<std::string()> domain_option_domain, base64_public_key;
+    rule<StringRange()> domain_option_domain, base64_public_key;
 
     Domain subdomain;
 };

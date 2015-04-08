@@ -11,20 +11,14 @@ namespace phx = boost::phoenix;
 
 struct ElementHideRule::Impl
 {
-    using IncludeDomain = ::ElementHideRule::IncludeDomain;
-    using ExcludeDomain = ::ElementHideRule::ExcludeDomain;
-    using DomainT = ::ElementHideRule::Domain;
-
     rule<std::shared_ptr<Rule>()>
         element_hide_rule, basic_element_hide_rule,
         exception_element_hide_rule;
 
-    rule<IncludeDomain()> include_domain;
-    rule<ExcludeDomain()> exclude_domain;
-    rule<DomainT()> domain;
-    rule<std::vector<DomainT>()> domains;
+    rule<StringRange()> domain, include_domain, exclude_domain;;
+    rule<std::vector<StringRange>()> domains;
 
-    rule<std::string()> css_selector;
+    rule<StringRange()> css_selector;
 
     Domain subdomain;
 
@@ -51,11 +45,17 @@ struct ElementHideRule::Impl
         domain = include_domain | exclude_domain;
 
         include_domain = subdomain;
-        exclude_domain = '~' >> subdomain;
+        exclude_domain
+            = qi::raw
+              [
+                qi::char_('~') >> subdomain
+              ];
 
-        css_selector = +qi::char_;
-
-        //BOOST_SPIRIT_DEBUG_NODE(domains);
+        css_selector
+            = qi::raw
+              [
+                +qi::char_
+              ];
     }
 };
 

@@ -2,38 +2,22 @@
 #define EXCEPTION_ELEMENT_HIDE_RULE_HPP
 
 #include "element_hide_rule.hpp"
+#include "type.hpp"
+
+#include <vector>
+
+namespace adblock {
 
 class ExceptionElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
 public:
-    using Base::String;
-    using Base::Domain;
-
-public:
-    ExceptionElementHideRule(const String &selector,
-            const boost::optional<std::vector<Domain>> &domains);
-
-    template<typename Str>
-    static bool matchFormat(Str&&);
+    ExceptionElementHideRule(const StringRange &selector,
+            const boost::optional<std::vector<StringRange>> &domains);
 };
 
 std::ostream &operator<<(std::ostream&, const ExceptionElementHideRule&);
 
-#include <utility>
-
-#include <boost/regex.hpp>
-
-template<typename Str>
-bool ExceptionElementHideRule::
-matchFormat(Str &&line)
-{
-    //TODO needs to be more strict
-    static const boost::regex pattern {
-        R"([a-zA-Z.,~]*#@#.*)"
-    };
-
-    return boost::regex_match(line, pattern);
-}
+} // namespace adblock
 
 #endif // EXCEPTION_ELEMENT_HIDE_RULE_HPP

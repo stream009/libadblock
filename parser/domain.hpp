@@ -4,18 +4,17 @@
 #include "type.hpp"
 
 #include <memory>
-#include <string>
 
 namespace adblock { namespace parser {
 
-class Domain : public grammar<std::string()>
+class Domain : public grammar<StringRange()>
 {
 public:
     Domain();
     ~Domain();
 
 private:
-    rule<std::string()> start;
+    rule<StringRange()> start;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

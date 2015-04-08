@@ -3,8 +3,10 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/iterator_range.hpp>
 
+namespace adblock {
+
 bool EndMatchPattern::
-doMatch(const Range &target, const TokenRange &tokens) const
+doMatch(const UriRange &target, const TokenRange &tokens) const
 {
     namespace ba = boost::algorithm;
 
@@ -26,3 +28,5 @@ doMatch(const Range &target, const TokenRange &tokens) const
 
     return Base::doMatch(remaining, remainingTokens);
 }
+
+} // namespace adblock

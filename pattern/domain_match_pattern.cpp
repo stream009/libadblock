@@ -8,6 +8,12 @@
 
 namespace adblock {
 
+DomainMatchPattern::
+DomainMatchPattern(const StringRange &domain,
+                   const boost::optional<StringRange> &pattern)
+    : Base { domain }, m_pattern { pattern }
+{}
+
 bool DomainMatchPattern::
 doMatchUrl(const Uri &url) const
 {

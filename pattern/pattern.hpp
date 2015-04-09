@@ -4,7 +4,6 @@
 #include "type.hpp"
 
 #include <ostream>
-#include <typeinfo>
 
 namespace adblock {
 
@@ -20,7 +19,6 @@ private:
 
     friend std::ostream &operator<<(std::ostream &os, const Pattern &pattern)
     {
-        os << typeid(pattern).name() << " ";
         pattern.print(os);
         return os;
     }

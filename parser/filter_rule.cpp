@@ -33,7 +33,7 @@ struct FilterRule::Impl
                     phx::make_shared<ExceptionFilterRule>(qi::_1, qi::_2)
             ];
 
-        options = +option;
+        options = option % ',';
     }
 
     rule<std::shared_ptr<Rule>()> filter_rule;

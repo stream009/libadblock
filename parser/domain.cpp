@@ -7,7 +7,7 @@ struct Domain::Impl
     Impl()
     {
         namespace qi = boost::spirit::qi;
-        const auto &letter = qi::alpha;
+        //const auto &letter = qi::alpha;
 
         // Domain name specification from RFC 1035
         subdomain
@@ -16,33 +16,38 @@ struct Domain::Impl
                 label >> +(qi::char_('.') >> label)
               ];
 
+        // RFC1035 says label must start with letter but
+        // RFC1123 relux this rule and allow number on first character.
         label
             = qi::raw
               [
-                letter >> -(label_body >> let_dig)
+                let_dig >> -(label_body | let_dig)
               ];
 
         label_body
             = qi::raw
               [
-                *(let_dig_hyp >> &let_dig)
+                let_dig_hyp >> (label_body | let_dig)
               ];
 
-        let_dig_hyp = let_dig | '-';
+        let_dig_hyp = let_dig | qi::char_('-');
         let_dig     = letter | qi::digit;
-
+        letter      = qi::alpha | utf8;
+        utf8        = qi::char_ - qi::print - qi::cntrl;
+#if 0
         BOOST_SPIRIT_DEBUG_NODE(subdomain);
         BOOST_SPIRIT_DEBUG_NODE(label);
-#if 0
         BOOST_SPIRIT_DEBUG_NODE(let_dig_hyp);
         BOOST_SPIRIT_DEBUG_NODE(let_dig);
+        BOOST_SPIRIT_DEBUG_NODE(letter);
+        BOOST_SPIRIT_DEBUG_NODE(utf8);
 #endif
     }
 
     rule<StringRange()>
         subdomain, label, label_body;
     rule<char()>
-        let_dig, let_dig_hyp;
+        let_dig, let_dig_hyp, letter, utf8;
 };
 
 Domain::

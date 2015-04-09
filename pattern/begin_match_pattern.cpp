@@ -5,6 +5,11 @@
 
 namespace adblock {
 
+BeginMatchPattern::
+BeginMatchPattern(const StringRange &range)
+    : Base { range }
+{}
+
 bool BeginMatchPattern::
 doMatch(const UriRange &target, const TokenRange &tokens) const
 {

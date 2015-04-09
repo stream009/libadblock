@@ -165,6 +165,18 @@ class DoNotTrackOption : public Option
 public:
 };
 
+class PopUpOption : public Option
+{
+public:
+};
+
+class MediaOption : public InversibleOption
+{
+    using Base = InversibleOption;
+public:
+    using Base::Base;
+};
+
 } // namespace adblock
 
 #endif // OPTION_HPP

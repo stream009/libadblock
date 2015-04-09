@@ -1,19 +1,26 @@
 #ifndef DOMAIN_MATCH_PATTERN_HPP
 #define DOMAIN_MATCH_PATTERN_HPP
 
-#include "basic_match_pattern.hpp"
+#include "base_match_pattern.hpp"
+#include "type.hpp"
+
+#include <boost/optional.hpp>
 
 namespace adblock {
 
-class DomainMatchPattern : public BasicMatchPattern
+class DomainMatchPattern : public BaseMatchPattern
 {
-    using Base = BasicMatchPattern;
+    using Base = BaseMatchPattern;
 public:
-    using Base::Base;
+    DomainMatchPattern(const StringRange &domain,
+                       const boost::optional<StringRange> &pattern);
 
 private:
-    // @override BasicMatchPattern
+    // @override BaseMatchPattern
     bool doMatchUrl(const Uri&) const override;
+
+private:
+    boost::optional<StringRange> m_pattern;
 };
 
 } // namespace adblock

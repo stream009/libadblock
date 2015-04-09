@@ -11,7 +11,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
-find_package(Boost 1.57 REQUIRED COMPONENTS iostreams regex system)
+find_package(Boost 1.57 REQUIRED 
+	     COMPONENTS iostreams program_options regex system timer)
 include(PrecompiledHeader)
 
 set(SRCS main.cpp 
@@ -20,6 +21,7 @@ set(SRCS main.cpp
 	 rule/basic_element_hide_rule.cpp
 	 rule/exception_element_hide_rule.cpp
 	 rule/comment_rule.cpp
+         pattern/base_match_pattern.cpp
          pattern/basic_match_pattern.cpp
 	 pattern/begin_match_pattern.cpp
 	 pattern/end_match_pattern.cpp
@@ -28,6 +30,7 @@ set(SRCS main.cpp
 )
 
 #add_definitions(-D_GLIBCXX_PROFILE)
+add_definitions(-DBOOST_SPIRIT_DEBUG)
 
 add_executable(${MAIN} ${SRCS})
 

@@ -19,8 +19,11 @@
 
 #include <boost/algorithm/string/compare.hpp>
 #include <boost/algorithm/string/find_iterator.hpp>
+#include <boost/format.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/program_options.hpp>
 #include <boost/range/algorithm.hpp>
+#include <boost/timer/timer.hpp>
 
 using adblock::Rule;
 
@@ -92,29 +95,9 @@ fromBuffer(const boost::iterator_range<const char*> &bufferR)
     return rules;
 }
 
-int
-main(const int argc, const char *argv[])
+void
+printStatistics(const std::vector<std::shared_ptr<Rule>> &rules)
 {
-    namespace bio = boost::iostreams;
-
-    std::vector<std::shared_ptr<Rule>> rules;
-    std::vector<std::string> lines;
-    bio::mapped_file_source file;
-
-    if (argc == 1) {
-        lines = fromStdIn(rules);
-    }
-    else {
-        //TODO check file's existance.
-        file.open(argv[1]);
-        assert(file.is_open());
-
-        std::cout << argv[1] << ": " << file.size() << "\n";
-        const auto &bufferR = boost::make_iterator_range(
-                                     file.data(), file.data() + file.size());
-        rules = fromBuffer(bufferR);
-    }
-
     using namespace adblock;
     std::cout << "comment: " << countRule<CommentRule>(rules) << "\n";
 
@@ -150,4 +133,126 @@ main(const int argc, const char *argv[])
               << countRule<ExceptionElementHideRule>(rules) << "\n";
 
     std::cout << "total: " << rules.size() << "\n";
+}
+
+int
+main(const int argc, const char *argv[])
+{
+    using namespace adblock;
+    namespace bpo = boost::program_options;
+    namespace bio = boost::iostreams;
+
+    bpo::options_description desc;
+    desc.add_options()
+        ("help", "print help message")
+        ("input-file", bpo::value<std::string>(), "input file")
+        ("stdin", "read rules from stdin")
+        ("stats", "print statistics")
+        ("map", "search rule by using std::map")
+        ;
+    bpo::positional_options_description pos;
+    pos.add("input-file", -1);
+
+    bpo::variables_map vm;
+    bpo::store(
+        bpo::command_line_parser(argc, argv)
+            .options(desc)
+            .positional(pos)
+            .run(), vm);
+    bpo::notify(vm);
+
+    std::vector<std::shared_ptr<Rule>> rules;
+    std::vector<std::string> lines;
+    bio::mapped_file_source file;
+
+    if (vm.empty() || vm.count("help")) {
+        std::cout << desc << "\n";
+        return 1;
+    }
+    else if (vm.count("stdin")) {
+        lines = fromStdIn(rules);
+    }
+    else if (vm.count("input-file")) {
+        //TODO check file's existance.
+        const auto &filename = vm["input-file"].as<std::string>();
+        file.open(filename);
+        assert(file.is_open());
+
+        const auto begin = file.data();
+        const auto end = begin + file.size();
+
+        // first line have to be version string
+        const auto it = std::find(begin, end, '\n');
+        assert(it != end);
+        assert(boost::equals(StringRange(begin, it), "[Adblock Plus 2.0]"));
+
+        const auto &bufferR = boost::make_iterator_range(it + 1, end);
+
+        rules = fromBuffer(bufferR);
+    }
+
+    if (vm.count("stats")) {
+        printStatistics(rules);
+    }
+    else if (vm.count("map")) {
+        using namespace adblock;
+
+        std::set<StringRange, std::greater<StringRange>> patterns;
+
+        boost::timer::cpu_timer t;
+        for (auto line = 0u; line < rules.size(); ++line) {
+            const auto &rule =
+                  std::dynamic_pointer_cast<BasicFilterRule>(rules.at(line));
+            if (!rule) continue;
+
+            const auto *pattern =
+                  dynamic_cast<const BasicMatchPattern*>(&rule->pattern());
+
+            if (pattern) {
+                const auto &rv = patterns.emplace(pattern->stringRange());
+                if (!rv.second) {
+                    std::cout << "insert failed at line " << line + 1
+                              << " " << pattern->stringRange() << "\n";
+                }
+            }
+        }
+        t.stop();
+        std::cout << t.format();
+#if 0
+        for (const auto &p: patterns) {
+            std::cout << p << "\n";
+        }
+#endif
+        std::cout << "map size: " << patterns.size() << "\n";
+
+        std::string line;
+        do {
+            std::cout << "URL: ";
+            if (!std::getline(std::cin, line)) break;
+            if (line.empty()) break;
+
+            auto begin = line.data();
+            const auto end = begin + line.size();
+            t.start();
+            for (; begin != end; ++begin) {
+                const StringRange range { begin, end, };
+                const auto it = patterns.lower_bound(range);
+
+                if (it != patterns.end() && boost::starts_with(range, *it)) {
+                    std::cout << "prefix match : "
+                              << range << " [" << *it << "]\n";
+                    break;
+                }
+#if 0
+                else {
+                    std::cout << "fail to match: "
+                              << range << " [" << *it << "]\n";
+                }
+#endif
+            }
+            t.stop();
+            std::cout << t.format();
+
+        } while (true);
+    }
 }

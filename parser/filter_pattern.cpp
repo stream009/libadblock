@@ -26,11 +26,15 @@ struct FilterPattern::Impl
     Domain subdomain;
     FilterOption option;
 
-    rule<StringRange()> pattern_string;
-    rule<char()> url_char;
+    rule<StringRange()> pattern_string, domain_string;
+    rule<char()> url_char, pattern_char, domain_char, utf8_char;
 
     Impl()
     {
+        using qi::_val;
+        using qi::_1;
+        using qi::_2;
+
         pattern = regex_pattern
                 | domain_match_pattern
                 | begin_match_pattern
@@ -40,25 +44,28 @@ struct FilterPattern::Impl
         basic_match_pattern =
             pattern_string
             [
-                qi::_val = phx::make_shared<BasicMatchPattern>(qi::_1)
+                _val = phx::make_shared<BasicMatchPattern>(_1)
             ];
 
         begin_match_pattern =
-            ("|" >> pattern_string)
+            ('|' >> pattern_string)
             [
-                qi::_val = phx::make_shared<BeginMatchPattern>(qi::_1)
+                _val = phx::make_shared<BeginMatchPattern>(_1)
             ];
 
         end_match_pattern =
-            (pattern_string >> "|")
+            qi::raw
             [
-                qi::_val = phx::make_shared<EndMatchPattern>(qi::_1)
+                +(pattern_char - '|') >> '|' >> &end_of_pattern
+            ]
+            [
+                _val = phx::make_shared<EndMatchPattern>(_1)
             ];
 
         domain_match_pattern =
-            ("||" >> subdomain)
+            ("||" >> domain_string >> -pattern_string)
             [
-                qi::_val = phx::make_shared<DomainMatchPattern>(qi::_1)
+                _val = phx::make_shared<DomainMatchPattern>(_1, _2)
             ];
 
         using qi::char_;
@@ -74,7 +81,7 @@ struct FilterPattern::Impl
                  >> '/'
             ]
             [
-                qi::_val = phx::make_shared<RegexPattern>(qi::_1)
+                _val = phx::make_shared<RegexPattern>(_1)
             ];
 
         end_of_pattern
@@ -86,11 +93,27 @@ struct FilterPattern::Impl
         pattern_string
             = qi::raw
               [
-                +(url_char | char_("^*"))
+                +pattern_char
               ];
 
+        domain_string
+            = qi::raw
+              [
+                +domain_char
+              ];
+
+        pattern_char
+            = url_char | char_("^*");
+
         //url_char = qi::alnum | char_("%~&/:$#=_,."); //TODO think through
-        url_char = qi::graph - '$';
+        url_char
+            = qi::graph - '$' | utf8_char;
+
+        domain_char
+            = qi::alnum | char_('-') | utf8_char;
+
+        utf8_char
+            = char_ - qi::print - qi::cntrl;
     }
 };
 

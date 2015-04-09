@@ -2,22 +2,22 @@
 #define BEGIN_MATCH_PATTERN_HPP
 
 #include "type.hpp"
-#include "basic_match_pattern.hpp"
+#include "base_match_pattern.hpp"
 
 namespace adblock {
 
-class BeginMatchPattern : public BasicMatchPattern
+class BeginMatchPattern : public BaseMatchPattern
 {
-    using Base = BasicMatchPattern;
+    using Base = BaseMatchPattern;
 public:
     using Base::TokenRange;
     using Base::UriRange;
 
 public:
-    using Base::Base;
+    BeginMatchPattern(const StringRange &range);
 
 private:
-    // @override BasicMatchPattern
+    // @override BaseMatchPattern
     bool doMatch(const UriRange&, const TokenRange&) const override;
 };
 

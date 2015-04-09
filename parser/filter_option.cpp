@@ -24,9 +24,9 @@ struct FilterOption::Impl
             =   script_option
               | image_option
               | stylesheet_option
-              | object_option
               | xmlhttprequest_option
               | object_subrequest_option
+              | object_option
               | subdocument_option
               | document_option
               | elemhide_option
@@ -36,7 +36,9 @@ struct FilterOption::Impl
               | domain_option
               | sitekey_option
               | match_case_option
-              | donottrack_option;
+              | donottrack_option
+              | popup_option
+              | media_option;
 
         const auto &inverse = qi::char_('~');
 
@@ -73,7 +75,7 @@ struct FilterOption::Impl
             (-inverse >> "document")
             [ _val = make_shared<DocumentOption>(static_cast_<bool>(_1)) ];
         elemhide_option =
-            (-inverse >> "elemehide")
+            (-inverse >> "elemhide")
             [ _val = make_shared<ElemHideOption>(static_cast_<bool>(_1)) ];
         other_option =
             (-inverse >> "other")
@@ -94,6 +96,16 @@ struct FilterOption::Impl
             [ _val = make_shared<CollapseOption>(static_cast_<bool>(_1)) ];
         donottrack_option =
             lit("donottrack") [ _val = make_shared<DoNotTrackOption>() ];
+        popup_option
+            = lit("popup")
+              [
+                _val = make_shared<PopUpOption>()
+              ];
+        media_option
+            = (-inverse >> "media")
+              [
+                _val = make_shared<MediaOption>(static_cast_<bool>(_1))
+              ];
 
         domain_option_domain
             = qi::raw
@@ -109,13 +121,13 @@ struct FilterOption::Impl
     }
 
     rule<std::shared_ptr<Option>()>
-        option, script_option,
+        option, script_option, media_option,
         domain_option, sitekey_option, match_case_option,
         donottrack_option, image_option,
         stylesheet_option, object_option, xmlhttprequest_option,
         object_subrequest_option, subdocument_option,
         document_option, elemhide_option, other_option,
-        third_party_option, collapse_option;
+        third_party_option, collapse_option, popup_option;
 
     rule<StringRange()> domain_option_domain, base64_public_key;
 

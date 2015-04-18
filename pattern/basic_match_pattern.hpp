@@ -9,8 +9,18 @@ namespace adblock {
 class BasicMatchPattern : public BaseMatchPattern
 {
     using Base = BaseMatchPattern;
+    using Base::Tokens;
 public:
-    BasicMatchPattern(const StringRange &range);
+    BasicMatchPattern(const StringRange &pattern,
+                      const bool beginMatch = false,
+                      const bool endMatch = false);
+private:
+    // @override BaseMatchPattern
+    bool doMatchUrl(const Uri&) const override;
+    const Tokens &tokens() const override { return m_tokens; }
+
+private:
+    Tokens m_tokens;
 };
 
 } // namespace adblock

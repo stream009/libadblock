@@ -1,6 +1,7 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
+#include "context.hpp"
 #include "type.hpp"
 
 #include <ostream>
@@ -11,15 +12,14 @@ namespace adblock {
 class Option
 {
 public:
-    using Context = size_t;
+    virtual ~Option() = default;
 
-public:
     bool match(const Uri &uri, const Context &context) const
     {
         return doMatch(uri, context);
     }
 
-protected:
+protected: // private
     virtual bool doMatch(const Uri&, const Context&) const// = 0;
     { return false; }
 };
@@ -33,17 +33,18 @@ operator<<(std::ostream &os, const Option &option)
 class InversibleOption : public Option
 {
 public:
-    InversibleOption(const bool inverse)
-        : m_inverse { inverse }
-    {}
-
     // @overload Option
     bool match(const Uri &uri, const Context &context) const
     {
         return m_inverse ? !doMatch(uri, context) : doMatch(uri, context);
     }
 
-    bool inverse() { return m_inverse; }
+    bool inverse() const { return m_inverse; }
+
+protected:
+    InversibleOption(const bool inverse)
+        : m_inverse { inverse }
+    {}
 
 private:
     bool m_inverse;
@@ -53,128 +54,181 @@ class ScriptOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ScriptOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class ImageOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ImageOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class StyleSheetOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    StyleSheetOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class ObjectOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ObjectOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class XmlHttpRequestOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    XmlHttpRequestOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class ObjectSubRequestOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ObjectSubRequestOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class SubDocumentOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    SubDocumentOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
-class DocumentOption : public InversibleOption
+class DocumentOption : public InversibleOption //TODO test
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    DocumentOption(const bool inverse) : Base { inverse } {}
 };
 
-class ElemHideOption : public InversibleOption
+class ElemHideOption : public InversibleOption //TODO test
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ElemHideOption(const bool inverse) : Base { inverse } {}
 };
 
 class OtherOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    OtherOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class ThirdPartyOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    ThirdPartyOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class DomainOption : public Option
 {
 public:
-    DomainOption(const std::vector<StringRange> &domains)
-        : m_domains { domains } //TODO split incude and exclude domain
-    {}
+    using Domains = std::vector<StringRange>;
+    using DomainsRange = boost::iterator_range<Domains::const_iterator>;
+
+public:
+    DomainOption(const Domains&);
+
+    DomainsRange includeDomains() const;
+    DomainsRange excludeDomains() const;
 
 private:
-    std::vector<StringRange> m_domains;
+    bool doMatch(const Uri&, const Context&) const override;
+
+    void validate() const
+    {
+        assert(!m_includeDomains.empty() ||
+               !m_excludeDomains.empty());
+    }
+
+private:
+    Domains m_includeDomains;
+    Domains m_excludeDomains;
 };
 
 class SiteKeyOption : public Option
 {
 public:
-    SiteKeyOption(const StringRange &siteKey)
-        : m_siteKey { siteKey }
+    using SiteKeys = std::vector<StringRange>;
+    using SiteKeysRange = boost::iterator_range<SiteKeys::const_iterator>;
+public:
+    SiteKeyOption(const SiteKeys &siteKeys)
+        : m_siteKeys { siteKeys }
     {}
 
+    SiteKeysRange siteKeys() const { return m_siteKeys; }
+
 private:
-    StringRange m_siteKey;
+    bool doMatch(const Uri&, const Context&) const override;
+
+    void validate()
+    {
+        assert(!m_siteKeys.empty());
+    }
+
+private:
+    SiteKeys m_siteKeys;
 };
 
-class MatchCaseOption : public Option
-{
-public:
-};
+class MatchCaseOption : public Option {}; //TODO test
 
 class CollapseOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    CollapseOption(const bool inverse) : Base { inverse } {}
 };
 
-class DoNotTrackOption : public Option
-{
-public:
-};
+class DoNotTrackOption : public Option {}; //TODO test
 
 class PopUpOption : public Option
 {
-public:
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 class MediaOption : public InversibleOption
 {
     using Base = InversibleOption;
 public:
-    using Base::Base;
+    MediaOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
 };
 
 } // namespace adblock

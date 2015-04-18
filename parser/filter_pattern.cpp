@@ -1,14 +1,12 @@
 #include "filter_pattern.hpp"
 
 #include "make_shared.hpp"
-#include "parser/domain.hpp"
 #include "parser/filter_option.hpp"
 #include "pattern/basic_match_pattern.hpp"
-#include "pattern/begin_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
-#include "pattern/end_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
 
+#include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 
 namespace adblock { namespace parser {
@@ -18,12 +16,10 @@ namespace phx = boost::phoenix;
 struct FilterPattern::Impl
 {
     rule<std::shared_ptr<Pattern>()>
-        pattern, regex_pattern, domain_match_pattern, begin_match_pattern,
-        end_match_pattern, basic_match_pattern;
+        pattern, regex_pattern, domain_match_pattern, basic_match_pattern;
 
     rule<> options, end_of_pattern;
 
-    Domain subdomain;
     FilterOption option;
 
     rule<StringRange()> pattern_string, domain_string;
@@ -34,52 +30,49 @@ struct FilterPattern::Impl
         using qi::_val;
         using qi::_1;
         using qi::_2;
+        using qi::_3;
+        using qi::char_;
+        using qi::raw;
+        using phx::static_cast_;
 
         pattern = regex_pattern
                 | domain_match_pattern
-                | begin_match_pattern
-                | end_match_pattern
                 | basic_match_pattern;
 
         basic_match_pattern =
-            pattern_string
+            (
+                   -char_('|')
+                >> pattern_string
+                >> -(char_('|'))
+            )
             [
-                _val = phx::make_shared<BasicMatchPattern>(_1)
-            ];
-
-        begin_match_pattern =
-            ('|' >> pattern_string)
-            [
-                _val = phx::make_shared<BeginMatchPattern>(_1)
-            ];
-
-        end_match_pattern =
-            qi::raw
-            [
-                +(pattern_char - '|') >> '|' >> &end_of_pattern
-            ]
-            [
-                _val = phx::make_shared<EndMatchPattern>(_1)
+                _val = phx::make_shared<BasicMatchPattern>(
+                    _2,
+                    static_cast_<bool>(_1),
+                    static_cast_<bool>(_3)
+                )
             ];
 
         domain_match_pattern =
-            ("||" >> domain_string >> -pattern_string)
+            ("||" >> domain_string >> -pattern_string >> -(char_('|')))
             [
-                _val = phx::make_shared<DomainMatchPattern>(_1, _2)
+                _val = phx::make_shared<DomainMatchPattern>(
+                    _1, _2,
+                    static_cast_<bool>(_3)
+                )
             ];
 
-        using qi::char_;
-
         regex_pattern =
-            qi::raw
-            [
-                    '/'
-                 >> *(
-                          ~char_('/')
-                        | (char_('/') >> !&(end_of_pattern))
-                     )
-                 >> '/'
-            ]
+            (   '/'
+              >> raw
+                 [
+                   *(
+                         ~char_('/')
+                       | (char_('/') >> !&(end_of_pattern))
+                    )
+                 ]
+              >> '/'
+            )
             [
                 _val = phx::make_shared<RegexPattern>(_1)
             ];
@@ -91,13 +84,16 @@ struct FilterPattern::Impl
             = '$' >> option % ',';
 
         pattern_string
-            = qi::raw
+            = raw
               [
-                +pattern_char
+                +(
+                      (pattern_char - '|')
+                    | (char_('|') >> !&(end_of_pattern))
+                 )
               ];
 
         domain_string
-            = qi::raw
+            = raw
               [
                 +domain_char
               ];

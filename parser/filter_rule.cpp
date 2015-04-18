@@ -4,6 +4,7 @@
 #include "filter_pattern.hpp"
 #include "make_shared.hpp"
 #include "option.hpp"
+#include "white_list_option.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 
@@ -20,20 +21,19 @@ struct FilterRule::Impl
         filter_rule = exception_filter_rule | basic_filter_rule;
 
         basic_filter_rule =
-            (pattern >> -('$' >> options))
+            (pattern >> -('$' >> filterOption % ','))
             [
                 qi::_val =
                     phx::make_shared<BasicFilterRule>(qi::_1, qi::_2)
             ];
 
         exception_filter_rule =
-            ("@@" >> pattern >> -('$' >> options))
+            ("@@" >> pattern
+                  >> -('$' >> (filterOption | whiteListOption) % ','))
             [
                 qi::_val =
                     phx::make_shared<ExceptionFilterRule>(qi::_1, qi::_2)
             ];
-
-        options = option % ',';
     }
 
     rule<std::shared_ptr<Rule>()> filter_rule;
@@ -41,10 +41,9 @@ struct FilterRule::Impl
     rule<std::shared_ptr<Rule>()> basic_filter_rule;
     rule<std::shared_ptr<Rule>()> exception_filter_rule;
 
-    rule<std::vector<std::shared_ptr<Option>>()> options;
-
     FilterPattern pattern;
-    FilterOption option;
+    FilterOption filterOption;
+    WhiteListOption whiteListOption;
 };
 
 FilterRule::

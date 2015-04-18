@@ -1,21 +1,50 @@
 #include "filter_rule.hpp"
 
 #include "option.hpp"
+#include "pattern/pattern.hpp"
+
+#include <boost/algorithm/cxx11/all_of.hpp>
 
 namespace adblock {
 
 FilterRule::
 FilterRule(const std::shared_ptr<Pattern> &pattern,
-           const boost::optional<
-                        std::vector<std::shared_ptr<Option>>> &options)
+           const boost::optional<Options> &options)
     : m_pattern { pattern }
     , m_options { options }
-{}
+{
+    validate();
+}
 
 bool FilterRule::
-match(const Uri &url, const Context&) const
+match(const Uri &uri, const Context &context) const
 {
-    return m_pattern->match(url);
+    if (!m_pattern->match(uri)) return false;
+    if (!m_options) return true;
+
+    return boost::algorithm::all_of(*m_options,
+        [&uri, &context](const std::shared_ptr<Option> &option) {
+            return option->match(uri, context);
+        }
+    );
+}
+
+const Pattern &FilterRule::
+pattern() const
+{
+    assert(m_pattern);
+    return *m_pattern;
+}
+
+FilterRule::OptionsRange FilterRule::
+options() const
+{
+    if (m_options) {
+        return *m_options;
+    }
+    else {
+        return {};
+    }
 }
 
 void FilterRule::

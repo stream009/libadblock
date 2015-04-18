@@ -7,7 +7,11 @@
 
 #include <memory>
 
+namespace adblock {
+
 class Rule;
+
+} // namespace adblock
 
 namespace adblock { namespace parser {
 

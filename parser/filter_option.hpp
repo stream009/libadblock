@@ -1,12 +1,13 @@
 #ifndef PARSER_FILTER_OPTION_HPP
 #define PARSER_FILTER_OPTION_HPP
 
-#include "option.hpp"
 #include "type.hpp"
 
 #include <memory>
 
+namespace adblock {
 class Option;
+} // namespace adblock
 
 namespace adblock { namespace parser {
 

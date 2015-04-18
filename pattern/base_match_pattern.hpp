@@ -30,37 +30,30 @@ public:
         return doMatchUrl(url);
     }
 
-    const StringRange &wholePattern() const { return m_str; }
-    const StringRange &firstToken() const { return m_tokens.at(0); }
+    const StringRange &pattern() const { return m_str; }
+    bool isBeginMatch() const { return m_beginMatch; }
+    bool isEndMatch() const { return m_endMatch; }
+
+    const Token &firstToken() const { return tokens().at(0); }
 
 protected:
-    BaseMatchPattern(const StringRange &range);
+    virtual bool doMatchUrl(const Uri&) const = 0;
+    virtual const Tokens &tokens() const = 0;
 
-    const Tokens &tokens() const { return m_tokens; }
+    BaseMatchPattern(const StringRange &range,
+                     const bool beginMatch,
+                     const bool endMatch);
 
-    virtual bool doMatchUrl(const Uri&) const;
-    virtual bool doMatch(const UriRange&, const TokenRange&) const;
+    bool doMatch(const UriRange&, const TokenRange&) const;
 
 private:
-    void validate() const
-    {
-        assert(!m_str.empty());
-        assert(!m_tokens.empty());
-        assert(std::none_of(m_tokens.begin(), m_tokens.end(),
-            [] (const Token &token) {
-                return token.empty();
-            }
-        ));
-    }
-
-    void init();
-
     // @override Pattern
     void print(std::ostream&) const override;
 
 private:
     StringRange m_str;
-    Tokens m_tokens;
+    bool m_beginMatch = false;
+    bool m_endMatch = false;
 };
 
 } // namespace adblock

@@ -28,8 +28,6 @@ struct FilterOption::Impl
               | object_subrequest_option
               | object_option
               | subdocument_option
-              | document_option
-              | elemhide_option
               | other_option
               | third_party_option
               | collapse_option
@@ -71,12 +69,6 @@ struct FilterOption::Impl
         subdocument_option =
             (-inverse >> "subdocument")
             [ _val = make_shared<SubDocumentOption>(static_cast_<bool>(_1)) ];
-        document_option =
-            (-inverse >> "document")
-            [ _val = make_shared<DocumentOption>(static_cast_<bool>(_1)) ];
-        elemhide_option =
-            (-inverse >> "elemhide")
-            [ _val = make_shared<ElemHideOption>(static_cast_<bool>(_1)) ];
         other_option =
             (-inverse >> "other")
             [ _val = make_shared<OtherOption>(static_cast_<bool>(_1)) ];
@@ -87,7 +79,7 @@ struct FilterOption::Impl
             "domain=" >> (domain_option_domain % '|')
             [ _val = make_shared<DomainOption>(qi::_1) ];
         sitekey_option =
-            "sitekey=" >> base64_public_key
+            "sitekey=" >> (base64_public_key % '|')
             [ _val = make_shared<SiteKeyOption>(qi::_1) ];
         match_case_option =
             lit("match-case") [ _val = make_shared<MatchCaseOption>() ];
@@ -125,8 +117,7 @@ struct FilterOption::Impl
         domain_option, sitekey_option, match_case_option,
         donottrack_option, image_option,
         stylesheet_option, object_option, xmlhttprequest_option,
-        object_subrequest_option, subdocument_option,
-        document_option, elemhide_option, other_option,
+        object_subrequest_option, subdocument_option, other_option,
         third_party_option, collapse_option, popup_option;
 
     rule<StringRange()> domain_option_domain, base64_public_key;

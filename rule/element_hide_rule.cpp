@@ -1,5 +1,7 @@
 #include "element_hide_rule.hpp"
 
+#include <iterator>
+
 namespace adblock {
 
 ElementHideRule::
@@ -7,34 +9,61 @@ ElementHideRule(const StringRange &selector,
                 const boost::optional<std::vector<StringRange>> &domains)
     : m_cssSelector { selector }
 {
-    if (domains) {
-        for (const auto &domain: *domains) {
-            if (domain.front() != '~') {
-                includeDomains().push_back(domain);
-            }
-            else {
-                excludeDomains().push_back(domain);
-            }
+    if (!domains) return;
+
+    for (const auto &domain: *domains) {
+        if (domain.front() != '~') {
+            addIncludeDomain(domain);
+        }
+        else {
+            addExcludeDomain(
+                StringRange {
+                    std::next(domain.begin()), domain.end() }
+            );
         }
     }
 }
 
-std::vector<StringRange> &ElementHideRule::
-includeDomains()
+using DomainsRange = ElementHideRule::DomainsRange;
+
+DomainsRange ElementHideRule::
+includeDomains() const
+{
+    if (m_includeDomains) {
+        return *m_includeDomains;
+    }
+    else {
+        return DomainsRange {};
+    }
+}
+
+DomainsRange ElementHideRule::
+excludeDomains() const
+{
+    if (m_excludeDomains) {
+        return *m_excludeDomains;
+    }
+    else {
+        return DomainsRange {};
+    }
+}
+
+void ElementHideRule::
+addIncludeDomain(const StringRange &domain)
 {
     if (m_includeDomains == boost::none) {
         m_includeDomains.emplace();
     }
-    return *m_includeDomains;
+    m_includeDomains->push_back(domain);
 }
 
-std::vector<StringRange> &ElementHideRule::
-excludeDomains()
+void ElementHideRule::
+addExcludeDomain(const StringRange &domain)
 {
     if (m_excludeDomains == boost::none) {
         m_excludeDomains.emplace();
     }
-    return *m_excludeDomains;
+    m_excludeDomains->push_back(domain);
 }
 
 void ElementHideRule::

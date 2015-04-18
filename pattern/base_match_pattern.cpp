@@ -2,13 +2,8 @@
 
 #include <ostream>
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/compare.hpp>
-#include <boost/algorithm/string/find.hpp>
-#include <boost/algorithm/string/finder.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/trim.hpp>
 
 namespace adblock {
 
@@ -17,11 +12,11 @@ operator()(const char left, const char right) const
 {
     namespace ba = boost::algorithm;
 
-    static const auto &is_equal = ba::is_equal();
+    static const auto &is_iequal = ba::is_iequal();
     static const auto &is_separator =
-                       !(ba::is_alnum() || ba::is_any_of("_-.%"));
+                       !(ba::is_alnum() || ba::is_any_of("_~.%"));
     if (right != '^') {
-        return is_equal(left, right);
+        return is_iequal(left, right);
     }
     else {
         return is_separator(left);
@@ -29,14 +24,13 @@ operator()(const char left, const char right) const
 }
 
 BaseMatchPattern::
-BaseMatchPattern(const StringRange &range)
-    : m_str { range }
-{
-    init();
-#ifndef NDEBUG
-    validate();
-#endif
-}
+BaseMatchPattern(const StringRange &range,
+                 const bool beginMatch,
+                 const bool endMatch)
+    : m_str { range },
+      m_beginMatch { beginMatch },
+      m_endMatch { endMatch }
+{}
 
 bool BaseMatchPattern::
 doMatch(const UriRange &target, const TokenRange &tokens) const
@@ -44,8 +38,45 @@ doMatch(const UriRange &target, const TokenRange &tokens) const
     namespace ba = boost::algorithm;
     static const auto &compare = Compare {};
 
+    if (tokens.empty()) return true;
+
+    auto tokensCopy = tokens;
     auto range = target;
-    for (const auto &token: tokens) {
+    boost::optional<std::string> uriCopy;
+
+    // A separator has to match with end of the input.
+    // So, if a pattern ends with '^' and a URI doesn't have
+    // a separator on its tail, we copy URI string and append
+    // a dummy separator to it.
+    if (tokens.back().back() == '^' && !compare(range.back(), '^')) {
+        uriCopy.emplace(range.begin(), range.end());
+        uriCopy->push_back('/');
+        range = UriRange { uriCopy->begin(), uriCopy->end() };
+    }
+
+    if (m_beginMatch) {
+        const auto &firstToken = tokensCopy.front();
+        if (!ba::starts_with(range, firstToken, compare)) {
+            return false;
+        }
+
+        if (!m_endMatch || tokensCopy.size() > 1) {
+            tokensCopy.drop_front();
+            range.drop_front(firstToken.size());
+        }
+    }
+
+    if (m_endMatch) {
+        const auto &lastToken = tokensCopy.back();
+        if (!ba::ends_with(range, lastToken, compare)) {
+            return false;
+        }
+
+        tokensCopy.drop_back();
+        range.drop_back(lastToken.size());
+    }
+
+    for (const auto &token: tokensCopy) {
         const auto &rv = ba::find(range, ba::first_finder(token, compare));
         if (rv.empty()) return false;
 
@@ -53,26 +84,6 @@ doMatch(const UriRange &target, const TokenRange &tokens) const
     }
 
     return true;
-}
-
-bool BaseMatchPattern::
-doMatchUrl(const Uri &uri) const
-{
-    const UriRange range { uri.begin(), uri.end() };
-    return doMatch(range, m_tokens);
-}
-
-void BaseMatchPattern::
-init()
-{
-    namespace ba = boost::algorithm;
-
-    // trim leading and trailing "*"
-    //auto &&range = boost::make_iterator_range(m_str);
-    auto range = m_str;
-    range = ba::trim_copy_if(range, ba::is_any_of("*"));
-
-    ba::split(m_tokens, range, ba::is_any_of("*"), ba::token_compress_on);
 }
 
 void BaseMatchPattern::

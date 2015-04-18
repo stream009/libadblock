@@ -14,8 +14,14 @@ class ElementHideRule : public Rule
 {
     using Base = Rule;
 public:
+    using DomainsRange = boost::iterator_range<
+                            std::vector<StringRange>::const_iterator>;
+public:
     bool match(const Uri&) const;
-    const StringRange &cssSelector();
+    const StringRange &cssSelector() const { return m_cssSelector; }
+
+    DomainsRange includeDomains() const;
+    DomainsRange excludeDomains() const;
 
 protected:
     ElementHideRule(const StringRange &selector,
@@ -24,8 +30,8 @@ private:
     // @override Rule
     void print(std::ostream&) const override;
 
-    std::vector<StringRange> &includeDomains();
-    std::vector<StringRange> &excludeDomains();
+    void addIncludeDomain(const StringRange&);
+    void addExcludeDomain(const StringRange&);
 
 private:
     StringRange m_cssSelector;

@@ -1,10 +1,12 @@
 #ifndef FILTER_RULE_HPP
 #define FILTER_RULE_HPP
 
+#include "context.hpp"
 #include "rule.hpp"
 #include "type.hpp"
-#include "pattern/pattern.hpp"
 
+#include <cassert>
+#include <iosfwd>
 #include <memory>
 #include <vector>
 
@@ -13,29 +15,37 @@
 namespace adblock {
 
 class Option;
+class Pattern;
 
 class FilterRule : public Rule
 {
     using Base = Rule;
 public:
-    using Context = size_t; //TODO
+    using Options = std::vector<std::shared_ptr<Option>>;
+    using OptionsRange = boost::iterator_range<Options::const_iterator>;
 
 public:
     virtual bool match(const Uri&, const Context&) const;
 
-    const Pattern &pattern() const
-    { assert(m_pattern); return *m_pattern; } //TODO temporary
+    const Pattern &pattern() const;
+    OptionsRange options() const;
 
 protected:
     FilterRule(const std::shared_ptr<Pattern>&,
-               const boost::optional<std::vector<std::shared_ptr<Option>>>&);
+               const boost::optional<Options>&);
+
+private:
+    // @override Rule
+    void print(std::ostream&) const override;
+
+    void validate() const
+    {
+        assert(m_pattern);
+    }
 
 private:
     std::shared_ptr<Pattern> m_pattern;
-    boost::optional<std::vector<std::shared_ptr<Option>>> m_options;
-
-    // @override Rule
-    void print(std::ostream&) const override;
+    boost::optional<Options> m_options;
 };
 
 } // namespace adblock

@@ -160,31 +160,27 @@ function(add_precompiled_header _target _input)
 
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     get_filename_component(_name ${_input} NAME)
-    set(_pch_header "${CMAKE_CURRENT_SOURCE_DIR}/${_input}")
-    set(_pch_binary_dir "${CMAKE_CURRENT_BINARY_DIR}/${_target}_pch")
-    set(_pchfile "${_pch_binary_dir}/${_input}")
-    set(_outdir "${CMAKE_CURRENT_BINARY_DIR}/${_target}_pch/${_name}.gch")
+    set(_pch_source "${CMAKE_CURRENT_SOURCE_DIR}/${_input}")
+    set(_pch_dir    "${CMAKE_CURRENT_BINARY_DIR}/${_target}_pch")
+    set(_pch_name   "${_pch_dir}/${_name}")
+    set(_outdir     "${_pch_name}.gch")
+
     make_directory(${_outdir})
     set(_output_cxx "${_outdir}/${CMAKE_CXX_COMPILER_ID}.c++")
-    set(_output_c "${_outdir}/${CMAKE_CXX_COMPILER_ID}.c")
+    set(_output_c   "${_outdir}/${CMAKE_CXX_COMPILER_ID}.c")
 
-    set(_pch_flags_file "${_pch_binary_dir}/compile_flags.rsp")
+    set(_pch_flags_file "${_pch_dir}/compile_flags.rsp")
     export_all_flags("${_pch_flags_file}")
     set(_compiler_FLAGS "@${_pch_flags_file}")
     add_custom_command(
-      OUTPUT "${_pchfile}"
-      COMMAND "${CMAKE_COMMAND}" -E copy "${_pch_header}" "${_pchfile}"
-      DEPENDS "${_pch_header}"
-      COMMENT "Updating ${_name}")
-    add_custom_command(
       OUTPUT "${_output_cxx}"
-      COMMAND "${CMAKE_CXX_COMPILER}" ${_compiler_FLAGS} -x c++-header -o "${_output_cxx}" "${_pchfile}"
-      DEPENDS "${_pchfile}" "${_pch_flags_file}"
+      COMMAND "${CMAKE_CXX_COMPILER}" ${_compiler_FLAGS} -x c++-header -o "${_output_cxx}" "${_pch_source}"
+      DEPENDS "${_pch_source}" "${_pch_flags_file}"
       COMMENT "Precompiling ${_name} for ${_target} (C++)")
     add_custom_command(
       OUTPUT "${_output_c}"
-      COMMAND "${CMAKE_C_COMPILER}" ${_compiler_FLAGS} -x c-header -o "${_output_c}" "${_pchfile}"
-      DEPENDS "${_pchfile}" "${_pch_flags_file}"
+      COMMAND "${CMAKE_C_COMPILER}" ${_compiler_FLAGS} -x c-header -o "${_output_c}" "${_pch_source}"
+      DEPENDS "${_pch_source}" "${_pch_flags_file}"
       COMMENT "Precompiling ${_name} for ${_target} (C)")
 
     get_property(_sources TARGET ${_target} PROPERTY SOURCES)
@@ -199,16 +195,16 @@ function(add_precompiled_header _target _input)
 	separate_arguments(_pch_compile_flags)
 	list(APPEND _pch_compile_flags -Winvalid-pch)
 	if(_PCH_FORCEINCLUDE)
-	  list(APPEND _pch_compile_flags -include "${_pchfile}")
+	  list(APPEND _pch_compile_flags -include "${_pch_name}")
 	else(_PCH_FORCEINCLUDE)
-	  list(APPEND _pch_compile_flags "-I${_pch_binary_dir}")
+	  list(APPEND _pch_compile_flags "-I${_pch_dir}")
 	endif(_PCH_FORCEINCLUDE)
 
 	get_source_file_property(_object_depends "${_source}" OBJECT_DEPENDS)
 	if(NOT _object_depends)
 	  set(_object_depends)
 	endif()
-	list(APPEND _object_depends "${_pchfile}")
+	list(APPEND _object_depends "${_pch_source}")
 	if(_source MATCHES \\.\(cc|cxx|cpp\)$)
 	  list(APPEND _object_depends "${_output_cxx}")
 	else()
@@ -216,7 +212,6 @@ function(add_precompiled_header _target _input)
 	endif()
 
 	combine_arguments(_pch_compile_flags)
-	#message("${_source}" ${_pch_compile_flags})
 	set_source_files_properties(${_source} PROPERTIES
 	  COMPILE_FLAGS ${_pch_compile_flags}
 	  OBJECT_DEPENDS "${_object_depends}")

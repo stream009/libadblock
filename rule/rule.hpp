@@ -4,7 +4,6 @@
 #include "type.hpp"
 
 #include <ostream>
-#include <typeinfo>
 
 #include <boost/noncopyable.hpp>
 
@@ -20,7 +19,6 @@ private:
 
     friend std::ostream &operator<<(std::ostream &os, const Rule &rule)
     {
-        os << typeid(rule).name() << "\n";
         rule.print(os);
         return os;
     }

@@ -9,11 +9,11 @@ struct Domain::Impl
         namespace qi = boost::spirit::qi;
         //const auto &letter = qi::alpha;
 
-        // Domain name specification from RFC 1035
+        // Domain name specification from RFC1035
         subdomain
             = qi::raw
               [
-                label >> +(qi::char_('.') >> label)
+                label % qi::char_('.')
               ];
 
         // RFC1035 says label must start with letter but

@@ -1,44 +1,81 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(CMAKE_CXX_COMPILER clang++)
 set(MAIN "wildcard")
 
-project(${MAIN} CXX)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/CMakePCHCompiler")
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra")
+project(${MAIN} C CXX CXXPCH)
+
+find_package(Boost 1.57 REQUIRED
+	         COMPONENTS iostreams program_options regex system timer)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+endif()
 
-find_package(Boost 1.57 REQUIRED 
-	     COMPONENTS iostreams program_options regex system timer)
-include(PrecompiledHeader)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DBOOST_SPIRIT_DEBUG)
+endif()
+include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/lib)
 
-set(SRCS main.cpp 
-	 rule/filter_rule.cpp
-	 rule/element_hide_rule.cpp
-	 rule/basic_element_hide_rule.cpp
-	 rule/exception_element_hide_rule.cpp
-	 rule/comment_rule.cpp
-         pattern/base_match_pattern.cpp
-         pattern/basic_match_pattern.cpp
-	 pattern/begin_match_pattern.cpp
-	 pattern/end_match_pattern.cpp
-	 pattern/domain_match_pattern.cpp
-	 pattern/regex_pattern.cpp
+function(add_executable target_)
+    _add_executable(${target_} ${ARGN})
+    set_property(GLOBAL APPEND PROPERTY all_targets ${target_})
+endfunction()
+
+function(add_library target_)
+    _add_library(${target_} ${ARGN})
+    set_property(GLOBAL APPEND PROPERTY all_targets ${target_})
+endfunction()
+
+add_custom_target(global_pch)
+target_precompiled_header(global_pch stable.hpp)
+
+add_library(rule OBJECT
+    rule/filter_rule.cpp
+    rule/element_hide_rule.cpp
+    rule/basic_element_hide_rule.cpp
+    rule/exception_element_hide_rule.cpp
+    rule/comment_rule.cpp
 )
 
-#add_definitions(-D_GLIBCXX_PROFILE)
-add_definitions(-DBOOST_SPIRIT_DEBUG)
+add_library(pattern OBJECT
+    pattern/base_match_pattern.cpp
+    pattern/basic_match_pattern.cpp
+    pattern/domain_match_pattern.cpp
+    pattern/regex_pattern.cpp
+)
 
-add_executable(${MAIN} ${SRCS})
+add_library(option OBJECT
+    option.cpp
+)
 
-include_directories(${CMAKE_SOURCE_DIR})
-target_link_libraries(${MAIN} cppnetlib-uri)
-target_link_libraries(${MAIN} ${Boost_LIBRARIES})
-
-add_precompiled_header(${MAIN} stable.hpp FORCEINCLUDE)
+add_library(domain_data_base OBJECT
+    domain_data_base.cpp
+)
 
 add_subdirectory(parser)
+add_subdirectory(lib/reg_dom)
+
+add_executable(${MAIN}
+    main.cpp
+    $<TARGET_OBJECTS:pattern>
+    $<TARGET_OBJECTS:rule>
+    $<TARGET_OBJECTS:option>
+    $<TARGET_OBJECTS:reg_dom>
+    $<TARGET_OBJECTS:domain_data_base>
+)
+target_link_libraries(${MAIN} cppnetlib-uri)
+target_link_libraries(${MAIN} ${Boost_LIBRARIES})
 target_link_libraries(${MAIN} parser)
+
+add_subdirectory(test)
+
+get_property(targets GLOBAL PROPERTY all_targets)
+foreach(target_ ${targets})
+    target_precompiled_header(${target_} stable.hpp REUSE global_pch)
+endforeach()

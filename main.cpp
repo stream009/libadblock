@@ -7,8 +7,6 @@
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "pattern/basic_match_pattern.hpp"
-#include "pattern/begin_match_pattern.hpp"
-#include "pattern/end_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
 
@@ -105,10 +103,6 @@ printStatistics(const std::vector<std::shared_ptr<Rule>> &rules)
               << countRule<BasicFilterRule>(rules) << "\n";
     std::cout << "\tbasic match pattern: "
               << countPattern<BasicFilterRule, BasicMatchPattern>(rules) << "\n";
-    std::cout << "\tbegin match pattern: "
-              << countPattern<BasicFilterRule, BeginMatchPattern>(rules) << "\n";
-    std::cout << "\tend match pattern: "
-              << countPattern<BasicFilterRule, EndMatchPattern>(rules) << "\n";
     std::cout << "\tdomain match pattern: "
               << countPattern<BasicFilterRule, DomainMatchPattern>(rules) << "\n";
     std::cout << "\tregex pattern: "
@@ -118,10 +112,6 @@ printStatistics(const std::vector<std::shared_ptr<Rule>> &rules)
               << countRule<ExceptionFilterRule>(rules) << "\n";
     std::cout << "\tbasic match pattern: "
               << countPattern<ExceptionFilterRule, BasicMatchPattern>(rules) << "\n";
-    std::cout << "\tbegin match pattern: "
-              << countPattern<ExceptionFilterRule, BeginMatchPattern>(rules) << "\n";
-    std::cout << "\tend match pattern: "
-              << countPattern<ExceptionFilterRule, EndMatchPattern>(rules) << "\n";
     std::cout << "\tdomain match pattern: "
               << countPattern<ExceptionFilterRule, DomainMatchPattern>(rules) << "\n";
     std::cout << "\tregex pattern: "
@@ -197,7 +187,12 @@ main(const int argc, const char *argv[])
     else if (vm.count("map")) {
         using namespace adblock;
 
-        std::set<StringRange, std::greater<StringRange>> patterns;
+        using RuleMap = std::map<
+                            StringRange,
+                            std::vector<std::shared_ptr<Rule>>,
+                            std::greater<StringRange>>;
+        RuleMap basicMatchRules;
+        RuleMap beginMatchRules;
 
         boost::timer::cpu_timer t;
         for (auto line = 0u; line < rules.size(); ++line) {
@@ -207,23 +202,18 @@ main(const int argc, const char *argv[])
 
             const auto *pattern =
                   dynamic_cast<const BasicMatchPattern*>(&rule->pattern());
+            if (!pattern) continue;
 
-            if (pattern) {
-                const auto &rv = patterns.emplace(pattern->stringRange());
-                if (!rv.second) {
-                    std::cout << "insert failed at line " << line + 1
-                              << " " << pattern->stringRange() << "\n";
-                }
-            }
+            basicMatchRules[pattern->firstToken()].push_back(rule);
         }
         t.stop();
         std::cout << t.format();
 #if 0
-        for (const auto &p: patterns) {
+        for (const auto &p: basicMatchRules) {
             std::cout << p << "\n";
         }
 #endif
-        std::cout << "map size: " << patterns.size() << "\n";
+        std::cout << "map size: " << basicMatchRules.size() << "\n";
 
         std::string line;
         do {
@@ -236,19 +226,15 @@ main(const int argc, const char *argv[])
             t.start();
             for (; begin != end; ++begin) {
                 const StringRange range { begin, end, };
-                const auto it = patterns.lower_bound(range);
+                const auto it = basicMatchRules.lower_bound(range);
 
-                if (it != patterns.end() && boost::starts_with(range, *it)) {
+                if (it != basicMatchRules.end()
+                                && boost::starts_with(range, it->first))
+                {
                     std::cout << "prefix match : "
-                              << range << " [" << *it << "]\n";
+                              << range << " [" << it->first << "]\n";
                     break;
                 }
-#if 0
-                else {
-                    std::cout << "fail to match: "
-                              << range << " [" << *it << "]\n";
-                }
-#endif
             }
             t.stop();
             std::cout << t.format();

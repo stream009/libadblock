@@ -31,7 +31,9 @@ countRule(const std::vector<std::shared_ptr<Rule>> rules)
 {
     return boost::count_if(rules,
         [] (const std::shared_ptr<Rule> &rule) {
-            return std::dynamic_pointer_cast<R>(rule);
+            assert(rule);
+            const auto &r = *rule;
+            return typeid(r) == typeid(R);
         }
     );
 }
@@ -43,8 +45,7 @@ countPattern(const std::vector<std::shared_ptr<Rule>> rules)
     return boost::count_if(rules,
         [] (const std::shared_ptr<Rule> &rule) {
             const auto &filterRule = std::dynamic_pointer_cast<R>(rule);
-            return filterRule &&
-                   dynamic_cast<const P*>(&filterRule->pattern());
+            return filterRule && typeid(filterRule->pattern()) == typeid(P);
         }
     );
 }

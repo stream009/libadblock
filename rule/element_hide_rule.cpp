@@ -2,6 +2,8 @@
 
 #include <iterator>
 
+#include <boost/algorithm/cxx11/any_of.hpp>
+
 namespace adblock {
 
 ElementHideRule::
@@ -9,6 +11,8 @@ ElementHideRule(const StringRange &selector,
                 const boost::optional<std::vector<StringRange>> &domains)
     : m_cssSelector { selector }
 {
+    assert(!selector.empty());
+
     if (!domains) return;
 
     for (const auto &domain: *domains) {
@@ -24,9 +28,36 @@ ElementHideRule(const StringRange &selector,
     }
 }
 
-using DomainsRange = ElementHideRule::DomainsRange;
+bool ElementHideRule::
+match(const Uri &uri) const
+{
+    namespace ba = boost::algorithm;
 
-DomainsRange ElementHideRule::
+    const auto &host = uri.host_range();
+    const auto &domainMatch = [&host] (const StringRange &domain) {
+        return ba::ends_with(host, domain);
+    };
+
+    if (m_excludeDomains &&
+        ba::any_of(*m_excludeDomains, domainMatch))
+    {
+        return false;
+    }
+
+    if (m_includeDomains) {
+        return ba::any_of(*m_includeDomains, domainMatch);
+    }
+
+    return true;
+}
+
+bool ElementHideRule::
+isDomainRestricted() const
+{
+    return m_includeDomains || m_excludeDomains;
+}
+
+ElementHideRule::DomainsRange ElementHideRule::
 includeDomains() const
 {
     if (m_includeDomains) {
@@ -37,7 +68,7 @@ includeDomains() const
     }
 }
 
-DomainsRange ElementHideRule::
+ElementHideRule::DomainsRange ElementHideRule::
 excludeDomains() const
 {
     if (m_excludeDomains) {

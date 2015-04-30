@@ -11,12 +11,14 @@ namespace adblock {
 DomainMatchPattern::
 DomainMatchPattern(const StringRange &domain,
                    const boost::optional<StringRange> &pattern,
-                   const bool endMatch)
+                   const bool endMatch/*= false*/)
     : Base { StringRange { domain.begin(),
                            pattern ? pattern->end() : domain.end() },
              false, endMatch }
 {
     namespace ba = boost::algorithm;
+    assert(!domain.empty());
+    assert(pattern ? !pattern->empty() : true);
 
     const auto &trimmedDomain = ba::trim_copy_if(domain, ba::is_any_of("*"));
     ba::split(m_domainTokens, trimmedDomain,

@@ -19,9 +19,11 @@ public:
         return doMatch(uri, context);
     }
 
-protected: // private
-    virtual bool doMatch(const Uri&, const Context&) const// = 0;
-    { return false; }
+protected:
+    virtual bool doMatch(const Uri&, const Context&) const
+    {
+        return true;
+    }
 };
 
 inline std::ostream &
@@ -204,7 +206,7 @@ private:
     SiteKeys m_siteKeys;
 };
 
-class MatchCaseOption : public Option {}; //TODO test
+class MatchCaseOption : public Option {};
 
 class CollapseOption : public InversibleOption
 {

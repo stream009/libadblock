@@ -20,13 +20,20 @@ protected:
     using TokenRange = boost::iterator_range<Tokens::const_iterator>;
     using UriRange = Uri::const_range_type;
 
-    struct Compare {
+private:
+    class Compare
+    {
+    public:
         bool operator()(const char left, const char right) const;
+        void setCaseSensitive(const bool caseSensitive);
+    private:
+        bool m_case = false;
     };
 
 public:
-    bool match(const Uri &url) const override
+    bool match(const Uri &url, const bool caseSensitive = false) const override
     {
+        m_compare.setCaseSensitive(caseSensitive);
         return doMatchUrl(url);
     }
 
@@ -54,6 +61,7 @@ private:
     StringRange m_str;
     bool m_beginMatch = false;
     bool m_endMatch = false;
+    mutable Compare m_compare;
 };
 
 } // namespace adblock

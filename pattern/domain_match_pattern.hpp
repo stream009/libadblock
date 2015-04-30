@@ -15,7 +15,7 @@ class DomainMatchPattern : public BaseMatchPattern
 public:
     DomainMatchPattern(const StringRange &domain,
                        const boost::optional<StringRange> &pattern,
-                       const bool endMatch);
+                       const bool endMatch = false);
 
 private:
     // @override BaseMatchPattern

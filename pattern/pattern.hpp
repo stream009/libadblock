@@ -12,8 +12,8 @@ class Pattern
 public:
     virtual ~Pattern() = default;
 
-    virtual bool match(const Uri &target) const = 0;
-
+    virtual bool match(const Uri &target,
+                       const bool caseSensitive = false) const = 0;
 private:
     virtual void print(std::ostream&) const = 0;
 

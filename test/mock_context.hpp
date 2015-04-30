@@ -4,11 +4,18 @@
 #include "context.hpp"
 #include "type.hpp"
 
+#include <boost/range/iterator_range.hpp>
+
 namespace adblock {
 
 class MockContext : public Context
 {
 public:
+    MockContext()
+        : m_uri { "http://www.adblock.org" },
+          m_siteKey { boost::as_literal("") }
+    {}
+
     const Uri &origin() const override { return m_uri; }
 
     bool fromScriptTag() const override { return false; }
@@ -25,7 +32,7 @@ public:
 
 private:
     Uri m_uri;
-    StringRange m_siteKey { "" };
+    StringRange m_siteKey;
 };
 
 } // namespace adblock

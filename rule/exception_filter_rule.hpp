@@ -19,15 +19,7 @@ public:
                               std::vector<std::shared_ptr<Option>>> &options)
         : Base { pattern, options }
     {}
-
-    bool match(const Uri&, const Context&) const override;
 };
-
-inline bool ExceptionFilterRule::
-match(const Uri &url, const Context &context) const
-{
-    return !Base::match(url, context);
-}
 
 } // namespace adblock
 

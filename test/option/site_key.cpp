@@ -29,23 +29,23 @@ struct SiteKeyContext : MockContext
 TEST(SiteKeyOption, Init)
 {
     const SiteKeyOption option {
-        { "abcdsitekeydcba", "bcdesitekeyedcb", }
+        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
     };
 
     const auto &siteKeys = option.siteKeys();
     ASSERT_EQ(2, siteKeys.size());
-    EXPECT_EQ(1, boost::count(siteKeys, "abcdsitekeydcba"));
-    EXPECT_EQ(1, boost::count(siteKeys, "bcdesitekeyedcb"));
+    EXPECT_EQ(1, boost::count(siteKeys, "abcdsitekeydcba"_r));
+    EXPECT_EQ(1, boost::count(siteKeys, "bcdesitekeyedcb"_r));
 }
 
 TEST(SiteKeyOption, Match)
 {
     const SiteKeyOption option {
-        { "abcdsitekeydcba", "bcdesitekeyedcb", }
+        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
     };
 
     const auto &uri = "http://whatever.idontcare.com"_u;
-    const SiteKeyContext context { "bcdesitekeyedcb" };
+    const SiteKeyContext context { "bcdesitekeyedcb"_r };
 
     EXPECT_TRUE(option.match(uri, context));
 }
@@ -53,11 +53,11 @@ TEST(SiteKeyOption, Match)
 TEST(SiteKeyOption, NoMatch)
 {
     const SiteKeyOption option {
-        { "abcdsitekeydcba", "bcdesitekeyedcb", }
+        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
     };
 
     const auto &uri = "http://whatever.idontcare.com"_u;
-    const SiteKeyContext context { "foobarxyzzy" };
+    const SiteKeyContext context { "foobarxyzzy"_r };
 
     EXPECT_FALSE(option.match(uri, context));
 }

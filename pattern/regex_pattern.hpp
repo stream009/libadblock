@@ -13,16 +13,18 @@ namespace adblock {
 class RegexPattern : public Pattern
 {
 public:
-    RegexPattern(const StringRange &range);
+    RegexPattern(const StringRange&);
 
-    bool match(const Uri &target) const override;
+    bool match(const Uri &target, const bool caseSensitive = false) const override;
 
 private:
     // @override Pattern
     void print(std::ostream&) const override;
 
 private:
-    boost::regex m_regEx;
+    StringRange m_pattern;
+    mutable boost::optional<boost::regex> m_regEx;
+    mutable bool m_regExCaseSensitivity = false;
 };
 
 } // namespace adblock

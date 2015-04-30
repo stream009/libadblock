@@ -310,4 +310,18 @@ TEST(BasicMatchPattern, MatchShouldBeCaseInsensitive2)
     EXPECT_TRUE(pattern.match(uri));
 }
 
+TEST(BasicMatchPattern, CaseSensitiveMatch)
+{
+    BasicMatchPattern pattern { ".Jpg"_r };
+    const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
+    EXPECT_TRUE(pattern.match(uri, true));
+}
+
+TEST(BasicMatchPattern, CaseSensitiveUnmatch)
+{
+    BasicMatchPattern pattern { ".jpg"_r };
+    const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
+    EXPECT_FALSE(pattern.match(uri, true));
+}
+
 } // namespace adblock

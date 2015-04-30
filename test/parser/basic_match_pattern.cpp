@@ -26,6 +26,7 @@ TEST(BasicMatchPatternParser, Basic)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
     EXPECT_FALSE(pattern->isBeginMatch());
     EXPECT_FALSE(pattern->isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern->firstToken());
 }
 
 TEST(BasicMatchPatternParser, BeginMatch)
@@ -40,6 +41,7 @@ TEST(BasicMatchPatternParser, BeginMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
     EXPECT_TRUE(pattern->isBeginMatch());
     EXPECT_FALSE(pattern->isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern->firstToken());
 }
 
 TEST(BasicMatchPatternParser, EndMatch)
@@ -54,6 +56,7 @@ TEST(BasicMatchPatternParser, EndMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
     EXPECT_FALSE(pattern->isBeginMatch());
     EXPECT_TRUE(pattern->isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern->firstToken());
 }
 
 TEST(BasicMatchPatternParser, ExactMatch)
@@ -68,6 +71,7 @@ TEST(BasicMatchPatternParser, ExactMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
     EXPECT_TRUE(pattern->isBeginMatch());
     EXPECT_TRUE(pattern->isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern->firstToken());
 }
 
 TEST(BasicMatchPatternParser, BarInMiddleOfPattern)
@@ -82,4 +86,20 @@ TEST(BasicMatchPatternParser, BarInMiddleOfPattern)
     EXPECT_EQ("ad|block", boost::lexical_cast<std::string>(*pattern));
     EXPECT_FALSE(pattern->isBeginMatch());
     EXPECT_FALSE(pattern->isEndMatch());
+    EXPECT_EQ("ad|block"_r, pattern->firstToken());
+}
+
+TEST(BasicMatchPatternParser, MultiTokenPattern)
+{
+    const auto &line = boost::as_literal("ad*block");
+    std::shared_ptr<Pattern> result;
+    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+
+    ASSERT_TRUE(rv);
+    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
+    EXPECT_TRUE(!!pattern);
+    EXPECT_EQ("ad*block", boost::lexical_cast<std::string>(*pattern));
+    EXPECT_FALSE(pattern->isBeginMatch());
+    EXPECT_FALSE(pattern->isEndMatch());
+    EXPECT_EQ("ad"_r, pattern->firstToken());
 }

@@ -106,7 +106,7 @@ struct FilterPattern::Impl
             = qi::graph - '$' | utf8_char;
 
         domain_char
-            = qi::alnum | char_('-') | utf8_char;
+            = qi::alnum | char_("-.") | utf8_char;
 
         utf8_char
             = char_ - qi::print - qi::cntrl;

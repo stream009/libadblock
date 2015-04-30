@@ -43,6 +43,8 @@ private:
         assert(m_pattern);
     }
 
+    bool hasMatchCaseOption() const;
+
 private:
     std::shared_ptr<Pattern> m_pattern;
     boost::optional<Options> m_options;

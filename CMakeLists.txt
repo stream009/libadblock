@@ -7,7 +7,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/CMakePCHCompiler")
 project(${MAIN} C CXX CXXPCH)
 
 find_package(Boost 1.57 REQUIRED
-	         COMPONENTS iostreams program_options regex system timer)
+	         COMPONENTS filesystem locale iostreams
+                        program_options regex system timer)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
@@ -43,6 +44,14 @@ add_library(rule OBJECT
     rule/comment_rule.cpp
 )
 
+add_library(rule_set OBJECT
+    rule_set/substring_match_filter_rule_set.cpp
+    rule_set/prefix_match_filter_rule_set.cpp
+    rule_set/suffix_match_filter_rule_set.cpp
+    rule_set/domain_match_filter_rule_set.cpp
+    rule_set/domained_element_hide_rule_set.cpp
+)
+
 add_library(pattern OBJECT
     pattern/base_match_pattern.cpp
     pattern/basic_match_pattern.cpp
@@ -50,12 +59,13 @@ add_library(pattern OBJECT
     pattern/regex_pattern.cpp
 )
 
-add_library(option OBJECT
-    option.cpp
-)
-
-add_library(domain_data_base OBJECT
+add_library(main OBJECT
     domain_data_base.cpp
+    filter_rule_base.cpp
+    element_hide_rule_base.cpp
+    option.cpp
+    subscription.cpp
+    adblock.cpp
 )
 
 add_subdirectory(parser)
@@ -63,11 +73,11 @@ add_subdirectory(lib/reg_dom)
 
 add_executable(${MAIN}
     main.cpp
+    $<TARGET_OBJECTS:main>
     $<TARGET_OBJECTS:pattern>
     $<TARGET_OBJECTS:rule>
-    $<TARGET_OBJECTS:option>
+    $<TARGET_OBJECTS:rule_set>
     $<TARGET_OBJECTS:reg_dom>
-    $<TARGET_OBJECTS:domain_data_base>
 )
 target_link_libraries(${MAIN} cppnetlib-uri)
 target_link_libraries(${MAIN} ${Boost_LIBRARIES})

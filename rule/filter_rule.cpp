@@ -4,6 +4,7 @@
 #include "pattern/pattern.hpp"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
+#include <boost/algorithm/cxx11/any_of.hpp>
 
 namespace adblock {
 
@@ -19,7 +20,7 @@ FilterRule(const std::shared_ptr<Pattern> &pattern,
 bool FilterRule::
 match(const Uri &uri, const Context &context) const
 {
-    if (!m_pattern->match(uri)) return false;
+    if (!m_pattern->match(uri, hasMatchCaseOption())) return false;
     if (!m_options) return true;
 
     return boost::algorithm::all_of(*m_options,
@@ -58,6 +59,20 @@ print(std::ostream &os) const
             os << *option << " ";
         }
     }
+}
+
+bool FilterRule::
+hasMatchCaseOption() const
+{
+    if (!m_options) return false;
+
+    return boost::algorithm::any_of(*m_options,
+        [](const Options::value_type &option) {
+            assert(option);
+            const auto &theOption = *option;
+            return typeid(theOption) == typeid(MatchCaseOption);
+        }
+    );
 }
 
 } // namespace adblock

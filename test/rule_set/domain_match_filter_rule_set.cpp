@@ -66,3 +66,18 @@ TEST(DomainMatchFilterRuleSet, NoHit)
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
 }
+
+TEST(DomainMatchFilterRuleSet, MultiToken)
+{
+    const auto &rule1 = make_rule("adblock*org"_r);
+    const auto &rule2 = make_rule("ban"_r);
+
+    DomainMatchFilterRuleSet ruleSet;
+    ruleSet.put(rule1);
+    ruleSet.put(rule2);
+
+    auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(rule1, results.front());
+}
+

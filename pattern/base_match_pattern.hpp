@@ -17,7 +17,7 @@ class BaseMatchPattern : public Pattern
 protected:
     using Token = StringRange;
     using Tokens = std::vector<Token>;
-    using TokenRange = boost::iterator_range<Tokens::const_iterator>;
+    using TokensRange = boost::iterator_range<Tokens::const_iterator>;
     using UriRange = Uri::const_range_type;
 
 private:
@@ -41,17 +41,18 @@ public:
     bool isBeginMatch() const { return m_beginMatch; }
     bool isEndMatch() const { return m_endMatch; }
 
-    const Token &firstToken() const { return tokens().at(0); }
+    const Token &firstToken() const { return tokens().front(); } //TODO remove
+    TokensRange tokens() const { return doTokens(); }
 
 protected:
     virtual bool doMatchUrl(const Uri&) const = 0;
-    virtual const Tokens &tokens() const = 0;
+    virtual TokensRange doTokens() const = 0;
 
     BaseMatchPattern(const StringRange &range,
                      const bool beginMatch,
                      const bool endMatch);
 
-    bool doMatch(const UriRange&, const TokenRange&) const;
+    bool doMatch(const UriRange&, const TokensRange&) const;
 
 private:
     // @override Pattern

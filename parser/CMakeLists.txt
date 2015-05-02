@@ -1,4 +1,4 @@
-set(SRCS
+add_library(parser
     parser.cpp
     domain.cpp
     filter_rule.cpp
@@ -7,8 +7,6 @@ set(SRCS
     filter_pattern.cpp
     filter_option.cpp
     white_list_option.cpp
+    header.cpp
 )
-
-set(TARGET parser)
-
-add_library(${TARGET} STATIC ${SRCS})
+target_link_libraries(parser option)

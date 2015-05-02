@@ -8,6 +8,8 @@
 
 #include <cassert>
 
+#include <boost/format.hpp>
+
 namespace adblock {
 
 void FilterRuleBase::
@@ -38,6 +40,18 @@ query(const Uri &uri, const Context &context) const
     else {
         return m_normal.query(uri, context);
     }
+}
+
+void FilterRuleBase::
+statistics(std::ostream &os) const
+{
+    os << "[Basic Match Pattern]\n";
+    m_normal.statistics(os);
+    os << "\n";
+
+    os << "[Exception Match Pattern]\n";
+    m_exception.statistics(os);
+    os << "\n";
 }
 
 
@@ -76,7 +90,6 @@ query(const Uri &uri, const Context &context) const
 {
     assert(uri.is_valid());
 
-    std::cout << "URI: " << uri.string() << "\n";
     for (const auto &rule: m_prefix.query(uri)) {
         if (rule->match(uri, context)) return true;
     }
@@ -87,7 +100,6 @@ query(const Uri &uri, const Context &context) const
         if (rule->match(uri, context)) return true;
     }
     for (const auto &rule: m_substring.query(uri)) {
-        std::cout << "SUBSTR RULE: " << *rule << "\n";
         if (rule->match(uri, context)) return true;
     }
     for (const auto &rule: m_regex) {
@@ -95,6 +107,29 @@ query(const Uri &uri, const Context &context) const
     }
 
     return false;
+}
+
+void FilterRuleBase::FilterRuleGroup::
+statistics(std::ostream &os) const
+{
+    os << "Prefix Match Pattern\n";
+    m_prefix.statistics(os);
+    os << "\n";
+
+    os << "Suffix Match Pattern\n";
+    m_suffix.statistics(os);
+    os << "\n";
+
+    os << "Substring Match Pattern\n";
+    m_substring.statistics(os);
+    os << "\n";
+
+    os << "Domain Match Pattern\n";
+    m_domain.statistics(os);
+    os << "\n";
+
+    os << "Regex Pattern\n";
+    os << boost::format { "%20s: %6s\n" } % "Total" % m_regex.size();
 }
 
 } // namespace adblock

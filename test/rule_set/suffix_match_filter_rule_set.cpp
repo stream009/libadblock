@@ -66,3 +66,21 @@ TEST(SuffixMatchFilterRuleSet, NoNit)
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
 }
+
+TEST(SuffixMatchFilterRuleSet, MultiToken)
+{
+    const auto &rule1 = make_rule("adblock.org*jpg"_r);
+    const auto &rule2 = make_rule("adblock.com"_r);
+
+    SuffixMatchFilterRuleSet ruleSet;
+    ruleSet.put(rule1);
+    ruleSet.put(rule2);
+
+    auto &&results = ruleSet.query("http://www.adblock.org/top.jpg"_u);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(rule1, results.front());
+
+    results = ruleSet.query("http://www.google.com/top.jpg"_u);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(rule1, results.front());
+}

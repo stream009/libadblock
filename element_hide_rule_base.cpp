@@ -90,4 +90,20 @@ put(const ElementHideRulePtr &ruleP)
     }
 }
 
+void ElementHideRuleBase::
+statistics(std::ostream &os) const
+{
+    os << "Normal Element Hide Rule\n";
+    os << boost::format { "%20s: %6s\n" } % "Total" % m_blackList.size();
+    os << "\n";
+
+    os << "Domained Black List\n";
+    m_domainedBlackList.statistics(os);
+    os << "\n";
+
+    os << "Domained White List\n";
+    m_domainedWhiteList.statistics(os);
+    os << "\n";
+}
+
 } // namespace adblock

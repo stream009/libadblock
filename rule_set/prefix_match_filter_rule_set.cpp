@@ -18,8 +18,9 @@ doPut(const FilterRulePtr &rule)
                 dynamic_cast<const BaseMatchPattern*>(&rule->pattern());
     assert(pattern);
     assert(pattern->isBeginMatch());
-    //m_rules[pattern->firstToken()].push_back(rule);
-    m_rules.insert(pattern->firstToken(), rule);
+    const auto &tokens = pattern->tokens();
+    assert(!tokens.empty());
+    m_rules.insert(tokens.front(), rule);
 }
 
 PrefixMatchFilterRuleSet::FilterRules PrefixMatchFilterRuleSet::
@@ -34,22 +35,24 @@ doQuery(const Uri &uri) const
     const char* const end = begin + std::distance(uri.begin(), uri.end());
 
     const StringRange uriR { begin, end, };
-#if 0
-    const auto &items = m_rules.match(uriR);
-    if (items) {
-        for (const auto &item: *items) {
-            boost::copy(item.second, inserter);
-        }
-    }
-#endif
+
     m_rules.traverse(uriR,
         [&inserter] (const Rules::NodeType &node) {
-            boost::copy(node.values(), inserter);
+            if (node.hasValue()) {
+                boost::copy(node.values(), inserter);
+            }
             return false;
         }
     );
+
     //TODO return lazy generator instead of copy
     return results;
+}
+
+void PrefixMatchFilterRuleSet::
+doStatistics(std::ostream &os) const
+{
+    m_rules.statistics(os);
 }
 
 } // namespace adblock

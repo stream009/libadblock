@@ -50,4 +50,14 @@ elementHideCss(const Uri &uri) const
     return m_elementHideRuleBase.query(uri);
 }
 
+void AdBlock::
+statistics(std::ostream &os) const
+{
+    os << "*** Filter Rule Base ***\n";
+    m_filterRuleBase.statistics(os);
+
+    os << "*** Element Hide Rule Base ***\n";
+    m_elementHideRuleBase.statistics(os);
+}
+
 } // namespace adblock

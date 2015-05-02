@@ -24,6 +24,8 @@ public:
     bool shouldBlock(const Uri&, const Context&) const;
     std::string elementHideCss(const Uri&) const;
 
+    void statistics(std::ostream&) const;
+
 private:
     std::vector<Subscription> m_subscriptions;
     FilterRuleBase m_filterRuleBase;

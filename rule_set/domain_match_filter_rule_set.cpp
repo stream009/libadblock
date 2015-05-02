@@ -18,7 +18,9 @@ doPut(const FilterRulePtr &rule)
                 dynamic_cast<const DomainMatchPattern*>(&rule->pattern());
     assert(pattern);
 
-    m_map[pattern->firstToken()].push_back(rule);
+    const auto &tokens = pattern->tokens();
+    assert(!tokens.empty());
+    m_rules.insert(tokens.front(), rule);
 }
 
 DomainMatchFilterRuleSet::FilterRules DomainMatchFilterRuleSet::
@@ -37,16 +39,24 @@ doQuery(const Uri &uri) const
     for (; begin != end; ++begin) {
         const StringRange suffix { begin, end, };
 
-        const auto &items = m_map.match(suffix);
-        if (!items) continue;
-
-        for (const auto &item: *items) {
-            boost::copy(item.second, inserter);
-        }
+        m_rules.traverse(suffix,
+            [&inserter] (const Rules::NodeType &node) {
+                if (node.hasValue()) {
+                    boost::copy(node.values(), inserter);
+                }
+                return false;
+            }
+        );
     }
 
     //TODO return lazy generator instead of copy
     return results;
+}
+
+void DomainMatchFilterRuleSet::
+doStatistics(std::ostream &os) const
+{
+    m_rules.statistics(os);
 }
 
 } // namespace adblock

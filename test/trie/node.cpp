@@ -115,7 +115,7 @@ TEST(Node, Traverse)
 
     size_t branch = 0, leaf = 0;
     root.traverse(
-        [&branch, &leaf](Node &node) {
+        [&branch, &leaf](const Node &node, const size_t) {
             if (node.hasChild()) {
                 ++branch;
             }
@@ -126,4 +126,24 @@ TEST(Node, Traverse)
     );
     EXPECT_EQ(6, branch);
     EXPECT_EQ(3, leaf);
+}
+
+TEST(Node, CaseInsensitive)
+{
+    {
+        Node node;
+        EXPECT_EQ(nullptr, node.findChild('a'));
+
+        node.appendChild('A');
+        EXPECT_NE(nullptr, node.findChild('a'));
+        EXPECT_NE(nullptr, node.findChild('A'));
+    }
+    {
+        Node node;
+        EXPECT_EQ(nullptr, node.findChild('a'));
+
+        node.appendChild('a');
+        EXPECT_NE(nullptr, node.findChild('a'));
+        EXPECT_NE(nullptr, node.findChild('A'));
+    }
 }

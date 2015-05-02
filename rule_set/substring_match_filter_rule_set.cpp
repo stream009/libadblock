@@ -17,7 +17,9 @@ doPut(const FilterRulePtr &rule)
     const auto *pattern =
                 dynamic_cast<const BaseMatchPattern*>(&rule->pattern());
     assert(pattern);
-    m_map[pattern->firstToken()].push_back(rule);
+    const auto &tokens = pattern->tokens();
+    assert(!tokens.empty());
+    m_rules.insert(tokens.front(), rule);
 }
 
 SubstringMatchFilterRuleSet::FilterRules SubstringMatchFilterRuleSet::
@@ -34,22 +36,24 @@ doQuery(const Uri &uri) const
     for (; begin != end; ++begin) {
         const StringRange suffix { begin, end, };
 
-        const auto &items = m_map.match(suffix);
-        if (!items) continue;
-
-        std::cout << "SUFFIX: " << suffix << "\n";
-        for (const auto &item: *items) {
-            std::cout << "APPEND: " << "[" << item.first << "] ";
-            for (const auto &rule: item.second) {
-                std::cout << rule->pattern() << ", ";
+        m_rules.traverse(suffix,
+            [&inserter] (const Rules::NodeType &node) {
+                if (node.hasValue()) {
+                    boost::copy(node.values(), inserter);
+                }
+                return false;
             }
-            std::cout << "\n";
-            boost::copy(item.second, inserter);
-        }
+        );
     }
 
     //TODO return lazy generator instead of copy
     return results;
+}
+
+void SubstringMatchFilterRuleSet::
+doStatistics(std::ostream &os) const
+{
+    m_rules.statistics(os);
 }
 
 } // namespace adblock

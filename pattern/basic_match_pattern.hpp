@@ -17,7 +17,7 @@ public:
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(const Uri&) const override;
-    const Tokens &tokens() const override { return m_tokens; }
+    TokensRange doTokens() const override { return m_tokens; }
 
 private:
     Tokens m_tokens;

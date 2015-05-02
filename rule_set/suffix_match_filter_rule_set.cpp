@@ -18,7 +18,11 @@ doPut(const FilterRulePtr &rule)
                 dynamic_cast<const BaseMatchPattern*>(&rule->pattern());
     assert(pattern);
     assert(pattern->isEndMatch());
-    m_map[pattern->firstToken()].push_back(rule);
+    const auto &tokens = pattern->tokens();
+    assert(!tokens.empty());
+    const auto &token = tokens.back();
+    const ReverseStringRange reverseToken { token.end(), token.begin() };
+    m_rules.insert(reverseToken, rule);
 }
 
 SuffixMatchFilterRuleSet::FilterRules SuffixMatchFilterRuleSet::
@@ -32,17 +36,25 @@ doQuery(const Uri &uri) const
     const char *begin = &(*uri.begin());
     const char* const end = begin + std::distance(uri.begin(), uri.end());
 
-    const StringRange uriR { begin, end, };
+    const ReverseStringRange uriR { end, begin };
 
-    const auto &items = m_map.match(uriR);
-    if (items) {
-        for (const auto &item: *items) {
-            boost::copy(item.second, inserter);
+    m_rules.traverse(uriR,
+        [&inserter] (const Rules::NodeType &node) {
+            if (node.hasValue()) {
+                boost::copy(node.values(), inserter);
+            }
+            return false;
         }
-    }
+    );
 
     //TODO return lazy generator instead of copy
     return results;
+}
+
+void SuffixMatchFilterRuleSet::
+doStatistics(std::ostream &os) const
+{
+    m_rules.statistics(os);
 }
 
 } // namespace adblock

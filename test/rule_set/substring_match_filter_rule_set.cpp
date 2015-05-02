@@ -66,3 +66,17 @@ TEST(SubstringMatchFilterRuleSet, NoHit)
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
 }
+
+TEST(SubstringMatchFilterRuleSet, MultiToken)
+{
+    const auto &rule1 = make_rule("adblock*jpg"_r);
+    const auto &rule2 = make_rule("adblockplus"_r);
+
+    SubstringMatchFilterRuleSet ruleSet;
+    ruleSet.put(rule1);
+    ruleSet.put(rule2);
+
+    auto &&results = ruleSet.query("http://www.adblock.org/top.png"_u);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(rule1, results.front());
+}

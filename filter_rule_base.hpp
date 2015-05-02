@@ -18,16 +18,15 @@ public:
     using FilterRulePtr = std::shared_ptr<FilterRule>;
 
 private:
-    class FilterRuleGroup
+    struct FilterRuleGroup
     {
-    public:
         // query
         bool query(const Uri&, const Context&) const;
+        void statistics(std::ostream&) const;
 
         // modifier
         void put(const FilterRulePtr&);
 
-    private:
         PrefixMatchFilterRuleSet m_prefix;
         SuffixMatchFilterRuleSet m_suffix;
         SubstringMatchFilterRuleSet m_substring;
@@ -38,6 +37,7 @@ private:
 public:
     // query
     bool query(const Uri&, const Context&) const;
+    void statistics(std::ostream&) const;
 
     // modifier
     void put(const FilterRulePtr&);

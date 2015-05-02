@@ -1,12 +1,28 @@
 #include "parser.hpp"
 
 #include "grammar.hpp"
+#include "header.hpp"
 
 #include <algorithm>
 #include <iostream>
 #include <iterator>
 
 namespace adblock { namespace parser {
+
+StringRange
+parseHeader(const StringRange &line)
+{
+    namespace qi = boost::spirit::qi;
+
+    static const Header grammar;
+
+    StringRange result;
+    auto begin = line.begin();
+    const auto end = line.end();
+    qi::phrase_parse(begin, end, grammar, qi::ascii::space, result);
+
+    return result;
+}
 
 std::shared_ptr<Rule>
 parse(const StringRange &line)

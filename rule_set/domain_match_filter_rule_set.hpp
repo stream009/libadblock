@@ -2,8 +2,8 @@
 #define ADBLOCK_DOMAIN_MATCH_FILTER_RULE_SET_HPP
 
 #include "filter_rule_set.hpp"
-#include "prefix_map.hpp"
 #include "type.hpp"
+#include "trie/trie.hpp"
 
 namespace adblock {
 
@@ -13,14 +13,16 @@ class DomainMatchFilterRuleSet : public FilterRuleSet
 public:
     using Base::FilterRulePtr;
     using Base::FilterRules;
-    using RuleMap = PrefixMap<StringRange, FilterRules>;
+    using Rules = trie::Trie<StringRange, FilterRulePtr>;
 
 private:
+    // @override FilterRuleSet
     void doPut(const FilterRulePtr&) override;
     FilterRules doQuery(const Uri&) const override;
+    void doStatistics(std::ostream&) const override;
 
 private:
-    RuleMap m_map;
+    Rules m_rules;
 };
 
 } // namespace adblock

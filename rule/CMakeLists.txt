@@ -1,0 +1,7 @@
+add_library(rule
+    filter_rule.cpp
+    element_hide_rule.cpp
+    basic_element_hide_rule.cpp
+    exception_element_hide_rule.cpp
+    comment_rule.cpp
+)

@@ -8,8 +8,11 @@
 
 namespace adblock { namespace parser {
 
+StringRange
+parseHeader(const StringRange&);
+
 std::shared_ptr<Rule>
-parse(const StringRange &line);
+parse(const StringRange &header);
 
 }} // namespace adblock::parser
 

@@ -27,6 +27,7 @@ public:
 public:
     // query
     std::string query(const Uri&) const;
+    void statistics(std::ostream&) const;
 
     // modifier
     void put(const ElementHideRulePtr&);

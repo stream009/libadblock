@@ -5,6 +5,7 @@
 #include "rule/rule.hpp"
 
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -24,6 +25,9 @@ public:
     using const_iterator = StringRange::const_iterator;
     using Path = boost::filesystem::path;
 
+    class ParseError;
+    struct Statistics;
+
 public:
     // constructors
     Subscription(const Path &filePath);
@@ -34,11 +38,46 @@ public:
 
     RulesRange rules() const;
 
+    // query
+    Statistics statistics() const;
+
+    static const StringRange supportedVersion();
+
 private:
-    Path m_filePath;
     boost::iostreams::mapped_file_source m_file;
     Rules m_rules;
 };
+
+
+//TODO derive from application specific base exception class
+class Subscription::ParseError : public std::exception
+{
+    const char* what() const noexcept override;
+};
+
+
+struct Subscription::Statistics {
+    struct FilterRule {
+        size_t total;
+        size_t basicMatchPattern;
+        size_t domainMatchPattern;
+        size_t regexPattern;
+    };
+
+    struct ElementHideRule {
+        size_t total;
+        size_t basic;
+        size_t domainRestricted;
+    };
+
+    FilterRule      basicFilterRule;
+    FilterRule      exceptionFilterRule;
+    ElementHideRule basicElementHideRule;
+    ElementHideRule exceptionElementHideRule;
+    size_t          commentRule;
+};
+
+std::ostream &operator<<(std::ostream&, const Subscription::Statistics&);
 
 } // namespace adblock
 

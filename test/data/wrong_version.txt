@@ -1,0 +1,23 @@
+[Adblock Plus 3.0]
+! Title: Elementary
+&ad_box_
+&adgroupid=
+&admeld_
+###A9AdsMiddleBoxTop
+###A9AdsOutOfStockWidgetTop
+###A9AdsServicesWidgetTop
+thedailygreen.com#@##AD_banner
+webmail.verizon.net#@##AdColumn
+jobs.wa.gov.au,lalovings.com#@##AdContainer
+||007-gateway.com^$third-party
+||0icep80f.com^$third-party
+||101m3.com^$third-party
+search.safefinder.com,search.snapdo.com###ABottomD
+aol.com###AOLP_partnerSearch
+search.safefinder.com,search.snap.do,search.snapdo.com###ATopD
+@@||houstonpress.com/adindex/$xmlhttprequest
+@@||howcast.com/flash/assets/ads/liverail.swf
+@@||hp.com^*/scripts/ads/$~third-party
+@@.com/b/$image,domain=catalogfavoritesvip.com|freeshipping.com|freeshippingbymastercard.com|freeshippingrewards.com|habandvipplus.com|inthecompanyofdogsvip.com|naturesjewelryvip.com|northstylevip.com|pyramidcollectionvip.com|serengeticatalogvip.com|travelplus.com
+@@.com/banners/$image,domain=catalogfavoritesvip.com|deliverydeals.co.uk|freeshipping.com|freeshippingbymastercard.com|freeshippingrewards.com|habandvipplus.com|inthecompanyofdogsvip.com|naturesjewelryvip.com|northstylevip.com|pyramidcollectionvip.com|serengeticatalogvip.com|travelplus.com
+@@.com/image-*-$image,domain=affrity.com|catalogfavoritesvip.com|deliverydeals.co.uk|freeshipping.com|freeshippingbymastercard.com|freeshippingrewards.com|habandvipplus.com|inthecompanyofdogsvip.com|naturesjewelryvip.com|northstylevip.com|pyramidcollectionvip.com|serengeticatalogvip.com|theperfectsaver.com|travelplus.com

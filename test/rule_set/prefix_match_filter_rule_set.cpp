@@ -65,3 +65,18 @@ TEST(PrefixMatchFilterRuleSet, NoHit)
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
 }
+
+TEST(PrefixMatchFilterRuleSet, MultiToken)
+{
+    const auto &rule1 = make_rule("http://www.adblock*jpg"_r);
+    const auto &rule2 = make_rule("adblock"_r);
+
+    PrefixMatchFilterRuleSet ruleSet;
+    ruleSet.put(rule1);
+    ruleSet.put(rule2);
+
+    auto &&results = ruleSet.query("http://www.adblock.org"_u);
+    ASSERT_EQ(1, results.size());
+    EXPECT_EQ(rule1, results.front());
+}
+

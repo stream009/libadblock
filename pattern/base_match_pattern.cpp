@@ -41,7 +41,7 @@ BaseMatchPattern(const StringRange &range,
 {}
 
 bool BaseMatchPattern::
-doMatch(const UriRange &target, const TokenRange &tokens) const
+doMatch(const UriRange &target, const TokensRange &tokens) const
 {
     namespace ba = boost::algorithm;
 
@@ -84,7 +84,6 @@ doMatch(const UriRange &target, const TokenRange &tokens) const
     }
 
     for (const auto &token: tokensCopy) {
-        std::cout << range << " : " << token << "\n";
         const auto &rv = ba::find(range, ba::first_finder(token, m_compare));
         if (rv.empty()) return false;
 

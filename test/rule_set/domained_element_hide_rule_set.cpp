@@ -23,13 +23,14 @@ make_rule(const StringRange &cssSelector,
 TEST(DomainedElementHideRuleSet, Basic)
 {
     const auto &rule = make_rule("div"_r, Domains { "adblock.org"_r });
+    assert(rule);
 
     DomainedElementHideRuleSet ruleSet;
-    ruleSet.put(rule);
+    ruleSet.put(*rule);
 
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 
     results = ruleSet.query("http://www.adblockplus.org/"_u);
     EXPECT_TRUE(results.empty());
@@ -44,17 +45,18 @@ TEST(DomainedElementHideRuleSet, MultipleDomain)
     const StringRange &cssSelector = "div"_r;
 
     const auto &rule = make_rule(cssSelector, domains);
+    assert(rule);
 
     DomainedElementHideRuleSet ruleSet;
-    ruleSet.put(rule);
+    ruleSet.put(*rule);
 
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 
     results = ruleSet.query("http://www.google.com/something"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 
     results = ruleSet.query("http://www.adblockplus.org/"_u);
     EXPECT_TRUE(results.empty());
@@ -69,13 +71,14 @@ TEST(DomainedElementHideRuleSet, ExcludedByInverseDomain)
     const StringRange &cssSelector = "div"_r;
 
     const auto &rule = make_rule(cssSelector, domains);
+    assert(rule);
 
     DomainedElementHideRuleSet ruleSet;
-    ruleSet.put(rule);
+    ruleSet.put(*rule);
 
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 
     results = ruleSet.query("http://www.sub.adblock.org/other"_u);
     EXPECT_TRUE(results.empty());
@@ -84,21 +87,23 @@ TEST(DomainedElementHideRuleSet, ExcludedByInverseDomain)
 TEST(DomainedElementHideRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("div"_r, Domains { "adblock.org"_r, });
+    assert(rule1);
     const auto &rule2 = make_rule("table"_r, Domains { "sub.adblock.org"_r, });
+    assert(rule2);
 
     DomainedElementHideRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org/something"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule1, results.front());
+    EXPECT_EQ(&*rule1, results.front());
 
     results = ruleSet.query("http://sub.adblock.org/ban"_u);
     ASSERT_EQ(2, results.size());
     namespace br = boost::range;
-    EXPECT_TRUE(br::find(results, rule1) != results.end());
-    EXPECT_TRUE(br::find(results, rule2) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule1) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule2) != results.end());
 
     results = ruleSet.query("http://www.adblockplus.org/"_u);
     EXPECT_TRUE(results.empty());
@@ -107,18 +112,19 @@ TEST(DomainedElementHideRuleSet, MultipleHit)
 TEST(DomainedElementHideRuleSet, ExcludeOnlyRule)
 {
     const auto &rule = make_rule("div"_r, Domains { "~adblock.org"_r, });
+    assert(rule);
 
     DomainedElementHideRuleSet ruleSet;
-    ruleSet.put(rule);
+    ruleSet.put(*rule);
 
     auto &&results = ruleSet.query("http://www.adblock.org/something"_u);
     EXPECT_TRUE(results.empty());
 
     results = ruleSet.query("http://www.adblockplus.org/"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 
     results = ruleSet.query("http://www.google.com/"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule, results.front());
+    EXPECT_EQ(&*rule, results.front());
 }

@@ -12,29 +12,30 @@
 namespace adblock {
 
 void DomainedElementHideRuleSet::
-put(const ElementHideRulePtr &rule)
+put(const ElementHideRule &rule)
 {
-    assert(rule);
-    assert(rule->isDomainRestricted());
+    assert(rule.isDomainRestricted());
 
-    const auto &includes = rule->includeDomains();
+    const auto &includes = rule.includeDomains();
     if (!includes.empty()) {
         for (const auto &domain: includes) {
             const ReverseStringRange reversedDomain {
                                      domain.end(), domain.begin() };
-            m_normal.insert(reversedDomain, rule);
+            m_normal.insert(reversedDomain, &rule);
+            //TODO duplication check
         }
     }
     else {
         // Rules which only have excluded domains mean
         // any domain except excluded domains.
         // So, register excluded domain for later query.
-        const auto &excludes = rule->excludeDomains();
+        const auto &excludes = rule.excludeDomains();
         assert(!excludes.empty());
         for (const auto &domain: excludes) {
             const ReverseStringRange reversedDomain {
                                      domain.end(), domain.begin() };
-            m_exception.insert(rule);
+            m_exception.insert(&rule);
+            //TODO duplication check
         }
     }
 }
@@ -57,7 +58,7 @@ query(const Uri &uri) const
     const ReverseStringRange reverseHostR { end, begin, };
 
     const auto &excludedDomain =
-        [hostR](const ElementHideRulePtr &rule) {
+        [hostR](const ElementHideRule *rule) {
             return ba::any_of(rule->excludeDomains(),
                 [&hostR](const StringRange &domain) {
                     return ba::ends_with(hostR, domain);
@@ -69,7 +70,7 @@ query(const Uri &uri) const
         [&inserter, &excludedDomain] (const Rules::NodeType &node) {
             if (node.hasValue()) {
                 ba::copy_if(node.values(), inserter,
-                    [&excludedDomain] (const ElementHideRulePtr &rule) {
+                    [&excludedDomain] (const ElementHideRule *rule) {
                         return !excludedDomain(rule);
                     }
                 );
@@ -79,7 +80,7 @@ query(const Uri &uri) const
     );
 
     ba::copy_if(m_exception, inserter,
-        [&excludedDomain](const ElementHideRulePtr &rule) {
+        [&excludedDomain](const ElementHideRule *rule) {
             assert(rule->includeDomains().empty());
             return !excludedDomain(rule);
         }

@@ -25,8 +25,9 @@ TEST(ElementHideRuleBase, Elementary)
 {
     const auto &rule =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
+    assert(rule);
     ElementHideRuleBase ruleBase;
-    ruleBase.put(rule);
+    ruleBase.put(*rule);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("div { display: none !important }", result);
@@ -39,8 +40,10 @@ TEST(ElementHideRuleBase, Domained)
     const auto &rule2 = make_rule<BasicElementHideRule>(
                                     "table"_r, Domains { "adblock.org"_r });
     ElementHideRuleBase ruleBase;
-    ruleBase.put(rule1);
-    ruleBase.put(rule2);
+    assert(rule1);
+    ruleBase.put(*rule1);
+    assert(rule2);
+    ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("table, div { display: none !important }", result);
@@ -53,8 +56,10 @@ TEST(ElementHideRuleBase, ExcludedByExceptionRule)
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
                                     "div"_r, Domains { "adblock.org"_r });
     ElementHideRuleBase ruleBase;
-    ruleBase.put(rule1);
-    ruleBase.put(rule2);
+    assert(rule1);
+    ruleBase.put(*rule1);
+    assert(rule2);
+    ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("", result);
@@ -67,8 +72,10 @@ TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
                                     "table"_r, Domains { "adblock.org"_r });
     ElementHideRuleBase ruleBase;
-    ruleBase.put(rule1);
-    ruleBase.put(rule2);
+    assert(rule1);
+    ruleBase.put(*rule1);
+    assert(rule2);
+    ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("div { display: none !important }", result);

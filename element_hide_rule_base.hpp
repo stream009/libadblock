@@ -4,25 +4,21 @@
 #include "type.hpp"
 #include "rule_set/domained_element_hide_rule_set.hpp"
 
-#include <memory>
+#include <iosfwd>
 #include <string>
 #include <vector>
-
-#include <boost/container/flat_set.hpp>
 
 namespace adblock {
 
 class ElementHideRuleBase
 {
-public:
-    using ElementHideRulePtr = std::shared_ptr<ElementHideRule>;
 private:
     struct CompareBySelector {
-        bool operator()(const ElementHideRulePtr &lhs,
-                        const ElementHideRulePtr &rhs) const;
+        bool operator()(const ElementHideRule &lhs,
+                        const ElementHideRule &rhs) const;
     };
 public:
-    using ElementHideRules = std::vector<ElementHideRulePtr>;
+    using ElementHideRules = std::vector<const ElementHideRule*>;
 
 public:
     // query
@@ -30,7 +26,7 @@ public:
     void statistics(std::ostream&) const;
 
     // modifier
-    void put(const ElementHideRulePtr&);
+    void put(const ElementHideRule&);
 
 public:
     DomainedElementHideRuleSet m_domainedBlackList;

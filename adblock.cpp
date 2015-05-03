@@ -20,12 +20,14 @@ addSubscription(const Path &filePath)
 
     for (const auto &rule: subscription.rules()) {
         if (const auto &ptr = std::dynamic_pointer_cast<FilterRule>(rule)) {
-            m_filterRuleBase.put(ptr);
+            assert(ptr);
+            m_filterRuleBase.put(*ptr);
         }
         else if (const auto &ptr =
                     std::dynamic_pointer_cast<ElementHideRule>(rule))
         {
-            m_elementHideRuleBase.put(ptr);
+            assert(ptr);
+            m_elementHideRuleBase.put(*ptr);
         }
         else if (std::dynamic_pointer_cast<CommentRule>(rule)) {
             // comment rule will be skipped

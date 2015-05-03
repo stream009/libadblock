@@ -38,7 +38,10 @@ TEST(FilterRuleBase, Basic)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r));
+    const auto &rule
+        = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+    assert(rule);
+    rb.put(*rule);
 
     EXPECT_TRUE(rb.query("http://www.adblockplug.org"_u, cxt));
 }
@@ -48,7 +51,10 @@ TEST(FilterRuleBase, Domain)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_domain_rule<BasicFilterRule>("adblock.org"_r, boost::none));
+    const auto &rule
+        = make_domain_rule<BasicFilterRule>("adblock.org"_r, boost::none);
+    assert(rule);
+    rb.put(*rule);
 
     EXPECT_TRUE(rb.query("http://www.adblock.org"_u, cxt));
 }
@@ -58,7 +64,10 @@ TEST(FilterRuleBase, Regex)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_rule<BasicFilterRule, RegexPattern>(".*adblock.*"_r));
+    const auto &rule
+        = make_rule<BasicFilterRule, RegexPattern>(".*adblock.*"_r);
+    assert(rule);
+    rb.put(*rule);
 
     EXPECT_TRUE(rb.query("http://www.adblock.org"_u, cxt));
 }
@@ -68,9 +77,14 @@ TEST(FilterRuleBase, ExceptionBasic)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r));
-    rb.put(
-        make_rule<ExceptionFilterRule, BasicMatchPattern>("adblockplus"_r));
+    auto &&rule
+        = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+    assert(rule);
+    rb.put(*rule);
+    rule =
+        make_rule<ExceptionFilterRule, BasicMatchPattern>("adblockplus"_r);
+    assert(rule);
+    rb.put(*rule);
 
     // match with basic but excluded by exception rule
     EXPECT_FALSE(rb.query("http://www.adblockplus.org"_u, cxt));
@@ -81,8 +95,14 @@ TEST(FilterRuleBase, ExceptionDomain)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r));
-    rb.put(make_domain_rule<ExceptionFilterRule>("adblock.org"_r, boost::none));
+    auto &&rule
+        = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+    assert(rule);
+    rb.put(*rule);
+    rule = make_domain_rule<ExceptionFilterRule>(
+                                        "adblock.org"_r, boost::none);
+    assert(rule);
+    rb.put(*rule);
 
     // match with basic but excluded by exception rule
     EXPECT_FALSE(rb.query("http://www.adblock.org"_u, cxt));
@@ -93,9 +113,13 @@ TEST(FilterRuleBase, ExceptionRegex)
     FilterRuleBase rb;
     MockContext cxt;
 
-    rb.put(make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r));
-    rb.put(make_rule<ExceptionFilterRule,
-                            RegexPattern>(R"(.*adblock\.org.*)"_r));
+    auto &&rule = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+    assert(rule);
+    rb.put(*rule);
+    rule = make_rule<ExceptionFilterRule,
+                            RegexPattern>(R"(.*adblock\.org.*)"_r);
+    assert(rule);
+    rb.put(*rule);
 
     // match with basic but excluded by exception rule
     EXPECT_FALSE(rb.query("http://www.adblock.org"_u, cxt));

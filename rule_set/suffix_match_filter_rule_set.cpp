@@ -4,25 +4,24 @@
 
 #include <cassert>
 #include <iterator>
+#include <ostream>
 
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
 void SuffixMatchFilterRuleSet::
-doPut(const FilterRulePtr &rule)
+doPut(const FilterRule &rule)
 {
-    assert(rule);
-
     const auto *pattern =
-                dynamic_cast<const BaseMatchPattern*>(&rule->pattern());
+                dynamic_cast<const BaseMatchPattern*>(&rule.pattern());
     assert(pattern);
     assert(pattern->isEndMatch());
     const auto &tokens = pattern->tokens();
     assert(!tokens.empty());
     const auto &token = tokens.back();
     const ReverseStringRange reverseToken { token.end(), token.begin() };
-    m_rules.insert(reverseToken, rule);
+    m_rules.insert(reverseToken, &rule);
 }
 
 SuffixMatchFilterRuleSet::FilterRules SuffixMatchFilterRuleSet::
@@ -30,7 +29,7 @@ doQuery(const Uri &uri) const
 {
     assert(uri.is_valid());
 
-    std::vector<FilterRulePtr> results;
+    std::vector<const FilterRule*> results;
     const auto &inserter = std::back_inserter(results);
 
     const char *begin = &(*uri.begin());

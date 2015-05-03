@@ -11,7 +11,6 @@
 namespace adblock {
 
 using ElementHideRules = ElementHideRuleBase::ElementHideRules;
-using ElementHideRulePtr = ElementHideRuleBase::ElementHideRulePtr;
 
 static std::string
 joinSelectors(const ElementHideRules &rules, const StringRange &separator)
@@ -43,7 +42,7 @@ removeWhiteRules(ElementHideRules &rules, const ElementHideRules &whiteRules)
     auto end = rules.end();
     for (const auto &whiteRule: whiteRules) {
         end = std::remove_if(begin, end,
-            [&whiteRule](const ElementHideRulePtr &rule) {
+            [&whiteRule](const ElementHideRule *rule) {
                 return rule->cssSelector() == whiteRule->cssSelector();
             }
         );
@@ -69,21 +68,19 @@ query(const Uri &uri) const
 }
 
 void ElementHideRuleBase::
-put(const ElementHideRulePtr &ruleP)
+put(const ElementHideRule &rule)
 {
-    const auto &rule = *ruleP;
-
     if (typeid(rule) == typeid(BasicElementHideRule)) {
-        if (ruleP->isDomainRestricted()) {
-            m_domainedBlackList.put(ruleP);
+        if (rule.isDomainRestricted()) {
+            m_domainedBlackList.put(rule);
         }
         else {
-            m_blackList.push_back(ruleP);
+            m_blackList.push_back(&rule);
         }
     }
     else if (typeid(rule) == typeid(ExceptionElementHideRule)) {
-        assert(ruleP->isDomainRestricted());
-        m_domainedWhiteList.put(ruleP);
+        assert(rule.isDomainRestricted());
+        m_domainedWhiteList.put(rule);
     }
     else {
         assert(false && "unknown type of element hide rule");

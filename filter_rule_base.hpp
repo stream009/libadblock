@@ -14,9 +14,6 @@ namespace adblock {
 
 class FilterRuleBase
 {
-public:
-    using FilterRulePtr = std::shared_ptr<FilterRule>;
-
 private:
     struct FilterRuleGroup
     {
@@ -25,13 +22,13 @@ private:
         void statistics(std::ostream&) const;
 
         // modifier
-        void put(const FilterRulePtr&);
+        void put(const FilterRule&);
 
         PrefixMatchFilterRuleSet m_prefix;
         SuffixMatchFilterRuleSet m_suffix;
         SubstringMatchFilterRuleSet m_substring;
         DomainMatchFilterRuleSet m_domain;
-        std::vector<FilterRulePtr> m_regex;
+        std::vector<const FilterRule*> m_regex;
     };
 
 public:
@@ -40,7 +37,7 @@ public:
     void statistics(std::ostream&) const;
 
     // modifier
-    void put(const FilterRulePtr&);
+    void put(const FilterRule&);
 
 private:
     FilterRuleGroup m_normal;

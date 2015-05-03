@@ -13,16 +13,13 @@
 namespace adblock {
 
 void FilterRuleBase::
-put(const FilterRulePtr &ruleP)
+put(const FilterRule &rule)
 {
-    assert(ruleP);
-    const auto &rule = *ruleP;
-
     if (typeid(rule) == typeid(BasicFilterRule)) {
-        m_normal.put(ruleP);
+        m_normal.put(rule);
     }
     else if (typeid(rule) == typeid(ExceptionFilterRule)) {
-        m_exception.put(ruleP);
+        m_exception.put(rule);
     }
     else {
         assert(false && "unknown type of filter rule");
@@ -56,11 +53,9 @@ statistics(std::ostream &os) const
 
 
 void FilterRuleBase::FilterRuleGroup::
-put(const FilterRulePtr &rule)
+put(const FilterRule &rule)
 {
-    assert(rule);
-
-    const auto &pattern = rule->pattern();
+    const auto &pattern = rule.pattern();
     if (const auto *patternP =
                 dynamic_cast<const BasicMatchPattern*>(&pattern))
     {
@@ -78,7 +73,7 @@ put(const FilterRulePtr &rule)
         m_domain.put(rule);
     }
     else if (typeid(pattern) == typeid(RegexPattern)) {
-        m_regex.push_back(rule);
+        m_regex.push_back(&rule);
     }
     else {
         assert(false && "unknown type of match pattern");
@@ -90,19 +85,19 @@ query(const Uri &uri, const Context &context) const
 {
     assert(uri.is_valid());
 
-    for (const auto &rule: m_prefix.query(uri)) {
+    for (const auto *rule: m_prefix.query(uri)) {
         if (rule->match(uri, context)) return true;
     }
-    for (const auto &rule: m_suffix.query(uri)) {
+    for (const auto *rule: m_suffix.query(uri)) {
         if (rule->match(uri, context)) return true;
     }
-    for (const auto &rule: m_domain.query(uri)) {
+    for (const auto *rule: m_domain.query(uri)) {
         if (rule->match(uri, context)) return true;
     }
-    for (const auto &rule: m_substring.query(uri)) {
+    for (const auto *rule: m_substring.query(uri)) {
         if (rule->match(uri, context)) return true;
     }
-    for (const auto &rule: m_regex) {
+    for (const auto *rule: m_regex) {
         if (rule->match(uri, context)) return true;
     }
 

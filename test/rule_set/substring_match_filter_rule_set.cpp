@@ -24,12 +24,12 @@ TEST(SubstringMatchFilterRuleSet, Basic)
     const auto &rule2 = make_rule("adblockplus"_r);
 
     SubstringMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule1, results.front());
+    EXPECT_EQ(&*rule1, results.front());
 }
 
 TEST(SubstringMatchFilterRuleSet, MultipleHit)
@@ -40,18 +40,18 @@ TEST(SubstringMatchFilterRuleSet, MultipleHit)
     const auto &rule4 = make_rule("adblockplus"_r);
 
     SubstringMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
-    ruleSet.put(rule3);
-    ruleSet.put(rule4);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
+    ruleSet.put(*rule3);
+    ruleSet.put(*rule4);
 
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     ASSERT_EQ(3, results.size());
     namespace br = boost::range;
-    EXPECT_TRUE(br::find(results, rule1) != results.end());
-    EXPECT_TRUE(br::find(results, rule2) != results.end());
-    EXPECT_TRUE(br::find(results, rule3) != results.end());
-    EXPECT_TRUE(br::find(results, rule4) == results.end());
+    EXPECT_TRUE(br::find(results, &*rule1) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule2) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule3) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule4) == results.end());
 }
 
 TEST(SubstringMatchFilterRuleSet, NoHit)
@@ -60,8 +60,8 @@ TEST(SubstringMatchFilterRuleSet, NoHit)
     const auto &rule2 = make_rule("google.com"_r);
 
     SubstringMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
@@ -73,10 +73,10 @@ TEST(SubstringMatchFilterRuleSet, MultiToken)
     const auto &rule2 = make_rule("adblockplus"_r);
 
     SubstringMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org/top.png"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule1, results.front());
+    EXPECT_EQ(&*rule1, results.front());
 }

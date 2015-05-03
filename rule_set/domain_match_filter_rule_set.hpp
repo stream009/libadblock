@@ -5,19 +5,20 @@
 #include "type.hpp"
 #include "trie/trie.hpp"
 
+#include <iosfwd>
+
 namespace adblock {
 
 class DomainMatchFilterRuleSet : public FilterRuleSet
 {
     using Base = FilterRuleSet;
 public:
-    using Base::FilterRulePtr;
     using Base::FilterRules;
-    using Rules = trie::Trie<StringRange, FilterRulePtr>;
+    using Rules = trie::Trie<StringRange, const FilterRule*>;
 
 private:
     // @override FilterRuleSet
-    void doPut(const FilterRulePtr&) override;
+    void doPut(const FilterRule&) override;
     FilterRules doQuery(const Uri&) const override;
     void doStatistics(std::ostream&) const override;
 

@@ -4,8 +4,7 @@
 #include "type.hpp"
 #include "rule/filter_rule.hpp"
 
-#include <memory>
-#include <ostream>
+#include <iosfwd>
 #include <vector>
 
 namespace adblock {
@@ -13,21 +12,20 @@ namespace adblock {
 class FilterRuleSet
 {
 public:
-    using FilterRulePtr = std::shared_ptr<FilterRule>;
-    using FilterRules = std::vector<FilterRulePtr>;
+    using FilterRules = std::vector<const FilterRule*>;
 public:
     // constructor / destructor
     virtual ~FilterRuleSet() = default;
 
     // modifier
-    void put(const FilterRulePtr &rule) { doPut(rule); }
+    void put(const FilterRule &rule) { doPut(rule); }
 
     // query
     FilterRules query(const Uri &uri) const { return doQuery(uri); }
     void statistics(std::ostream &os) const { return doStatistics(os); }
 
 private:
-    virtual void doPut(const FilterRulePtr&) = 0;
+    virtual void doPut(const FilterRule&) = 0;
     virtual FilterRules doQuery(const Uri&) const = 0;
     virtual void doStatistics(std::ostream&) const = 0;
 };

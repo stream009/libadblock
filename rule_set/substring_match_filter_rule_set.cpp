@@ -4,22 +4,21 @@
 
 #include <cassert>
 #include <iterator>
+#include <ostream>
 
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
 void SubstringMatchFilterRuleSet::
-doPut(const FilterRulePtr &rule)
+doPut(const FilterRule &rule)
 {
-    assert(rule);
-
     const auto *pattern =
-                dynamic_cast<const BaseMatchPattern*>(&rule->pattern());
+                dynamic_cast<const BaseMatchPattern*>(&rule.pattern());
     assert(pattern);
     const auto &tokens = pattern->tokens();
     assert(!tokens.empty());
-    m_rules.insert(tokens.front(), rule);
+    m_rules.insert(tokens.front(), &rule);
 }
 
 SubstringMatchFilterRuleSet::FilterRules SubstringMatchFilterRuleSet::

@@ -4,23 +4,22 @@
 
 #include <cassert>
 #include <iterator>
+#include <ostream>
 
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
 void DomainMatchFilterRuleSet::
-doPut(const FilterRulePtr &rule)
+doPut(const FilterRule &rule)
 {
-    assert(rule);
-
     const auto *pattern =
-                dynamic_cast<const DomainMatchPattern*>(&rule->pattern());
+                dynamic_cast<const DomainMatchPattern*>(&rule.pattern());
     assert(pattern);
 
     const auto &tokens = pattern->tokens();
     assert(!tokens.empty());
-    m_rules.insert(tokens.front(), rule);
+    m_rules.insert(tokens.front(), &rule);
 }
 
 DomainMatchFilterRuleSet::FilterRules DomainMatchFilterRuleSet::
@@ -28,7 +27,7 @@ doQuery(const Uri &uri) const
 {
     assert(uri.is_valid());
 
-    std::vector<FilterRulePtr> results;
+    std::vector<const FilterRule*> results;
     const auto &inserter = std::back_inserter(results);
 
     const auto &host = uri.host_range();

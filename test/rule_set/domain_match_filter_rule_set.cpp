@@ -27,12 +27,12 @@ TEST(DomainMatchFilterRuleSet, OneHit)
     const auto &rule2 = make_rule("ban"_r);
 
     DomainMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule1, results.front());
+    EXPECT_EQ(&*rule1, results.front());
 }
 
 TEST(DomainMatchFilterRuleSet, MultipleHit)
@@ -42,16 +42,16 @@ TEST(DomainMatchFilterRuleSet, MultipleHit)
     const auto &rule3 = make_rule("adblock.com"_r);
 
     DomainMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
-    ruleSet.put(rule3);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
+    ruleSet.put(*rule3);
 
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     ASSERT_EQ(2, results.size());
     namespace br = boost::range;
-    EXPECT_TRUE(br::find(results, rule1) != results.end());
-    EXPECT_TRUE(br::find(results, rule2) != results.end());
-    EXPECT_TRUE(br::find(results, rule3) == results.end());
+    EXPECT_TRUE(br::find(results, &*rule1) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule2) != results.end());
+    EXPECT_TRUE(br::find(results, &*rule3) == results.end());
 }
 
 TEST(DomainMatchFilterRuleSet, NoHit)
@@ -60,8 +60,8 @@ TEST(DomainMatchFilterRuleSet, NoHit)
     const auto &rule2 = make_rule("adblock.com"_r);
 
     DomainMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
@@ -73,11 +73,10 @@ TEST(DomainMatchFilterRuleSet, MultiToken)
     const auto &rule2 = make_rule("ban"_r);
 
     DomainMatchFilterRuleSet ruleSet;
-    ruleSet.put(rule1);
-    ruleSet.put(rule2);
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
 
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
-    EXPECT_EQ(rule1, results.front());
+    EXPECT_EQ(&*rule1, results.front());
 }
-

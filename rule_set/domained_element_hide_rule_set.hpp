@@ -16,12 +16,11 @@ namespace adblock {
 class DomainedElementHideRuleSet
 {
 public:
-    using ElementHideRulePtr = std::shared_ptr<ElementHideRule>;
-    using ElementHideRules = std::vector<ElementHideRulePtr>;
+    using ElementHideRules = std::vector<const ElementHideRule*>;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<const char*>>;
-    using Rules = trie::Trie<ReverseStringRange, ElementHideRulePtr>;
-    using ExceptionOnlyRules = boost::container::flat_set<ElementHideRulePtr>;
+    using Rules = trie::Trie<ReverseStringRange, const ElementHideRule*>;
+    using ExceptionOnlyRules = boost::container::flat_set<const ElementHideRule*>;
 
 public:
     // query
@@ -29,7 +28,7 @@ public:
     void statistics(std::ostream&) const;
 
     // modifier
-    void put(const ElementHideRulePtr&);
+    void put(const ElementHideRule&);
 
 private:
     Rules m_normal;

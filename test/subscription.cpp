@@ -81,5 +81,5 @@ TEST(Subscription, DISABLED_EasyList)
     //EXPECT_EQ(46671, lines); // last line doesn't have '\n'
     //EXPECT_EQ(46671, subscription.rules().size());
 
-    //std::cout << subscription.statistics();
+    std::cout << subscription.statistics();
 }

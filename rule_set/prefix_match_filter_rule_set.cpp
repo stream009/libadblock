@@ -35,8 +35,9 @@ doQuery(const Uri &uri) const
 
     const StringRange uriR { begin, end, };
 
+    using Node = Rules::NodeType;
     m_rules.traverse(uriR,
-        [&inserter] (const Rules::NodeType &node) {
+        [&inserter] (const Node &node, const Node::Key&) {
             if (node.hasValue()) {
                 boost::copy(node.values(), inserter);
             }

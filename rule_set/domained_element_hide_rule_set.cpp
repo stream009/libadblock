@@ -66,8 +66,9 @@ query(const Uri &uri) const
             );
         };
 
+    using Node = Rules::NodeType;
     m_normal.traverse(reverseHostR,
-        [&inserter, &excludedDomain] (const Rules::NodeType &node) {
+        [&inserter, &excludedDomain] (const Node &node, const Node::Key&) {
             if (node.hasValue()) {
                 ba::copy_if(node.values(), inserter,
                     [&excludedDomain] (const ElementHideRule *rule) {

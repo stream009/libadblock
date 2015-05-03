@@ -35,8 +35,10 @@ doQuery(const Uri &uri) const
     for (; begin != end; ++begin) {
         const StringRange suffix { begin, end, };
 
+        using Node = Rules::NodeType;
         m_rules.traverse(suffix,
-            [&inserter] (const Rules::NodeType &node) {
+            [&inserter] (const Node &node, const Node::Key&)
+            {
                 if (node.hasValue()) {
                     boost::copy(node.values(), inserter);
                 }

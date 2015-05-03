@@ -7,23 +7,9 @@ TEST(Node, Elementary)
 {
     using Node = trie::Node<char, size_t>;
     Node node;
-    EXPECT_EQ(Node::Key {}, node.key());
 
     EXPECT_FALSE(node.hasChild());
     EXPECT_FALSE(node.hasValue());
-}
-
-TEST(Node, Key)
-{
-    using Node = trie::Node<char, size_t>;
-    {
-        Node node;
-        EXPECT_EQ(Node::Key {}, node.key());
-    }
-    {
-        Node node { 'A' };
-        EXPECT_EQ('a', node.key());
-    }
 }
 
 TEST(Node, Children)
@@ -35,21 +21,18 @@ TEST(Node, Children)
 
     auto *child = node.appendChild('A');
     ASSERT_NE(nullptr, child);
-    EXPECT_EQ('a', child->key());
     //EXPECT_EQ(node, child->parent());
 
     EXPECT_TRUE(node.hasChild());
 
     child = node.appendChild('B');
     ASSERT_NE(nullptr, child);
-    EXPECT_EQ('b', child->key());
     //EXPECT_EQ(node, child->parent());
 
     EXPECT_FALSE(child->hasChild());
 
     auto *gChild = child->appendChild('C');
     ASSERT_NE(nullptr, gChild);
-    EXPECT_EQ('c', gChild->key());
     //EXPECT_EQ(child, gChild->parent());
 }
 
@@ -115,7 +98,7 @@ TEST(Node, Traverse)
 
     size_t branch = 0, leaf = 0;
     root.traverse(
-        [&branch, &leaf](const Node &node, const size_t) {
+        [&branch, &leaf](const Node &node, const Node::Key&, const size_t) {
             if (node.hasChild()) {
                 ++branch;
             }

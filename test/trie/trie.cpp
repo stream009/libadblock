@@ -24,8 +24,8 @@ TEST(Trie, Traverse)
 
     std::string path;
     trie.traverse("abcd",
-        [&path](const NodeType &node) {
-            path += node.key();
+        [&path](const NodeType&, const NodeType::Key &key) {
+            path += key;
             return false;
         }
     );
@@ -42,12 +42,12 @@ TEST(Trie, CaseInsensitive)
 
     std::string path;
     trie.traverse("ABC",
-        [&path](const NodeType &node) {
-            path += node.key();
+        [&path](const NodeType&, const NodeType::Key &key) {
+            path += key;
             return false;
         }
     );
-    EXPECT_EQ("abc", path);
+    EXPECT_EQ("ABC", path);
 }
 
 TEST(Trie, InsertMore)

@@ -42,7 +42,6 @@
 #include <limits>
 #include <memory>
 #include <ostream>
-#include <reg_dom/regdom.h>
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>

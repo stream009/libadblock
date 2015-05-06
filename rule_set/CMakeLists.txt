@@ -5,3 +5,6 @@ add_library(rule_set
     domain_match_filter_rule_set.cpp
     domained_element_hide_rule_set.cpp
 )
+target_link_libraries(rule_set
+    rule
+)

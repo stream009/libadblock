@@ -9,4 +9,6 @@ add_library(parser
     white_list_option.cpp
     header.cpp
 )
-target_link_libraries(parser option)
+target_link_libraries(parser
+    rule
+)

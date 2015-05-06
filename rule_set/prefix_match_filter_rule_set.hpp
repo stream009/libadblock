@@ -1,9 +1,9 @@
 #ifndef ADBLOCK_PREFIX_MATCH_FILTER_RULE_SET_HPP
 #define ADBLOCK_PREFIX_MATCH_FILTER_RULE_SET_HPP
 
+#include "config.hpp"
 #include "filter_rule_set.hpp"
 #include "type.hpp"
-#include "trie/trie.hpp"
 
 #include <iosfwd>
 
@@ -14,7 +14,7 @@ class PrefixMatchFilterRuleSet : public FilterRuleSet
     using Base = FilterRuleSet;
 public:
     using Base::FilterRules;
-    using Rules = trie::Trie<StringRange, const FilterRule*>;
+    using Rules = rule_set::Rules<StringRange, const FilterRule*>;
 
 private:
     void doPut(const FilterRule&) override;

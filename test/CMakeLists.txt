@@ -5,11 +5,6 @@ add_definitions(-DPROJECT_ROOT=\"${CMAKE_SOURCE_DIR}\")
 
 link_libraries(
     ${GTEST_BOTH_LIBRARIES}
-    main
-    parser
-    rule
-    rule_set
-    pattern
 )
 
 add_executable(test_main
@@ -21,6 +16,9 @@ add_executable(test_main
     adblock.cpp
     misc.cpp
 )
+target_link_libraries(test_main
+    main
+)
 
 add_executable(test_rule_set
     rule_set/substring_match_filter_rule_set.cpp
@@ -29,17 +27,26 @@ add_executable(test_rule_set
     rule_set/domain_match_filter_rule_set.cpp
     rule_set/domained_element_hide_rule_set.cpp
 )
+target_link_libraries(test_rule_set
+    rule_set
+)
 
 add_executable(test_rule
     rule/filter_rule.cpp
     rule/element_hide_rule.cpp
     rule/comment_rule.cpp
 )
+target_link_libraries(test_rule
+    rule
+)
 
 add_executable(test_pattern
     pattern/basic_match_pattern.cpp
     pattern/domain_match_pattern.cpp
     pattern/regex_pattern.cpp
+)
+target_link_libraries(test_pattern
+    pattern
 )
 
 add_executable(test_parser
@@ -57,6 +64,9 @@ add_executable(test_parser
     parser/header.cpp
     parser/parser.cpp
 )
+target_link_libraries(test_parser
+    parser
+)
 
 add_executable(test_option
     option/script.cpp
@@ -73,8 +83,16 @@ add_executable(test_option
     option/site_key.cpp
     option/popup.cpp
 )
+target_link_libraries(test_option
+    option
+    reg_dom
+)
 
 add_executable(test_trie
     trie/trie.cpp
     trie/node.cpp
+)
+
+add_executable(test_radix_tree
+    radix_tree/radix_tree.cpp
 )

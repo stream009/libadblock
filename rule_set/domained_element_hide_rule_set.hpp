@@ -1,9 +1,9 @@
 #ifndef ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_SET_HPP
 #define ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_SET_HPP
 
+#include "config.hpp"
 #include "type.hpp"
 #include "rule/element_hide_rule.hpp"
-#include "trie/trie.hpp"
 
 #include <iosfwd>
 #include <memory>
@@ -19,7 +19,7 @@ public:
     using ElementHideRules = std::vector<const ElementHideRule*>;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<const char*>>;
-    using Rules = trie::Trie<ReverseStringRange, const ElementHideRule*>;
+    using Rules = rule_set::Rules<ReverseStringRange, const ElementHideRule*>;
     using ExceptionOnlyRules = boost::container::flat_set<const ElementHideRule*>;
 
 public:

@@ -3,8 +3,8 @@
 #include <cassert>
 
 extern "C" {
-#include <reg_dom/regdom.h>
-};
+#include "reg_dom/regdom.h"
+}
 
 namespace adblock {
 

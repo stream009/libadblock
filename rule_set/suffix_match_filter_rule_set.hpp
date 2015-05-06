@@ -1,9 +1,9 @@
 #ifndef ADBLOCK_SUFFIX_MATCH_FILTER_RULE_SET_HPP
 #define ADBLOCK_SUFFIX_MATCH_FILTER_RULE_SET_HPP
 
+#include "config.hpp"
 #include "filter_rule_set.hpp"
 #include "type.hpp"
-#include "trie/trie.hpp"
 
 #include <iosfwd>
 #include <iterator>
@@ -17,7 +17,7 @@ public:
     using Base::FilterRules;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<const char*>>;
-    using Rules = trie::Trie<ReverseStringRange, const FilterRule*>;
+    using Rules = rule_set::Rules<ReverseStringRange, const FilterRule*>;
 
 private:
     void doPut(const FilterRule&) override;

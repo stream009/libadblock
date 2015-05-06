@@ -38,20 +38,30 @@ TEST(AdBlock, DISABLED_EasyList)
 
     AdBlock adBlock;
     adBlock.addSubscription(path);
-#if 0
+
     {
-        //boost::timer::auto_cpu_timer t;
+        boost::timer::auto_cpu_timer t;
         const MockContext context;
+#if 0
         EXPECT_TRUE(
                 adBlock.shouldBlock("http://a.kickass.to/sc-b98b537.js"_u, context));
+#endif
+        for (auto i = 0u; i < 1000; ++i) {
+            adBlock.shouldBlock("http://a.kickass.to/sc-b98b537.js"_u, context);
+        }
     }
     {
-        //boost::timer::auto_cpu_timer t;
+        boost::timer::auto_cpu_timer t;
         const MockContext context;
+#if 0
         EXPECT_FALSE(
                 adBlock.shouldBlock("http://barhbarhbarh.com"_u, context));
+#endif
+        for (auto i = 0u; i < 1000; ++i) {
+            adBlock.shouldBlock("http://barhbarhbarh.com"_u, context);
+        }
     }
-
+#if 0
     const std::vector<Uri> blockUrls = {
         "http://adrotator.se/?placement=400229&cookie=1&random=0.028944230638444424&domain=uploadrocket.net"_u,
         "http://clkmon.com/adServe/banners?tid=SD1UPLOADROCKET_27179_0&tagid=2"_u,

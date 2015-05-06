@@ -45,6 +45,10 @@ add_library(main
     subscription.cpp
     adblock.cpp
 )
+target_link_libraries(main
+    rule_set
+    parser
+)
 
 add_library(option
     option.cpp

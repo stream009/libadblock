@@ -5,6 +5,9 @@
 #include "node_factory.hpp"
 
 #include <iosfwd>
+#include <type_traits>
+
+#include <boost/property_tree/ptree.hpp>
 
 namespace radix_tree {
 
@@ -17,21 +20,31 @@ public:
     using NodeType = Node<Key, Value>;
 
 public:
-    RadixTree() = default;
-
+    // modifier
     void insert(const Key&, const Value&);
+    void clear();
 
+    // query
     size_t node_count() const;
     size_t value_count() const;
 
     template<typename Visitor>
         void traverse(const Key&, Visitor&&) const;
 
-    void statistics(std::ostream&) const;
+    boost::property_tree::ptree statistics() const;
+
+    void validate() const
+    {
+        m_root.traverse(
+            [](const NodeType &node, const size_t) {
+                node.validate();
+            }
+        );
+    }
 
 private:
-    NodeType m_root;
     NodeFactory<NodeType> m_factory;
+    NodeType m_root;
 };
 
 } // namespace radix_tree

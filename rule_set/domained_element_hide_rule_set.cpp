@@ -2,11 +2,14 @@
 
 #include <iterator>
 #include <ostream>
+#include <string>
+#include <utility>
 
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/algorithm/cxx11/copy_if.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
@@ -45,11 +48,12 @@ query(const Uri &uri) const
 {
     assert(uri.is_valid());
 
+    const auto &host = uri.host_range();
+    if (host.empty()) return {};
+
     ElementHideRules results;
     auto &&inserter = std::back_inserter(results);
 
-    const auto &host = uri.host_range();
-    assert(!host.empty());
     const char *begin = &(*host.begin());
     const char* const end = begin + std::distance(host.begin(), host.end());
 
@@ -92,12 +96,28 @@ query(const Uri &uri) const
 }
 
 void DomainedElementHideRuleSet::
-statistics(std::ostream &os) const
+clear()
 {
-    m_normal.statistics(os);
+    m_normal.clear();
+    m_exception.clear();
+}
 
-    os << boost::format { "%20s: %6s\n" }
-                    % "Exception Only Rules" % m_exception.size();
+boost::property_tree::ptree DomainedElementHideRuleSet::
+statistics() const
+{
+    auto &&result = m_normal.statistics();
+
+    auto assocIt = result.find("Number of values");
+    assert(assocIt != result.not_found());
+    auto &&it = result.to_iterator(assocIt);
+    ++it; // insert AFTER "Number of values"
+
+    namespace bfp = boost::property_tree;
+    bfp::ptree value { std::to_string(m_exception.size()) };
+    bfp::ptree::value_type item { "Exception only rules", value };
+    result.insert(it, item);
+
+    return result;
 }
 
 } // namespace adblock

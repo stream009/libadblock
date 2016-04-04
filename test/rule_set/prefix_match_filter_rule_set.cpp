@@ -79,3 +79,21 @@ TEST(PrefixMatchFilterRuleSet, MultiToken)
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(&*rule1, results.front());
 }
+
+TEST(PrefixMatchFilterRuleSet, Clear)
+{
+    const auto &rule1 = make_rule("http://www.adblock*jpg"_r);
+    const auto &rule2 = make_rule("adblock"_r);
+
+    PrefixMatchFilterRuleSet ruleSet;
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
+
+    auto stats = ruleSet.statistics();
+    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
+
+    ruleSet.clear();
+
+    stats = ruleSet.statistics();
+    EXPECT_EQ(0, stats.get<size_t>("Number of values"));
+}

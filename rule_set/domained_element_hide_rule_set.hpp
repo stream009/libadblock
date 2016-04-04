@@ -5,11 +5,11 @@
 #include "type.hpp"
 #include "rule/element_hide_rule.hpp"
 
-#include <iosfwd>
 #include <memory>
 #include <vector>
 
 #include <boost/container/flat_set.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace adblock {
 
@@ -25,10 +25,11 @@ public:
 public:
     // query
     ElementHideRules query(const Uri&) const;
-    void statistics(std::ostream&) const;
+    boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(const ElementHideRule&);
+    void clear();
 
 private:
     Rules m_normal;

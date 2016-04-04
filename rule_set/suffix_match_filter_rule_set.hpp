@@ -5,8 +5,9 @@
 #include "filter_rule_set.hpp"
 #include "type.hpp"
 
-#include <iosfwd>
 #include <iterator>
+
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace adblock {
 
@@ -22,7 +23,8 @@ public:
 private:
     void doPut(const FilterRule&) override;
     FilterRules doQuery(const Uri&) const override;
-    void doStatistics(std::ostream&) const override;
+    boost::property_tree::ptree doStatistics() const override;
+    void doClear() override;
 
 private:
     Rules m_rules;

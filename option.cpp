@@ -76,7 +76,7 @@ doMatch(const Uri &uri, const Context &context) const
     const auto &uriDomain = ddb.query(uri);
     const auto &originDomain = ddb.query(context.origin());
 
-    return boost::equals(uriDomain, originDomain);
+    return !boost::equals(uriDomain, originDomain);
 }
 
 DomainOption::
@@ -94,6 +94,7 @@ DomainOption(const Domains &domains)
                         std::next(domain.begin()), domain.end());
         }
     }
+    validate();
 }
 
 DomainOption::DomainsRange DomainOption::
@@ -112,10 +113,10 @@ bool DomainOption::
 doMatch(const Uri&, const Context &context) const
 {
     const auto &origin = context.origin();
-    assert(origin.is_valid());
+    if (!origin.is_valid()) return false;
 
     const auto &host = origin.host_range();
-    assert(!host.empty());
+    if (host.empty()) return false;
 
     namespace ba = boost::algorithm;
 
@@ -124,10 +125,19 @@ doMatch(const Uri&, const Context &context) const
             return ba::ends_with(host, domain);
         };
 
+    // invariant guarantees either include or exclude domain is not empty
+
     // check exclude domains first
     if (ba::any_of(m_excludeDomains, predicate)) return false;
 
-    return ba::any_of(m_includeDomains, predicate);
+    if (m_includeDomains.empty()) {
+        // In case of options which have only exclude domains,
+        // match everything unless the target belongs to exclude domains.
+        return true;
+    }
+    else {
+        return ba::any_of(m_includeDomains, predicate);
+    }
 }
 
 bool SiteKeyOption::
@@ -153,6 +163,12 @@ bool MediaOption::
 doMatch(const Uri&, const Context &context) const
 {
     return context.fromAudioVideoTag();
+}
+
+bool FontOption::
+doMatch(const Uri&, const Context &context) const
+{
+    return context.isFont();
 }
 
 } // namespace adblock

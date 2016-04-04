@@ -7,18 +7,21 @@ link_libraries(
     ${GTEST_BOTH_LIBRARIES}
 )
 
+enable_testing()
+
 add_executable(test_main
     reg_dom.cpp
     domain_data_base.cpp
     filter_rule_base.cpp
     element_hide_rule_base.cpp
-    subscription.cpp
+    filter_set.cpp
     adblock.cpp
     misc.cpp
 )
 target_link_libraries(test_main
     main
 )
+add_test(main test_main)
 
 add_executable(test_rule_set
     rule_set/substring_match_filter_rule_set.cpp
@@ -30,6 +33,7 @@ add_executable(test_rule_set
 target_link_libraries(test_rule_set
     rule_set
 )
+add_test(rule_set test_rule_set)
 
 add_executable(test_rule
     rule/filter_rule.cpp
@@ -39,6 +43,7 @@ add_executable(test_rule
 target_link_libraries(test_rule
     rule
 )
+add_test(rule test_rule)
 
 add_executable(test_pattern
     pattern/basic_match_pattern.cpp
@@ -48,6 +53,7 @@ add_executable(test_pattern
 target_link_libraries(test_pattern
     pattern
 )
+add_test(pattern test_pattern)
 
 add_executable(test_parser
     parser/domain.cpp
@@ -67,6 +73,7 @@ add_executable(test_parser
 target_link_libraries(test_parser
     parser
 )
+add_test(parser test_parser)
 
 add_executable(test_option
     option/script.cpp
@@ -87,12 +94,23 @@ target_link_libraries(test_option
     option
     reg_dom
 )
+add_test(option test_option)
 
-add_executable(test_trie
-    trie/trie.cpp
-    trie/node.cpp
-)
+#add_executable(test_trie
+#    trie/trie.cpp
+#    trie/node.cpp
+#)
+#add_test(trie test_trie)
 
 add_executable(test_radix_tree
     radix_tree/radix_tree.cpp
 )
+add_test(radix_tree test_radix_tree)
+
+add_executable(test_api
+    api.cpp
+)
+target_link_libraries(test_api
+    adblock
+)
+add_test(api test_api)

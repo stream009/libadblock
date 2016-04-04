@@ -7,9 +7,12 @@
 #include <boost/algorithm/string/find_iterator.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/format.hpp>
+#include <boost/intrusive/set.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/make_unique.hpp>
 #include <boost/network/uri.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -22,6 +25,11 @@
 #include <boost/preprocessor/repetition/enum_shifted_binary_params.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/program_options.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/json_parser.hpp> //TODO
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
+#include <boost/range/adaptor/indirected.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -30,7 +38,7 @@
 #include <boost/spirit/include/qi.hpp>
 #include <boost/timer/timer.hpp>
 #include <cassert>
-#include <errno.h>
+#include <cstring>
 #include <exception>
 #include <fstream>
 #include <gtest/gtest.h>
@@ -38,14 +46,12 @@
 #include <iosfwd>
 #include <iostream>
 #include <iterator>
-#include <limits.h>
 #include <limits>
 #include <memory>
 #include <ostream>
 #include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <string>
+#include <type_traits>
 #include <typeinfo>
+#include <utility>
 #include <vector>

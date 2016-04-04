@@ -36,7 +36,8 @@ struct FilterOption::Impl
               | match_case_option
               | donottrack_option
               | popup_option
-              | media_option;
+              | media_option
+              | font_option;
 
         const auto &inverse = qi::char_('~');
 
@@ -98,6 +99,11 @@ struct FilterOption::Impl
               [
                 _val = make_shared<MediaOption>(static_cast_<bool>(_1))
               ];
+        font_option
+            = (-inverse >> "font")
+              [
+                _val = make_shared<FontOption>(static_cast_<bool>(_1))
+              ];
 
         domain_option_domain
             = qi::raw
@@ -113,7 +119,7 @@ struct FilterOption::Impl
     }
 
     rule<std::shared_ptr<Option>()>
-        option, script_option, media_option,
+        option, script_option, media_option, font_option,
         domain_option, sitekey_option, match_case_option,
         donottrack_option, image_option,
         stylesheet_option, object_option, xmlhttprequest_option,

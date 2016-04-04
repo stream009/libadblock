@@ -3,6 +3,9 @@
 #include "rule/basic_filter_rule.hpp"
 #include "rule_set/domain_match_filter_rule_set.hpp"
 
+#include "option.hpp"
+#include "test/mock_context.hpp"
+
 #include <memory>
 
 #include <boost/range/algorithm.hpp>
@@ -79,4 +82,22 @@ TEST(DomainMatchFilterRuleSet, MultiToken)
     auto &&results = ruleSet.query("http://www.adblock.org/ban"_u);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(&*rule1, results.front());
+}
+
+TEST(DomainMatchFilterRuleSet, Clear)
+{
+    const auto &rule1 = make_rule("adblock*org"_r);
+    const auto &rule2 = make_rule("ban"_r);
+
+    DomainMatchFilterRuleSet ruleSet;
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
+
+    auto stats = ruleSet.statistics();
+    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
+
+    ruleSet.clear();
+
+    stats = ruleSet.statistics();
+    EXPECT_EQ(0, stats.get<size_t>("Number of values"));
 }

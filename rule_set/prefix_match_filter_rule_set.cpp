@@ -49,10 +49,16 @@ doQuery(const Uri &uri) const
     return results;
 }
 
-void PrefixMatchFilterRuleSet::
-doStatistics(std::ostream &os) const
+boost::property_tree::ptree PrefixMatchFilterRuleSet::
+doStatistics() const
 {
-    m_rules.statistics(os);
+    return m_rules.statistics();
+}
+
+void PrefixMatchFilterRuleSet::
+doClear()
+{
+    m_rules.clear();
 }
 
 } // namespace adblock

@@ -35,3 +35,14 @@ TEST(DomainDataBase, WrongQuery)
 
     EXPECT_TRUE(range.empty());
 }
+
+TEST(DomainDataBase, ValidUriButNoHost)
+{
+    DomainDataBase db;
+    const Uri uri { "about:blank" };
+
+    EXPECT_TRUE(uri.is_valid());
+    const auto &range = db.query(uri);
+
+    EXPECT_TRUE(range.empty());
+}

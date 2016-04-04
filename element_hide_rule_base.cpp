@@ -3,10 +3,9 @@
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 
-#include <sstream>
-
-#include <boost/range/algorithm.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/range/adaptors.hpp>
+#include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
@@ -54,13 +53,13 @@ removeWhiteRules(ElementHideRules &rules, const ElementHideRules &whiteRules)
 std::string ElementHideRuleBase::
 query(const Uri &uri) const
 {
+    ElementHideRules resultSet { m_blackList };
+
     const auto &domainedBlackList = m_domainedBlackList.query(uri);
+    resultSet.insert(resultSet.end(),
+                     domainedBlackList.begin(), domainedBlackList.end());
+
     const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
-
-    ElementHideRules resultSet;
-    boost::copy(domainedBlackList, std::back_inserter(resultSet));
-    boost::copy(m_blackList, std::back_inserter(resultSet));
-
     removeWhiteRules(resultSet, domainedWhiteList);
 
     return resultSet.empty() ? ""
@@ -87,20 +86,43 @@ put(const ElementHideRule &rule)
     }
 }
 
-void ElementHideRuleBase::
-statistics(std::ostream &os) const
+boost::property_tree::ptree ElementHideRuleBase::
+statistics() const
 {
-    os << "Normal Element Hide Rule\n";
-    os << boost::format { "%20s: %6s\n" } % "Total" % m_blackList.size();
-    os << "\n";
+    boost::property_tree::ptree result, detail;
 
-    os << "Domained Black List\n";
-    m_domainedBlackList.statistics(os);
-    os << "\n";
+    size_t total = 0u;
 
-    os << "Domained White List\n";
-    m_domainedWhiteList.statistics(os);
-    os << "\n";
+    auto num = m_blackList.size();
+    total += num;
+    result.put("Normal element hide rule", num);
+
+    auto stats = m_domainedBlackList.statistics();
+    num = stats.get<size_t>("Number of values");
+    num += stats.get<size_t>("Exception only rules");
+    total += num;
+    result.put("Domained black list", num);
+    detail.put_child("Domained black list", stats);
+
+    stats = m_domainedWhiteList.statistics();
+    num = stats.get<size_t>("Number of values");
+    num += stats.get<size_t>("Exception only rules");
+    total += num;
+    result.put("Domained white list", num);
+    detail.put_child("Domained white list", stats);
+
+    result.put("Total", total);
+    result.put_child("detail", detail);
+
+    return result;
+}
+
+void ElementHideRuleBase::
+clear()
+{
+    m_domainedBlackList.clear();
+    m_domainedWhiteList.clear();
+    m_blackList.clear();
 }
 
 } // namespace adblock

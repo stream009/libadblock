@@ -80,3 +80,21 @@ TEST(SubstringMatchFilterRuleSet, MultiToken)
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(&*rule1, results.front());
 }
+
+TEST(SubstringMatchFilterRuleSet, Clear)
+{
+    const auto &rule1 = make_rule("adblock*jpg"_r);
+    const auto &rule2 = make_rule("adblockplus"_r);
+
+    SubstringMatchFilterRuleSet ruleSet;
+    ruleSet.put(*rule1);
+    ruleSet.put(*rule2);
+
+    auto stats = ruleSet.statistics();
+    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
+
+    ruleSet.clear();
+
+    stats = ruleSet.statistics();
+    EXPECT_EQ(0, stats.get<size_t>("Number of values"));
+}

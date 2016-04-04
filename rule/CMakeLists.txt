@@ -1,4 +1,5 @@
 add_library(rule
+    rule.cpp
     filter_rule.cpp
     element_hide_rule.cpp
     basic_element_hide_rule.cpp

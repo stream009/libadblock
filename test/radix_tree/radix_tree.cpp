@@ -3,7 +3,22 @@
 
 #include <string>
 
+#include <boost/property_tree/json_parser.hpp>
+
 #include <gtest/gtest.h>
+
+struct Node {
+    using Key = std::string;
+    using Value = size_t;
+
+    Node(const Key &key, const Value &value)
+        : m_key { key },
+          m_value { value }
+    {}
+
+    Key m_key;
+    Value m_value;
+};
 
 using RadixTree = radix_tree::RadixTree<std::string, size_t>;
 
@@ -54,7 +69,7 @@ TEST(RadixTree, AppendSuffixNode)
     );
 
     EXPECT_EQ(2, cnt);
-    EXPECT_EQ(2, childKeys.size());
+    ASSERT_EQ(2, childKeys.size());
     EXPECT_EQ("abc", childKeys[0]);
     EXPECT_EQ("d", childKeys[1]);
 }
@@ -280,4 +295,89 @@ TEST(RadixTree, UseRangeAsKey)
         EXPECT_EQ("a"_r, childKeys[0]);
         EXPECT_EQ("de"_r, childKeys[1]);
     }
+}
+
+TEST(RadixTree, Foo)
+{
+    RadixTree t;
+
+    t.insert("adblocks", 0);
+    EXPECT_EQ(2, t.node_count());
+    EXPECT_EQ(1, t.value_count());
+
+    auto cnt = 0u;
+    t.traverse("adblock.org",
+        [&](const RadixTree::NodeType&, const RadixTree::Key &key) {
+            std::cout << key << "\n";
+            ++cnt;
+            return false;
+        }
+    );
+
+    EXPECT_EQ(0, cnt);
+}
+
+TEST(RadixTree, Clear)
+{
+    RadixTree t;
+
+    t.insert("adblocks", 0);
+    t.insert("foo", 0);
+    EXPECT_EQ(3, t.node_count());
+    EXPECT_EQ(2, t.value_count());
+
+    t.clear();
+    EXPECT_EQ(1, t.node_count());
+    EXPECT_EQ(0, t.value_count());
+
+    t.insert("abc", 0);
+    t.insert("abcd", 0);
+    EXPECT_EQ(3, t.node_count());
+    EXPECT_EQ(2, t.value_count());
+
+    t.clear();
+    EXPECT_EQ(1, t.node_count());
+    EXPECT_EQ(0, t.value_count());
+}
+
+TEST(RadixTree, Statistics)
+{
+    RadixTree t;
+
+    t.insert("adblocks", 0);
+    t.insert("foo", 0);
+    t.insert("abc", 0);
+    t.insert("abcd", 0);
+
+    const auto &stats = t.statistics();
+
+    namespace bpt = boost::property_tree;
+
+    EXPECT_NO_THROW(EXPECT_EQ(3, stats.get<size_t>("Number of leaf")));
+    EXPECT_NO_THROW(EXPECT_EQ(3, stats.get<size_t>("Number of branch")));
+    EXPECT_NO_THROW(EXPECT_EQ(6, stats.get<size_t>("Number of nodes")));
+    EXPECT_NO_THROW(EXPECT_EQ(4, stats.get<size_t>("Number of values")));
+
+    bpt::ptree child;
+    ASSERT_NO_THROW(child = stats.get_child("Branches by children"));
+    EXPECT_EQ(2, child.size());
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("1")));
+    EXPECT_NO_THROW(EXPECT_EQ(2, child.get<size_t>("2")));
+
+    ASSERT_NO_THROW(child = stats.get_child("Branches by level"));
+    EXPECT_EQ(3, child.size());
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("0")));
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("1")));
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("2")));
+
+    ASSERT_NO_THROW(child = stats.get_child("Leaves by level"));
+    EXPECT_EQ(3, child.size());
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("1")));
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("2")));
+    EXPECT_NO_THROW(EXPECT_EQ(1, child.get<size_t>("3")));
+
+    ASSERT_NO_THROW(child = stats.get_child("Nodes by values"));
+    EXPECT_EQ(2, child.size());
+    EXPECT_NO_THROW(EXPECT_EQ(2, child.get<size_t>("0")));
+    EXPECT_NO_THROW(EXPECT_EQ(4, child.get<size_t>("1")));
 }

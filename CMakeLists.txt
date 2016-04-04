@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(MAIN "wildcard")
+set(MAIN "libadblock")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/CMakePCHCompiler")
 
@@ -13,9 +13,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})
 link_libraries(${Boost_LIBRARIES} cppnetlib-uri)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fvisibility=hidden")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fvisibility=hidden")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 endif()
@@ -39,10 +42,17 @@ endfunction()
 add_custom_target(global_pch)
 target_precompiled_header(global_pch stable.hpp)
 
+add_library(adblock SHARED
+    api.cpp
+)
+target_link_libraries(adblock
+    main
+)
+
 add_library(main
     filter_rule_base.cpp
     element_hide_rule_base.cpp
-    subscription.cpp
+    filter_set.cpp
     adblock.cpp
 )
 target_link_libraries(main
@@ -61,7 +71,7 @@ add_subdirectory(rule_set)
 add_subdirectory(pattern)
 add_subdirectory(parser)
 add_subdirectory(lib/reg_dom)
-add_subdirectory(test)
+#add_subdirectory(test)
 
 get_property(targets GLOBAL PROPERTY all_targets)
 foreach(target_ ${targets})

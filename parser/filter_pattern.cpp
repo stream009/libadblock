@@ -103,7 +103,7 @@ struct FilterPattern::Impl
 
         //url_char = qi::alnum | char_("%~&/:$#=_,."); //TODO think through
         url_char
-            = qi::graph - '$' | utf8_char;
+            = (qi::graph - '$') | utf8_char;
 
         domain_char
             = qi::alnum | char_("-.") | utf8_char;

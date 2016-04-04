@@ -7,8 +7,10 @@
 #include "rule/exception_filter_rule.hpp"
 
 #include <cassert>
+#include <utility>
 
 #include <boost/format.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
@@ -26,29 +28,51 @@ put(const FilterRule &rule)
     }
 }
 
-bool FilterRuleBase::
+void FilterRuleBase::
+clear()
+{
+    m_normal.clear();
+    m_exception.clear();
+}
+
+std::pair<bool, const FilterRule*> FilterRuleBase::
 query(const Uri &uri, const Context &context) const
 {
     assert(uri.is_valid());
 
-    if (m_exception.query(uri, context)) {
-        return false;
+    if (const auto *rule = m_exception.query(uri, context)) {
+        return std::make_pair(false, rule);
     }
     else {
-        return m_normal.query(uri, context);
+        rule = m_normal.query(uri, context);
+        return std::make_pair(rule != nullptr, rule);
     }
 }
 
-void FilterRuleBase::
-statistics(std::ostream &os) const
+boost::property_tree::ptree FilterRuleBase::
+statistics() const
 {
-    os << "[Basic Match Pattern]\n";
-    m_normal.statistics(os);
-    os << "\n";
+    boost::property_tree::ptree result, detail;
 
-    os << "[Exception Match Pattern]\n";
-    m_exception.statistics(os);
-    os << "\n";
+    size_t total = 0u;
+
+    auto stats = m_normal.statistics();
+    auto num = stats.get<size_t>("Total");
+    total += num;
+    result.put("Basic match pattern", num);
+    detail.put_child("Basic match pattern", stats);
+
+    stats = m_exception.statistics();
+    num = stats.get<size_t>("Total");
+    total += num;
+    result.put("Exception match pattern", num);
+    detail.put_child("Exception match pattern", stats);
+
+    result.put("Total", total);
+
+    result.put_child("detail", detail);
+
+    return result;
 }
 
 
@@ -80,51 +104,80 @@ put(const FilterRule &rule)
     }
 }
 
-bool FilterRuleBase::FilterRuleGroup::
+void FilterRuleBase::FilterRuleGroup::
+clear()
+{
+    m_prefix.clear();
+    m_suffix.clear();
+    m_substring.clear();
+    m_domain.clear();
+    m_regex.clear();
+}
+
+const FilterRule *FilterRuleBase::FilterRuleGroup::
 query(const Uri &uri, const Context &context) const
 {
     assert(uri.is_valid());
 
     for (const auto *rule: m_prefix.query(uri)) {
-        if (rule->match(uri, context)) return true;
+        if (rule->match(uri, context)) return rule;
     }
     for (const auto *rule: m_suffix.query(uri)) {
-        if (rule->match(uri, context)) return true;
+        if (rule->match(uri, context)) return rule;
     }
     for (const auto *rule: m_domain.query(uri)) {
-        if (rule->match(uri, context)) return true;
+        if (rule->match(uri, context)) return rule;
     }
     for (const auto *rule: m_substring.query(uri)) {
-        if (rule->match(uri, context)) return true;
+        if (rule->match(uri, context)) return rule;
     }
     for (const auto *rule: m_regex) {
-        if (rule->match(uri, context)) return true;
+        if (rule->match(uri, context)) return rule;
     }
 
-    return false;
+    return nullptr;
 }
 
-void FilterRuleBase::FilterRuleGroup::
-statistics(std::ostream &os) const
+boost::property_tree::ptree FilterRuleBase::FilterRuleGroup::
+statistics() const
 {
-    os << "Prefix Match Pattern\n";
-    m_prefix.statistics(os);
-    os << "\n";
+    boost::property_tree::ptree result, detail;
 
-    os << "Suffix Match Pattern\n";
-    m_suffix.statistics(os);
-    os << "\n";
+    size_t total = 0u;
 
-    os << "Substring Match Pattern\n";
-    m_substring.statistics(os);
-    os << "\n";
+    auto child = m_prefix.statistics();
+    auto num = child.get<size_t>("Number of values");
+    total += num;
+    result.put("Prefix match pattern", num);
+    detail.put_child("Prefix match pattern", child);
 
-    os << "Domain Match Pattern\n";
-    m_domain.statistics(os);
-    os << "\n";
+    child = m_suffix.statistics();
+    num = child.get<size_t>("Number of values");
+    total += num;
+    result.put("Suffix match pattern", num);
+    detail.put_child("Suffix match pattern", child);
 
-    os << "Regex Pattern\n";
-    os << boost::format { "%20s: %6s\n" } % "Total" % m_regex.size();
+    child = m_substring.statistics();
+    num = child.get<size_t>("Number of values");
+    total += num;
+    result.put("Substring match pattern", num);
+    detail.put_child("Substring match pattern", child);
+
+    child = m_domain.statistics();
+    num = child.get<size_t>("Number of values");
+    total += num;
+    result.put("Domain match pattern", num);
+    detail.put_child("Domain match pattern", child);
+
+    num = m_regex.size();
+    total += num;
+    result.put("Regex pattern", num);
+
+    result.put("Total", total);
+
+    result.put_child("detail", detail);
+
+    return result;
 }
 
 } // namespace adblock

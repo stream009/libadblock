@@ -13,12 +13,17 @@ template<typename NodeT>
 class NodeFactory
 {
 public:
-    NodeT *newNode()
+    NodeT &newNode(const typename NodeT::Key &key)
     {
-        m_store.push_back(boost::make_unique<NodeT>());
+        m_store.push_back(boost::make_unique<NodeT>(key));
         assert(m_store.back());
         assert(m_store.back().get());
-        return m_store.back().get();
+        return *m_store.back();
+    }
+
+    void clear()
+    {
+        m_store.clear();
     }
 
 private:

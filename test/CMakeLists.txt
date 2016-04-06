@@ -96,12 +96,6 @@ target_link_libraries(test_option
 )
 add_test(option test_option)
 
-#add_executable(test_trie
-#    trie/trie.cpp
-#    trie/node.cpp
-#)
-#add_test(trie test_trie)
-
 add_executable(test_radix_tree
     radix_tree/radix_tree.cpp
 )

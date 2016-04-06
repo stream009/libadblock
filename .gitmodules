@@ -1,3 +1,6 @@
 [submodule "cmake/CMakePCHCompiler"]
 	path = cmake/CMakePCHCompiler
 	url = https://github.com/nanoant/CMakePCHCompiler.git
+[submodule "lib/trie"]
+	path = lib/trie
+	url = https://github.com/stream009/trie.git

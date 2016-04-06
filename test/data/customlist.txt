@@ -1,0 +1,14 @@
+[Adblock Plus 2.0]
+@@||duckduckgo.com^$document
+duckduckgo.com#@#.has-ad
+||chatango.com^
+||connect.facebook.net/en_US/all.js
+||anyclip.com^
+||ajax.cloudflare.com^
+||paypal.com^
+||paypalobjects.com^
+||apis.google.com/js/plusone.js
+||google-analytics.com^
+||toptrailers.net^
+||bestories.xyz^
+@@||rapidrar.com^$document

@@ -4,8 +4,9 @@
 #include "type.hpp"
 #include "rule/filter_rule.hpp"
 
-#include <iosfwd>
 #include <vector>
+
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace adblock {
 
@@ -19,15 +20,17 @@ public:
 
     // modifier
     void put(const FilterRule &rule) { doPut(rule); }
+    void clear() { doClear(); }
 
     // query
     FilterRules query(const Uri &uri) const { return doQuery(uri); }
-    void statistics(std::ostream &os) const { return doStatistics(os); }
+    boost::property_tree::ptree statistics() const { return doStatistics(); }
 
 private:
     virtual void doPut(const FilterRule&) = 0;
     virtual FilterRules doQuery(const Uri&) const = 0;
-    virtual void doStatistics(std::ostream&) const = 0;
+    virtual boost::property_tree::ptree doStatistics() const = 0;
+    virtual void doClear() = 0;
 };
 
 } // namespace adblock

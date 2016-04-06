@@ -25,6 +25,7 @@ private:
     StringRange m_pattern;
     mutable boost::optional<boost::regex> m_regEx;
     mutable bool m_regExCaseSensitivity = false;
+    mutable bool m_disabled = false;
 };
 
 } // namespace adblock

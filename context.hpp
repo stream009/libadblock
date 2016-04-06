@@ -21,6 +21,7 @@ public:
     virtual bool fromPlugins() const = 0;
     virtual bool isSubDocument() const = 0;
     virtual bool isPopUp() const = 0;
+    virtual bool isFont() const = 0;
 
     virtual StringRange siteKey() const = 0;
 };

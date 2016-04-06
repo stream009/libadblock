@@ -4,9 +4,10 @@
 #include "type.hpp"
 #include "rule_set/domained_element_hide_rule_set.hpp"
 
-#include <iosfwd>
 #include <string>
 #include <vector>
+
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace adblock {
 
@@ -23,10 +24,11 @@ public:
 public:
     // query
     std::string query(const Uri&) const;
-    void statistics(std::ostream&) const;
+    boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(const ElementHideRule&);
+    void clear();
 
 public:
     DomainedElementHideRuleSet m_domainedBlackList;

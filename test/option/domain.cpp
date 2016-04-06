@@ -109,4 +109,31 @@ TEST(DomainOption, MatchToNegative)
     EXPECT_FALSE(option.match(uri, context));
 }
 
+TEST(DomainOption, OriginIsEmpty)
+{
+    const DomainOption::Domains domains {
+        "adblock.org"_r,
+        "~sub.adblock.org"_r,
+    };
+    const DomainOption option { domains };
+
+    const auto &uri = "http://www.google.com/image.jpg"_u;
+    DomainContext context { ""_u };
+
+    EXPECT_FALSE(option.match(uri, context));
+}
+
+TEST(DomainOption, ExcludeDomainOnlyOption)
+{
+    const DomainOption::Domains domains {
+        "~adblock.org"_r,
+    };
+    const DomainOption option { domains };
+
+    const auto &uri = "http://www.google.com/image.jpg"_u;
+    DomainContext context { "http://www.google.com"_u };
+
+    EXPECT_TRUE(option.match(uri, context));
+}
+
 } // namespace adblock

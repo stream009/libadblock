@@ -6,6 +6,7 @@
 #include <memory>
 
 #include <boost/optional.hpp>
+#include <boost/property_tree/json_parser.hpp> //TODO
 
 #include <gtest/gtest.h>
 
@@ -46,7 +47,9 @@ TEST(ElementHideRuleBase, Domained)
     ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
-    EXPECT_EQ("table, div { display: none !important }", result);
+    // either is ok.
+    //EXPECT_EQ("table, div { display: none !important }", result);
+    EXPECT_EQ("div, table { display: none !important }", result);
 }
 
 TEST(ElementHideRuleBase, ExcludedByExceptionRule)
@@ -79,4 +82,25 @@ TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("div { display: none !important }", result);
+}
+
+TEST(ElementHideRuleBase, Clear)
+{
+    const auto &rule1 =
+                make_rule<BasicElementHideRule>("div"_r, boost::none);
+    const auto &rule2 = make_rule<ExceptionElementHideRule>(
+                                    "table"_r, Domains { "adblock.org"_r });
+    ElementHideRuleBase ruleBase;
+    assert(rule1);
+    ruleBase.put(*rule1);
+    assert(rule2);
+    ruleBase.put(*rule2);
+
+    auto stats = ruleBase.statistics();
+    EXPECT_EQ(2, stats.get<size_t>("Total"));
+
+    ruleBase.clear();
+
+    stats = ruleBase.statistics();
+    EXPECT_EQ(0, stats.get<size_t>("Total"));
 }

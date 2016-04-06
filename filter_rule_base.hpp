@@ -10,6 +10,8 @@
 
 #include <memory>
 
+#include <boost/property_tree/ptree_fwd.hpp>
+
 namespace adblock {
 
 class FilterRuleBase
@@ -18,11 +20,12 @@ private:
     struct FilterRuleGroup
     {
         // query
-        bool query(const Uri&, const Context&) const;
-        void statistics(std::ostream&) const;
+        const FilterRule *query(const Uri&, const Context&) const;
+        boost::property_tree::ptree statistics() const;
 
         // modifier
         void put(const FilterRule&);
+        void clear();
 
         PrefixMatchFilterRuleSet m_prefix;
         SuffixMatchFilterRuleSet m_suffix;
@@ -33,11 +36,13 @@ private:
 
 public:
     // query
-    bool query(const Uri&, const Context&) const;
-    void statistics(std::ostream&) const;
+    std::pair<bool, const FilterRule*>
+        query(const Uri&, const Context&) const;
+    boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(const FilterRule&);
+    void clear();
 
 private:
     FilterRuleGroup m_normal;

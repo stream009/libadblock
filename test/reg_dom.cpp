@@ -3,7 +3,7 @@
 #include <boost/algorithm/string.hpp>
 
 extern "C" {
-#include <reg_dom/regdom.h>
+#include "reg_dom/regdom.h"
 };
 
 TEST(LibRegDom, LoadAndFreeTree)

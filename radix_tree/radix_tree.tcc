@@ -1,45 +1,50 @@
 #include "radix_tree.hpp"
 
 #include <cassert>
+#include <map>
 #include <ostream>
+#include <string>
 
 #include <boost/format.hpp>
 
 namespace radix_tree {
 
-template<typename Key, typename Value>
-inline void RadixTree<Key, Value>::
+template<typename K, typename V>
+inline void RadixTree<K, V>::
 insert(const Key &key, const Value &value)
 {
-    auto* const node = m_root.appendChild(m_factory, key);
-    assert(node);
-    node->appendValue(value);
+    auto &node = m_root.appendChild(m_factory, key);
+    node.appendValue(value);
 }
 
-template<typename Key, typename Value>
-inline size_t RadixTree<Key, Value>::
+template<typename K, typename V>
+inline void RadixTree<K, V>::
+clear()
+{
+    m_root.clear();
+    m_factory.clear();
+}
+
+template<typename K, typename V>
+inline size_t RadixTree<K, V>::
 node_count() const
 {
     auto result = 0u;
     m_root.traverse(
-        [&result](const NodeType&,
-                  const typename NodeType::Key&, const size_t)
-        {
+        [&result](const NodeType&, const size_t) {
             ++result;
         }
     );
     return result;
 }
 
-template<typename Key, typename Value>
-inline size_t RadixTree<Key, Value>::
+template<typename K, typename V>
+inline size_t RadixTree<K, V>::
 value_count() const
 {
     auto result = 0u;
     m_root.traverse(
-        [&result](const NodeType &node,
-                  const typename NodeType::Key&, const size_t)
-        {
+        [&result](const NodeType &node, const size_t) {
             if (node.hasValue()) {
                 result += node.values().size();
             }
@@ -48,19 +53,18 @@ value_count() const
     return result;
 }
 
-template<typename Key, typename Value>
+template<typename K, typename V>
 template<typename Visitor>
-inline void RadixTree<Key, Value>::
+inline void RadixTree<K, V>::
 traverse(const Key &query, Visitor &&visit) const
 {
     auto *node = &m_root;
     auto key = query;
 
     while (!key.empty()) {
-        const auto rv = node->findChild(key);
-        if (rv) {
-            const auto &childKey = rv->first;
-            const auto *child = rv->second;
+        const auto child = node->findPrefixChild(key);
+        if (child) {
+            const auto &childKey = child->key();
             if (visit(*child, childKey)) return;
 
             key = Key { key.begin() + childKey.size(), key.end() };
@@ -72,9 +76,9 @@ traverse(const Key &query, Visitor &&visit) const
     }
 }
 
-template<typename Key, typename Value>
-inline void RadixTree<Key, Value>::
-statistics(std::ostream &os) const
+template<typename K, typename V>
+inline boost::property_tree::ptree RadixTree<K, V>::
+statistics() const
 {
     size_t numBranch = 0, numLeaf = 0;
     std::map<size_t, size_t> childCounts;
@@ -83,9 +87,7 @@ statistics(std::ostream &os) const
     std::map<size_t, size_t> leavesByLevel;
 
     m_root.traverse(
-        [&](const NodeType &node, const typename NodeType::Key&,
-                                  const size_t level)
-        {
+        [&](const NodeType &node, const size_t level) {
             if (node.hasChild()) {
                 ++numBranch;
                 ++childCounts[node.childCount()];
@@ -99,34 +101,39 @@ statistics(std::ostream &os) const
         }
     );
 
-    boost::format fmt { "%21s: %6s\n" };
-    os << fmt % "Number of leaf" % numLeaf
-       << fmt % "Number of branch" % numBranch
-       << fmt % "Total number of nodes" % node_count();
+    namespace bpt = boost::property_tree;
+    bpt::ptree result;
 
-    os << fmt % "Branches by child" % "";
-    boost::format childsFmt { "%2s child" };
+    result.put("Number of leaf", numLeaf);
+    result.put("Number of branch", numBranch);
+    result.put("Number of nodes", node_count());
+    result.put("Number of values", value_count());
+
+    bpt::ptree child;
     for (const auto &item: childCounts) {
-        os << fmt % (childsFmt % item.first) % item.second;
+        child.put(std::to_string(item.first), item.second);
     }
+    result.put_child("Branches by children", child);
 
-    os << fmt % "Branches by level" % "";
-    boost::format levelFmt { "Level %2s" };
+    child.clear();
     for (const auto &item: branchsByLevel) {
-        os << fmt % (levelFmt % item.first) % item.second;
+        child.put(std::to_string(item.first), item.second);
     }
+    result.put_child("Branches by level", child);
 
-    os << fmt % "Leaves by level" % "";
+    child.clear();
     for (const auto &item: leavesByLevel) {
-        os << fmt % (levelFmt % item.first) % item.second;
+        child.put(std::to_string(item.first), item.second);
     }
+    result.put_child("Leaves by level", child);
 
-    os << fmt % "Number of values" % value_count();
-
-    boost::format valueFmt { "%2s value node" };
+    child.clear();
     for (const auto &item: valueCounts) {
-        os << fmt % (valueFmt % item.first) % item.second;
+        child.put(std::to_string(item.first), item.second);
     }
+    result.put_child("Nodes by values", child);
+
+    return result;
 }
 
 } // namespace radix_tree

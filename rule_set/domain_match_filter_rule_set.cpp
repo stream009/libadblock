@@ -27,11 +27,12 @@ doQuery(const Uri &uri) const
 {
     assert(uri.is_valid());
 
+    const auto &host = uri.host_range();
+    if (host.empty()) return {};
+
     std::vector<const FilterRule*> results;
     const auto &inserter = std::back_inserter(results);
 
-    const auto &host = uri.host_range();
-    assert(!host.empty());
     const char *begin = &(*host.begin());
     const char* const end = begin + std::distance(host.begin(), host.end());
 
@@ -53,10 +54,16 @@ doQuery(const Uri &uri) const
     return results;
 }
 
-void DomainMatchFilterRuleSet::
-doStatistics(std::ostream &os) const
+boost::property_tree::ptree DomainMatchFilterRuleSet::
+doStatistics() const
 {
-    m_rules.statistics(os);
+    return m_rules.statistics();
+}
+
+void DomainMatchFilterRuleSet::
+doClear()
+{
+    m_rules.clear();
 }
 
 } // namespace adblock

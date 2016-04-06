@@ -43,14 +43,10 @@ Header()
           > qi::raw[+qi::digit % '.']
           > "]" > qi::eoi;
 
-    using namespace qi::labels;
-    using phx::construct;
-    using phx::val;
-
     qi::on_error<qi::fail>
     (
         start,
-        printParseError(_1, _2, _3, _4)
+        printParseError(qi::_1, qi::_2, qi::_3, qi::_4)
     );
 }
 

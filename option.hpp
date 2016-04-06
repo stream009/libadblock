@@ -14,7 +14,7 @@ class Option
 public:
     virtual ~Option() = default;
 
-    bool match(const Uri &uri, const Context &context) const
+    virtual bool match(const Uri &uri, const Context &context) const
     {
         return doMatch(uri, context);
     }
@@ -35,8 +35,8 @@ operator<<(std::ostream &os, const Option &option)
 class InversibleOption : public Option
 {
 public:
-    // @overload Option
-    bool match(const Uri &uri, const Context &context) const
+    // @override Option
+    bool match(const Uri &uri, const Context &context) const override
     {
         return m_inverse ? !doMatch(uri, context) : doMatch(uri, context);
     }
@@ -228,6 +228,16 @@ class MediaOption : public InversibleOption
     using Base = InversibleOption;
 public:
     MediaOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch(const Uri&, const Context&) const override;
+};
+
+class FontOption : public InversibleOption
+{
+    using Base = InversibleOption;
+public:
+    FontOption(const bool inverse) : Base { inverse } {}
 
 private:
     bool doMatch(const Uri&, const Context&) const override;

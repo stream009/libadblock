@@ -4,3 +4,6 @@
 [submodule "lib/trie"]
 	path = lib/trie
 	url = https://github.com/stream009/trie.git
+[submodule "lib/radix_tree"]
+	path = lib/radix_tree
+	url = https://github.com/stream009/radix_tree.git

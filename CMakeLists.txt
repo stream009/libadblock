@@ -48,6 +48,16 @@ add_library(adblock SHARED
 target_link_libraries(adblock
     main
 )
+set_target_properties(adblock PROPERTIES
+    VERSION 0.0.1
+    SOVERSION 0
+)
+install(TARGETS adblock
+    LIBRARY DESTINATION lib
+)
+install(FILES api.h
+    DESTINATION include/adblock
+)
 
 add_library(main
     filter_rule_base.cpp

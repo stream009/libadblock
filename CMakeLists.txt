@@ -71,7 +71,10 @@ add_subdirectory(rule_set)
 add_subdirectory(pattern)
 add_subdirectory(parser)
 add_subdirectory(lib/reg_dom)
-#add_subdirectory(test)
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
 
 get_property(targets GLOBAL PROPERTY all_targets)
 foreach(target_ ${targets})

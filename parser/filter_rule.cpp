@@ -3,7 +3,6 @@
 #include "filter_option.hpp"
 #include "filter_pattern.hpp"
 #include "make_shared.hpp"
-#include "option.hpp"
 #include "white_list_option.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"

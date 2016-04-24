@@ -25,7 +25,7 @@ TEST(BasicFilterRule, Basic)
 
     const MockContext context {};
     const auto &uri = "http://adblock.org"_u;
-    EXPECT_TRUE(rule.match(uri, context));
+    EXPECT_TRUE(rule.match(uri, &context));
 }
 
 TEST(BasicFilterRule, WithOption)
@@ -49,7 +49,7 @@ TEST(BasicFilterRule, WithOption)
     } context {};
 
     const auto &uri = "http://adblock.org"_u;
-    EXPECT_TRUE(rule.match(uri, context));
+    EXPECT_TRUE(rule.match(uri, &context));
 }
 
 TEST(BasicFilterRule, CaseSensitiveMatch)
@@ -63,11 +63,11 @@ TEST(BasicFilterRule, CaseSensitiveMatch)
     const MockContext context {};
     {
         const auto &uri = "http://adblock.org"_u;
-        EXPECT_FALSE(rule.match(uri, context));
+        EXPECT_FALSE(rule.match(uri, &context));
     }
     {
         const auto &uri = "http://Adblock.org"_u;
-        EXPECT_TRUE(rule.match(uri, context));
+        EXPECT_TRUE(rule.match(uri, &context));
     }
 }
 
@@ -82,7 +82,7 @@ TEST(ExceptionFilterRule, Basic)
 
     const MockContext context {};
     const auto &uri = "http://adblock.org"_u;
-    EXPECT_TRUE(rule.match(uri, context));
+    EXPECT_TRUE(rule.match(uri, &context));
 }
 
 TEST(ExceptionFilterRule, WithOption)
@@ -106,7 +106,7 @@ TEST(ExceptionFilterRule, WithOption)
     } context {};
 
     const auto &uri = "http://adblock.org"_u;
-    EXPECT_TRUE(rule.match(uri, context));
+    EXPECT_TRUE(rule.match(uri, &context));
 }
 
 TEST(ExceptionFilterRule, CaseSensitiveMatch)
@@ -120,11 +120,11 @@ TEST(ExceptionFilterRule, CaseSensitiveMatch)
     const MockContext context {};
     {
         const auto &uri = "http://adblock.org"_u;
-        EXPECT_FALSE(rule.match(uri, context));
+        EXPECT_FALSE(rule.match(uri, &context));
     }
     {
         const auto &uri = "http://Adblock.org"_u;
-        EXPECT_TRUE(rule.match(uri, context));
+        EXPECT_TRUE(rule.match(uri, &context));
     }
 }
 

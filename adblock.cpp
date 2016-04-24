@@ -1,8 +1,11 @@
 #include "adblock.hpp"
 
+#include "option.hpp"
 #include "parser/parser.hpp"
+#include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"
 #include "rule/element_hide_rule.hpp"
+#include "rule/exception_filter_rule.hpp"
 #include "rule/filter_rule.hpp"
 #include "rule/rule.hpp"
 
@@ -103,9 +106,23 @@ void AdBlock::
 registerFilterSetToRuleBases(const FilterSetPtr &filterSet)
 {
     for (const auto &rule: filterSet->rules()) {
-        if (const auto *ptr = dynamic_cast<const FilterRule*>(&rule)) {
+        if (const auto *ptr = dynamic_cast<const BasicFilterRule*>(&rule)) {
             assert(ptr);
             m_filterRuleBase.put(*ptr);
+        }
+        else if (const auto *ptr =
+                          dynamic_cast<const ExceptionFilterRule*>(&rule))
+        {
+            assert(ptr);
+            if (ptr->hasOption<GenericHideOption>()) {
+                m_elementHideRuleBase.putGenericDisablerRule(*ptr);
+            }
+            else if (ptr->hasOption<GenericBlockOption>()) {
+                m_filterRuleBase.putGenericDisablerRule(*ptr);
+            }
+            else {
+                m_filterRuleBase.put(*ptr);
+            }
         }
         else if (const auto *ptr =
                             dynamic_cast<const ElementHideRule*>(&rule))

@@ -15,12 +15,15 @@ struct WhiteListOption::Impl
     {
         using qi::_1;
         using qi::_val;
+        using qi::lit;
         using phx::make_shared;
         using phx::static_cast_;
 
         white_list_option
             =   document_option
               | elemhide_option
+              | generic_hide_option
+              | generic_block_option
               ;
 
         const auto &inverse = qi::char_('~');
@@ -31,10 +34,17 @@ struct WhiteListOption::Impl
         elemhide_option =
             (-inverse >> "elemhide")
             [ _val = make_shared<ElemHideOption>(static_cast_<bool>(_1)) ];
+        generic_hide_option =
+            lit("generichide")
+            [ _val = make_shared<GenericHideOption>() ];
+        generic_block_option =
+            lit("genericblock")
+            [ _val = make_shared<GenericBlockOption>() ];
     }
 
     rule<std::shared_ptr<Option>()>
-        white_list_option, document_option, elemhide_option;
+        white_list_option, document_option, elemhide_option,
+        generic_hide_option, generic_block_option;
 };
 
 WhiteListOption::

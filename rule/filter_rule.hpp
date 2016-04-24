@@ -10,6 +10,7 @@
 #include <memory>
 #include <vector>
 
+#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/optional.hpp>
 
 namespace adblock {
@@ -25,10 +26,24 @@ public:
     using OptionsRange = boost::iterator_range<Options::const_iterator>;
 
 public:
-    virtual bool match(const Uri&, const Context&) const;
+    bool match(const Uri&, const Context* const) const;
 
     const Pattern &pattern() const;
     OptionsRange options() const;
+
+    template<typename OptionT>
+    bool hasOption() const
+    {
+        if (!m_options) return false;
+
+        return boost::algorithm::any_of(*m_options,
+            [](const Options::value_type &option) {
+                assert(option);
+                const auto &theOption = *option;
+                return typeid(theOption) == typeid(OptionT);
+            }
+        );
+    }
 
 protected:
     FilterRule(const std::shared_ptr<Pattern>&,
@@ -42,8 +57,6 @@ private:
     {
         assert(m_pattern);
     }
-
-    bool hasMatchCaseOption() const;
 
 private:
     std::shared_ptr<Pattern> m_pattern;

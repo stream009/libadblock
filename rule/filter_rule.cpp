@@ -18,16 +18,18 @@ FilterRule(const std::shared_ptr<Pattern> &pattern,
 }
 
 bool FilterRule::
-match(const Uri &uri, const Context &context) const
+match(const Uri &uri, const Context* const context) const
 {
-    if (!m_pattern->match(uri, hasMatchCaseOption())) return false;
-    if (!m_options) return true;
+    if (!m_pattern->match(uri, hasOption<MatchCaseOption>())) return false;
 
-    return boost::algorithm::all_of(*m_options,
-        [&uri, &context](const std::shared_ptr<Option> &option) {
-            return option->match(uri, context);
-        }
-    );
+    if (context && m_options) {
+        return boost::algorithm::all_of(*m_options,
+            [&uri, &context](const std::shared_ptr<Option> &option) {
+                return option->match(uri, *context);
+            }
+        );
+    }
+    return true;
 }
 
 const Pattern &FilterRule::
@@ -59,20 +61,6 @@ print(std::ostream &os) const
             os << *option << " ";
         }
     }
-}
-
-bool FilterRule::
-hasMatchCaseOption() const
-{
-    if (!m_options) return false;
-
-    return boost::algorithm::any_of(*m_options,
-        [](const Options::value_type &option) {
-            assert(option);
-            const auto &theOption = *option;
-            return typeid(theOption) == typeid(MatchCaseOption);
-        }
-    );
 }
 
 } // namespace adblock

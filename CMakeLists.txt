@@ -61,6 +61,7 @@ install(FILES api.h
 
 add_library(main
     filter_rule_base.cpp
+    filter_rule_group.cpp
     element_hide_rule_base.cpp
     filter_set.cpp
     adblock.cpp
@@ -88,5 +89,7 @@ endif()
 
 get_property(targets GLOBAL PROPERTY all_targets)
 foreach(target_ ${targets})
-    target_precompiled_header(${target_} stable.hpp REUSE global_pch)
+    if (TARGET ${target_})
+        target_precompiled_header(${target_} stable.hpp REUSE global_pch)
+    endif()
 endforeach()

@@ -89,17 +89,15 @@ add_executable(test_option
     option/domain.cpp
     option/site_key.cpp
     option/popup.cpp
+    option/generic_hide.cpp
+    option/generic_block.cpp
 )
 target_link_libraries(test_option
     option
     reg_dom
+    main
 )
 add_test(option test_option)
-
-add_executable(test_radix_tree
-    radix_tree/radix_tree.cpp
-)
-add_test(radix_tree test_radix_tree)
 
 add_executable(test_api
     api.cpp

@@ -14,7 +14,7 @@ class Option
 public:
     virtual ~Option() = default;
 
-    virtual bool match(const Uri &uri, const Context &context) const
+    bool match(const Uri &uri, const Context &context) const
     {
         return doMatch(uri, context);
     }
@@ -36,9 +36,10 @@ class InversibleOption : public Option
 {
 public:
     // @override Option
-    bool match(const Uri &uri, const Context &context) const override
+    bool doMatch(const Uri &uri, const Context &context) const override final
     {
-        return m_inverse ? !doMatch(uri, context) : doMatch(uri, context);
+        return m_inverse ? !doMatch2(uri, context)
+                         :  doMatch2(uri, context);
     }
 
     bool inverse() const { return m_inverse; }
@@ -47,6 +48,12 @@ protected:
     InversibleOption(const bool inverse)
         : m_inverse { inverse }
     {}
+
+private:
+    virtual bool doMatch2(const Uri &uri, const Context &context) const
+    {
+        return Option::doMatch(uri, context);
+    }
 
 private:
     bool m_inverse;
@@ -59,7 +66,7 @@ public:
     ScriptOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class ImageOption : public InversibleOption
@@ -69,7 +76,7 @@ public:
     ImageOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class StyleSheetOption : public InversibleOption
@@ -79,7 +86,7 @@ public:
     StyleSheetOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class ObjectOption : public InversibleOption
@@ -89,7 +96,7 @@ public:
     ObjectOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class XmlHttpRequestOption : public InversibleOption
@@ -99,7 +106,7 @@ public:
     XmlHttpRequestOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class ObjectSubRequestOption : public InversibleOption
@@ -109,7 +116,7 @@ public:
     ObjectSubRequestOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class SubDocumentOption : public InversibleOption
@@ -119,7 +126,7 @@ public:
     SubDocumentOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class DocumentOption : public InversibleOption //TODO test
@@ -143,7 +150,7 @@ public:
     OtherOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class ThirdPartyOption : public InversibleOption
@@ -153,7 +160,7 @@ public:
     ThirdPartyOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class DomainOption : public Option
@@ -230,7 +237,7 @@ public:
     MediaOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
 
 class FontOption : public InversibleOption
@@ -240,8 +247,12 @@ public:
     FontOption(const bool inverse) : Base { inverse } {}
 
 private:
-    bool doMatch(const Uri&, const Context&) const override;
+    bool doMatch2(const Uri&, const Context&) const override;
 };
+
+class GenericHideOption : public Option {};
+
+class GenericBlockOption : public Option {};
 
 } // namespace adblock
 

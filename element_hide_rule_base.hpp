@@ -2,6 +2,7 @@
 #define ADBLOCK_ELEMENT_HIDE_RULE_BASE_HPP
 
 #include "type.hpp"
+#include "filter_rule_group.hpp"
 #include "rule_set/domained_element_hide_rule_set.hpp"
 
 #include <string>
@@ -28,12 +29,17 @@ public:
 
     // modifier
     void put(const ElementHideRule&);
+    void putGenericDisablerRule(const FilterRule&);
     void clear();
+
+private:
+    bool genericDisabled(const Uri&) const;
 
 public:
     DomainedElementHideRuleSet m_domainedBlackList;
     DomainedElementHideRuleSet m_domainedWhiteList;
     ElementHideRules m_blackList;
+    FilterRuleGroup m_genericDisabled;
 };
 
 } // namespace adblock

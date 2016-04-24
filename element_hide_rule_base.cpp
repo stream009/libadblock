@@ -53,7 +53,11 @@ removeWhiteRules(ElementHideRules &rules, const ElementHideRules &whiteRules)
 std::string ElementHideRuleBase::
 query(const Uri &uri) const
 {
-    ElementHideRules resultSet { m_blackList };
+    ElementHideRules resultSet;
+
+    if (!genericDisabled(uri)) {
+        resultSet = m_blackList;
+    }
 
     const auto &domainedBlackList = m_domainedBlackList.query(uri);
     resultSet.insert(resultSet.end(),
@@ -84,6 +88,12 @@ put(const ElementHideRule &rule)
     else {
         assert(false && "unknown type of element hide rule");
     }
+}
+
+void ElementHideRuleBase::
+putGenericDisablerRule(const FilterRule &rule)
+{
+    m_genericDisabled.put(rule);
 }
 
 boost::property_tree::ptree ElementHideRuleBase::
@@ -123,6 +133,14 @@ clear()
     m_domainedBlackList.clear();
     m_domainedWhiteList.clear();
     m_blackList.clear();
+}
+
+bool ElementHideRuleBase::
+genericDisabled(const Uri &uri) const
+{
+    const auto* const rule = m_genericDisabled.query(uri);
+
+    return rule != nullptr;
 }
 
 } // namespace adblock

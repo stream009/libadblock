@@ -9,49 +9,49 @@
 namespace adblock {
 
 bool ScriptOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromScriptTag();
 }
 
 bool ImageOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromImageTag();
 }
 
 bool StyleSheetOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.isExternalStyleSheet();
 }
 
 bool ObjectOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromObjectTag();
 }
 
 bool XmlHttpRequestOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromXmlHttpRequest();
 }
 
 bool ObjectSubRequestOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromPlugins();
 }
 
 bool SubDocumentOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.isSubDocument();
 }
 
 bool OtherOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return !context.fromScriptTag()
         && !context.fromImageTag()
@@ -69,7 +69,7 @@ doMatch(const Uri&, const Context &context) const
 }
 
 bool ThirdPartyOption::
-doMatch(const Uri &uri, const Context &context) const
+doMatch2(const Uri &uri, const Context &context) const
 {
     DomainDataBase ddb;
 
@@ -160,13 +160,13 @@ doMatch(const Uri&, const Context &context) const
 }
 
 bool MediaOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.fromAudioVideoTag();
 }
 
 bool FontOption::
-doMatch(const Uri&, const Context &context) const
+doMatch2(const Uri&, const Context &context) const
 {
     return context.isFont();
 }

@@ -28,6 +28,7 @@ public:
     bool isSubDocument() const override { return false; }
     bool isPopUp() const override { return false; }
     bool isFont() const override { return false; }
+    bool isWebSocket() const override { return false; }
 
     StringRange siteKey() const override { return m_siteKey; }
 

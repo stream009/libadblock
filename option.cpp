@@ -171,4 +171,10 @@ doMatch2(const Uri&, const Context &context) const
     return context.isFont();
 }
 
+bool WebSocketOption::
+doMatch2(const Uri&, const Context &context) const
+{
+    return context.isWebSocket();
+}
+
 } // namespace adblock

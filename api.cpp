@@ -81,6 +81,11 @@ public:
         return m_cxt.content_type == TYPE_FONT;
     }
 
+    bool isWebSocket() const override
+    {
+        return m_cxt.content_type == TYPE_WEBSOCKET;
+    }
+
     adblock::StringRange siteKey() const override
     {
         return m_siteKey;
@@ -92,7 +97,7 @@ private:
     adblock::StringRange m_siteKey;
 };
 
-static std::vector<std::string> s_strings;
+static std::vector<std::vector<char>> s_strings;
 static std::vector<std::unique_ptr<adblock::AdBlock>> s_adBlocks;
 
 adblock_t
@@ -245,11 +250,17 @@ adblock_element_hide_css(adblock_t adblock,
         }
         auto &&cssStr = adBlock->elementHideCss(uri);
 
-        *css = cssStr.data();
-        *css_len = cssStr.size();
-
-        s_strings.push_back(std::move(cssStr));
-        assert(s_strings.back().data() == *css);
+        if (cssStr.empty()) {
+            *css_len = 0;
+            return;
+        }
+        else {
+            s_strings.emplace_back(cssStr.begin(), cssStr.end());
+            auto const& str = s_strings.back();
+            *css = str.data();
+            *css_len = str.size();
+            return;
+        }
     }
     catch (const std::exception &e) {
         std::cerr << __func__ << ": "
@@ -286,7 +297,7 @@ adblock_statistics(adblock_t adblock, const char **json, size_t *json_len)
     *json = string.data();
     *json_len = string.size();
 
-    s_strings.push_back(std::move(string));
+    s_strings.emplace_back(string.begin(), string.end());
 }
 
 bool
@@ -295,7 +306,7 @@ adblock_free(const char *ptr)
     try {
         const auto begin = s_strings.begin(), end = s_strings.end();
         const auto &it = std::remove_if(begin, end,
-            [ptr](const std::string &str) {
+            [ptr](const std::vector<char> &str) {
                 return str.data() == ptr;
             }
         );

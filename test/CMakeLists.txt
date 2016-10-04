@@ -91,6 +91,7 @@ add_executable(test_option
     option/popup.cpp
     option/generic_hide.cpp
     option/generic_block.cpp
+    option/websocket.cpp
 )
 target_link_libraries(test_option
     option

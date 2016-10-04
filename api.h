@@ -62,6 +62,7 @@ enum content_type {
     TYPE_OBJECT_SUBREQUEST = 12,
     TYPE_FONT = 14,
     TYPE_MEDIA = 15,
+    TYPE_WEBSOCKET = 16,
 };
 
 typedef struct adblock_context

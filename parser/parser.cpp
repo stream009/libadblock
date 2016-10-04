@@ -36,12 +36,14 @@ parse(const StringRange &line)
     const auto end = line.end();
     const auto rv = qi::parse(begin, end, grammar, rule);
     if (!rv) { //TODO proper error reporting
-        std::cout << "Couldn't parse: " << line << "\n";
+        std::cout << "Couldn't parse filter rune: " << line << "\n";
+        return nullptr;
     }
     if (begin != end) {
-        std::cout << "Partial match: " << line << " [";
+        std::cout << "Couldn't parse filter rule: " << line << " [";
         std::copy(begin, end, std::ostream_iterator<char>(std::cout));
         std::cout << "]\n";
+        return nullptr;
     }
 
     return rule;

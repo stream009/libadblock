@@ -32,7 +32,7 @@ operator<<(std::ostream &os, const Option &option)
     return os << typeid(option).name() << " ";
 }
 
-class InversibleOption : public Option
+class InvertibleOption : public Option
 {
 public:
     // @override Option
@@ -45,7 +45,7 @@ public:
     bool inverse() const { return m_inverse; }
 
 protected:
-    InversibleOption(const bool inverse)
+    InvertibleOption(const bool inverse)
         : m_inverse { inverse }
     {}
 
@@ -59,9 +59,9 @@ private:
     bool m_inverse;
 };
 
-class ScriptOption : public InversibleOption
+class ScriptOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ScriptOption(const bool inverse) : Base { inverse } {}
 
@@ -69,9 +69,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class ImageOption : public InversibleOption
+class ImageOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ImageOption(const bool inverse) : Base { inverse } {}
 
@@ -79,9 +79,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class StyleSheetOption : public InversibleOption
+class StyleSheetOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     StyleSheetOption(const bool inverse) : Base { inverse } {}
 
@@ -89,9 +89,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class ObjectOption : public InversibleOption
+class ObjectOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ObjectOption(const bool inverse) : Base { inverse } {}
 
@@ -99,9 +99,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class XmlHttpRequestOption : public InversibleOption
+class XmlHttpRequestOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     XmlHttpRequestOption(const bool inverse) : Base { inverse } {}
 
@@ -109,9 +109,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class ObjectSubRequestOption : public InversibleOption
+class ObjectSubRequestOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ObjectSubRequestOption(const bool inverse) : Base { inverse } {}
 
@@ -119,9 +119,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class SubDocumentOption : public InversibleOption
+class SubDocumentOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     SubDocumentOption(const bool inverse) : Base { inverse } {}
 
@@ -129,23 +129,23 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class DocumentOption : public InversibleOption //TODO test
+class DocumentOption : public InvertibleOption //TODO test
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     DocumentOption(const bool inverse) : Base { inverse } {}
 };
 
-class ElemHideOption : public InversibleOption //TODO test
+class ElemHideOption : public InvertibleOption //TODO test
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ElemHideOption(const bool inverse) : Base { inverse } {}
 };
 
-class OtherOption : public InversibleOption
+class OtherOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     OtherOption(const bool inverse) : Base { inverse } {}
 
@@ -153,9 +153,9 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class ThirdPartyOption : public InversibleOption
+class ThirdPartyOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     ThirdPartyOption(const bool inverse) : Base { inverse } {}
 
@@ -215,9 +215,9 @@ private:
 
 class MatchCaseOption : public Option {};
 
-class CollapseOption : public InversibleOption
+class CollapseOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     CollapseOption(const bool inverse) : Base { inverse } {}
 };
@@ -230,9 +230,9 @@ private:
     bool doMatch(const Uri&, const Context&) const override;
 };
 
-class MediaOption : public InversibleOption
+class MediaOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     MediaOption(const bool inverse) : Base { inverse } {}
 
@@ -240,11 +240,21 @@ private:
     bool doMatch2(const Uri&, const Context&) const override;
 };
 
-class FontOption : public InversibleOption
+class FontOption : public InvertibleOption
 {
-    using Base = InversibleOption;
+    using Base = InvertibleOption;
 public:
     FontOption(const bool inverse) : Base { inverse } {}
+
+private:
+    bool doMatch2(const Uri&, const Context&) const override;
+};
+
+class WebSocketOption : public InvertibleOption
+{
+    using Base = InvertibleOption;
+public:
+    WebSocketOption(const bool inverse) : Base { inverse } {}
 
 private:
     bool doMatch2(const Uri&, const Context&) const override;

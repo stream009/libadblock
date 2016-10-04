@@ -250,6 +250,8 @@ parse(const char *buffer, const size_t size)
         if (line.empty()) continue;
 
         auto &&rule = parser::parse(line);
+        if (!rule) continue;
+
         rule->setFilterSet(*this);
         rule->setLine(line);
 

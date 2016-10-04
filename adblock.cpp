@@ -114,13 +114,17 @@ registerFilterSetToRuleBases(const FilterSetPtr &filterSet)
                           dynamic_cast<const ExceptionFilterRule*>(&rule))
         {
             assert(ptr);
+            bool isDisabler = false;
             if (ptr->hasOption<GenericHideOption>()) {
                 m_elementHideRuleBase.putGenericDisablerRule(*ptr);
+                isDisabler = true;
             }
-            else if (ptr->hasOption<GenericBlockOption>()) {
+            if (ptr->hasOption<GenericBlockOption>()) {
                 m_filterRuleBase.putGenericDisablerRule(*ptr);
+                isDisabler = true;
             }
-            else {
+
+            if (!isDisabler) {
                 m_filterRuleBase.put(*ptr);
             }
         }

@@ -5,6 +5,11 @@
 #include "pattern/regex_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
+#include "option/script_option.hpp"
+#include "option/match_case_option.hpp"
+#include "option/domain_option.hpp"
+#include "option/document_option.hpp"
+#include "option/elem_hide_option.hpp"
 
 #include <memory>
 
@@ -78,6 +83,49 @@ TEST(BasicFilterRuleParser, TwoOptions)
     ASSERT_TRUE(!!scriptOption);
     EXPECT_TRUE(scriptOption->inverse());
 
+    EXPECT_TRUE(!!std::dynamic_pointer_cast<MatchCaseOption>(options[1]));
+}
+
+TEST(BasicFilterRuleParser, EmptyPattern)
+{
+    auto const& line = ""_r;
+    std::shared_ptr<Rule> result;
+    auto it = line.begin();
+    const auto rv = qi::parse(it, line.end(), grammar, result);
+
+    ASSERT_TRUE(rv && it == line.end());
+    const auto &rule = std::dynamic_pointer_cast<BasicFilterRule>(result);
+    EXPECT_TRUE(!!rule);
+
+    const auto &pattern =
+                dynamic_cast<const BasicMatchPattern*>(&(rule->pattern()));
+    EXPECT_TRUE(!!pattern);
+    EXPECT_EQ(""_r, pattern->pattern());
+
+    const auto &options = rule->options();
+    EXPECT_TRUE(options.empty());
+}
+
+TEST(BasicFilterRuleParser, EmptyPatternWithOption)
+{
+    auto const& line = "$domain=foo,match-case"_r;
+    std::shared_ptr<Rule> result;
+    auto it = line.begin();
+    const auto rv = qi::parse(it, line.end(), grammar, result);
+
+    ASSERT_TRUE(rv && it == line.end());
+    const auto &rule = std::dynamic_pointer_cast<BasicFilterRule>(result);
+    EXPECT_TRUE(!!rule);
+
+    const auto &pattern =
+                dynamic_cast<const BasicMatchPattern*>(&(rule->pattern()));
+    EXPECT_TRUE(!!pattern);
+    EXPECT_EQ(""_r, pattern->pattern());
+
+    const auto &options = rule->options();
+    EXPECT_EQ(2, options.size());
+
+    EXPECT_TRUE(!!std::dynamic_pointer_cast<DomainOption>(options[0]));
     EXPECT_TRUE(!!std::dynamic_pointer_cast<MatchCaseOption>(options[1]));
 }
 

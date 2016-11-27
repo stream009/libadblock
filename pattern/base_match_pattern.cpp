@@ -55,7 +55,10 @@ doMatch(const UriRange &target, const TokensRange &tokens) const
     // So, if a pattern ends with '^' and a URI doesn't have
     // a separator on its tail, we copy URI string and append
     // a dummy separator to it.
-    if (tokens.back().back() == '^' && !m_compare(range.back(), '^')) {
+    auto const& lastToken = tokens.back();
+    if ((!lastToken.empty() && lastToken.back() == '^') &&
+        (!range.empty() && !m_compare(range.back(), '^')))
+    {
         uriCopy.emplace(range.begin(), range.end());
         uriCopy->push_back('/');
         range = UriRange { uriCopy->begin(), uriCopy->end() };
@@ -84,6 +87,9 @@ doMatch(const UriRange &target, const TokensRange &tokens) const
     }
 
     for (const auto &token: tokensCopy) {
+        // empty token matches to everything
+        if (token.empty()) return true;
+
         const auto &rv = ba::find(range, ba::first_finder(token, m_compare));
         if (rv.empty()) return false;
 

@@ -202,7 +202,7 @@ TEST(DomainMatchPatternTest, DomainOnly)
 {
     DomainMatchPattern pattern {
         boost::as_literal("www.google.com"),
-        boost::none,
+        boost::as_literal(""),
         false
     };
 

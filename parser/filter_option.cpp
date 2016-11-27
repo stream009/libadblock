@@ -4,6 +4,25 @@
 #include "domain.hpp"
 #include "option.hpp"
 
+#include "option/script_option.hpp"
+#include "option/image_option.hpp"
+#include "option/style_sheet_option.hpp"
+#include "option/xml_http_request_option.hpp"
+#include "option/object_subrequest_option.hpp"
+#include "option/object_option.hpp"
+#include "option/subdocument_option.hpp"
+#include "option/other_option.hpp"
+#include "option/third_party_option.hpp"
+#include "option/collapse_option.hpp"
+#include "option/domain_option.hpp"
+#include "option/site_key_option.hpp"
+#include "option/match_case_option.hpp"
+#include "option/do_not_track_option.hpp"
+#include "option/popup_option.hpp"
+#include "option/media_option.hpp"
+#include "option/font_option.hpp"
+#include "option/web_socket_option.hpp"
+
 #include <boost/spirit/include/phoenix.hpp>
 
 namespace adblock { namespace parser {

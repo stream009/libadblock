@@ -1,10 +1,10 @@
 #include "filter_rule_group.hpp"
 
 #include "context.hpp"
-#include "option.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
+#include "option/domain_option.hpp"
 
 #include <cassert>
 

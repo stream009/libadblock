@@ -294,10 +294,12 @@ adblock_statistics(adblock_t adblock, const char **json, size_t *json_len)
     auto &&string = oss.str();
     assert(!string.empty());
 
-    *json = string.data();
-    *json_len = string.size();
-
     s_strings.emplace_back(string.begin(), string.end());
+
+    auto const& saved = s_strings.back();
+
+    *json = saved.data();
+    *json_len = saved.size();
 }
 
 bool

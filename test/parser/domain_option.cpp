@@ -1,5 +1,6 @@
 #include "parser/filter_option.hpp"
 #include "option.hpp"
+#include "option/domain_option.hpp"
 
 #include <memory>
 

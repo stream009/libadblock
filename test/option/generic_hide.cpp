@@ -1,3 +1,4 @@
+#include "option/generic_hide_option.hpp"
 #include "../mock_context.hpp"
 
 #include "element_hide_rule_base.hpp"

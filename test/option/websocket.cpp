@@ -1,3 +1,4 @@
+#include "option/web_socket_option.hpp"
 #include "../mock_context.hpp"
 
 #include "filter_rule_base.hpp"
@@ -28,12 +29,12 @@ TEST(WebSoket, Elementary)
     rb.put(*rule1);
 
     { // request via normal channel
-        const auto &rv = rb.query("www.adblock.org"_u, NormalContext());
+        const auto &rv = rb.query("http://www.adblock.org"_u, NormalContext());
         EXPECT_FALSE(rv.first);
     }
 
     { // request via WebSocket
-        const auto &rv = rb.query("www.adblock.org"_u, WebSocketContext());
+        const auto &rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
         EXPECT_TRUE(rv.first);
     }
 }
@@ -49,12 +50,12 @@ TEST(WebSoket, Invert)
     rb.put(*rule1);
 
     { // request via normal channel
-        const auto &rv = rb.query("www.adblock.org"_u, NormalContext());
+        const auto &rv = rb.query("http://www.adblock.org"_u, NormalContext());
         EXPECT_TRUE(rv.first);
     }
 
     { // request via WebSocket
-        const auto &rv = rb.query("www.adblock.org"_u, WebSocketContext());
+        const auto &rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
         EXPECT_FALSE(rv.first);
     }
 }

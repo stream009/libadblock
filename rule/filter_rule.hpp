@@ -4,6 +4,7 @@
 #include "context.hpp"
 #include "rule.hpp"
 #include "type.hpp"
+#include "option.hpp"
 
 #include <cassert>
 #include <iosfwd>
@@ -15,7 +16,6 @@
 
 namespace adblock {
 
-class Option;
 class Pattern;
 
 class FilterRule : public Rule
@@ -50,6 +50,9 @@ protected:
                const boost::optional<Options>&);
 
 private:
+    bool matchTypeOptions(Uri const&, Context const&) const;
+    bool matchRestrictionOptions(Uri const&, Context const&) const;
+
     // @override Rule
     void print(std::ostream&) const override;
 

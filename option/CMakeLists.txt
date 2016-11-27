@@ -1,0 +1,22 @@
+add_library(option
+    invertible_option.cpp
+    script_option.cpp
+    image_option.cpp
+    style_sheet_option.cpp
+    object_option.cpp
+    xml_http_request_option.cpp
+    object_subrequest_option.cpp
+    subdocument_option.cpp
+    document_option.cpp
+    elem_hide_option.cpp
+    other_option.cpp
+    third_party_option.cpp
+    domain_option.cpp
+    site_key_option.cpp
+    popup_option.cpp
+    media_option.cpp
+    font_option.cpp
+    web_socket_option.cpp
+    domain_data_base.cpp
+)
+target_link_libraries(option reg_dom)

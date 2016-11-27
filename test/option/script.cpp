@@ -1,4 +1,4 @@
-#include "option.hpp"
+#include "option/script_option.hpp"
 #include "../mock_context.hpp"
 
 #include <boost/spirit/include/qi.hpp>

@@ -10,26 +10,22 @@ namespace adblock {
 
 DomainMatchPattern::
 DomainMatchPattern(const StringRange &domain,
-                   const boost::optional<StringRange> &pattern,
+                   const StringRange &pattern,
                    const bool endMatch/*= false*/)
-    : Base { StringRange { domain.begin(),
-                           pattern ? pattern->end() : domain.end() },
+    : Base { StringRange { domain.begin(), pattern.end() },
              false, endMatch }
 {
     namespace ba = boost::algorithm;
     assert(!domain.empty());
-    assert(pattern ? !pattern->empty() : true);
 
     const auto &trimmedDomain = ba::trim_copy_if(domain, ba::is_any_of("*"));
     ba::split(m_domainTokens, trimmedDomain,
               ba::is_any_of("*"), ba::token_compress_on);
 
-    if (pattern) {
-        const auto &trimmedPattern =
-            ba::trim_copy_if(*pattern, ba::is_any_of("*"));
-        ba::split(m_patternTokens, trimmedPattern,
-                ba::is_any_of("*"), ba::token_compress_on);
-    }
+    const auto &trimmedPattern =
+        ba::trim_copy_if(pattern, ba::is_any_of("*"));
+    ba::split(m_patternTokens, trimmedPattern,
+            ba::is_any_of("*"), ba::token_compress_on);
 }
 
 bool DomainMatchPattern::

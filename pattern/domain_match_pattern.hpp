@@ -14,7 +14,7 @@ class DomainMatchPattern : public BaseMatchPattern
     using Base::Tokens;
 public:
     DomainMatchPattern(const StringRange &domain,
-                       const boost::optional<StringRange> &pattern,
+                       const StringRange &pattern,
                        const bool endMatch = false);
 
 private:

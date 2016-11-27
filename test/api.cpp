@@ -141,8 +141,6 @@ TEST_F(API_F, statistics)
     EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 
-    //std::cout << json << "\n";
-
     adblock_free(json);
 }
 

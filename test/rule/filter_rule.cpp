@@ -1,8 +1,9 @@
 #include "type.hpp"
-#include "option.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 #include "pattern/basic_match_pattern.hpp"
+#include "option/script_option.hpp"
+#include "option/match_case_option.hpp"
 
 #include "../mock_context.hpp"
 

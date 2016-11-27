@@ -1,10 +1,13 @@
 #include "filter_rule.hpp"
 
-#include "option.hpp"
 #include "pattern/pattern.hpp"
+#include "option/match_case_option.hpp"
+#include "option/type_option.hpp"
+#include "option/restriction_option.hpp"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/cxx11/any_of.hpp>
+#include <boost/range/adaptor/filtered.hpp>
 
 namespace adblock {
 
@@ -23,12 +26,10 @@ match(const Uri &uri, const Context* const context) const
     if (!m_pattern->match(uri, hasOption<MatchCaseOption>())) return false;
 
     if (context && m_options) {
-        return boost::algorithm::all_of(*m_options,
-            [&uri, &context](const std::shared_ptr<Option> &option) {
-                return option->match(uri, *context);
-            }
-        );
+        return matchTypeOptions(uri, *context)
+            && matchRestrictionOptions(uri, *context);
     }
+
     return true;
 }
 
@@ -48,6 +49,49 @@ options() const
     else {
         return {};
     }
+}
+
+bool FilterRule::
+matchTypeOptions(Uri const& uri, Context const& context) const
+{
+    assert(m_options);
+
+    namespace ba = boost::adaptors;
+
+    static auto const& isTypeOption =
+        [](std::shared_ptr<Option> const& option) {
+            return !!std::dynamic_pointer_cast<TypeOption>(option);
+        };
+
+    auto const& typeOptions = *m_options | ba::filtered(isTypeOption);
+
+    return typeOptions.empty() ||
+        boost::algorithm::any_of(typeOptions,
+            [&](std::shared_ptr<Option> const& option) {
+                return option->match(uri, context);
+            }
+        );
+}
+
+bool FilterRule::
+matchRestrictionOptions(Uri const& uri, Context const& context) const
+{
+    assert(m_options);
+
+    namespace ba = boost::adaptors;
+
+    static auto const& isRestrictionOption =
+        [](std::shared_ptr<Option> const& option) {
+            return !!std::dynamic_pointer_cast<RestrictionOption>(option);
+        };
+
+    // all_of return ture if range is empty.
+    return boost::algorithm::all_of(
+        *m_options | ba::filtered(isRestrictionOption),
+        [&](std::shared_ptr<Option> const& option) {
+            return option->match(uri, context);
+        }
+    );
 }
 
 void FilterRule::

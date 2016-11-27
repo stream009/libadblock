@@ -33,6 +33,7 @@ public:
     // query
     std::pair<bool, const FilterRule*>
         shouldBlock(const Uri&, const Context&) const;
+
     std::string elementHideCss(const Uri&) const;
 
     const FilterSetRng filterSets() const;

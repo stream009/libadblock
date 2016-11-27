@@ -28,7 +28,7 @@ make_rule(const StringRange &pattern)
 template<typename R>
 static std::shared_ptr<FilterRule>
 make_domain_rule(const StringRange &domain,
-                 const boost::optional<StringRange> &pattern,
+                 const StringRange &pattern,
                  const boost::optional<
                     std::vector<std::shared_ptr<Option>>> &options = boost::none)
 {
@@ -58,7 +58,7 @@ TEST(FilterRuleBase, Domain)
     MockContext cxt;
 
     const auto &rule
-        = make_domain_rule<BasicFilterRule>("adblock.org"_r, boost::none);
+        = make_domain_rule<BasicFilterRule>("adblock.org"_r, ""_r);
     assert(rule);
     rb.put(*rule);
 
@@ -113,7 +113,7 @@ TEST(FilterRuleBase, ExceptionDomain)
     rb.put(*rule1);
 
     const auto &rule2 = make_domain_rule<ExceptionFilterRule>(
-                                        "adblock.org"_r, boost::none);
+                                        "adblock.org"_r, ""_r);
     assert(rule2);
     rb.put(*rule2);
 

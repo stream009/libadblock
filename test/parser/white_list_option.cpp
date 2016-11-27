@@ -1,6 +1,8 @@
 #include "option.hpp"
 #include "type.hpp"
 #include "parser/white_list_option.hpp"
+#include "option/document_option.hpp"
+#include "option/elem_hide_option.hpp"
 
 #include <memory>
 

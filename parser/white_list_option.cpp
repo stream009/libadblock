@@ -3,6 +3,11 @@
 #include "make_shared.hpp"
 #include "option.hpp"
 
+#include "option/document_option.hpp"
+#include "option/elem_hide_option.hpp"
+#include "option/generic_hide_option.hpp"
+#include "option/generic_block_option.hpp"
+
 #include <boost/spirit/include/phoenix.hpp>
 
 namespace adblock { namespace parser {

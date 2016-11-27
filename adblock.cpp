@@ -1,6 +1,5 @@
 #include "adblock.hpp"
 
-#include "option.hpp"
 #include "parser/parser.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"
@@ -8,6 +7,8 @@
 #include "rule/exception_filter_rule.hpp"
 #include "rule/filter_rule.hpp"
 #include "rule/rule.hpp"
+#include "option/generic_hide_option.hpp"
+#include "option/generic_block_option.hpp"
 
 #include <memory>
 

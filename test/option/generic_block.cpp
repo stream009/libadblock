@@ -1,3 +1,4 @@
+#include "option/generic_block_option.hpp"
 #include "../mock_context.hpp"
 
 #include "filter_rule_base.hpp"

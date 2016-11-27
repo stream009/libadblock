@@ -54,7 +54,7 @@ struct FilterPattern::Impl
             ];
 
         domain_match_pattern =
-            ("||" >> domain_string >> -pattern_string >> -(char_('|')))
+            ("||" >> domain_string >> pattern_string >> -(char_('|')))
             [
                 _val = phx::make_shared<DomainMatchPattern>(
                     _1, _2,
@@ -86,7 +86,7 @@ struct FilterPattern::Impl
         pattern_string
             = raw
               [
-                +(
+                *(
                       (pattern_char - '|')
                     | (char_('|') >> !&(end_of_pattern))
                  )

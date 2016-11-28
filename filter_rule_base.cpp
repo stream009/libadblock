@@ -1,6 +1,7 @@
 #include "filter_rule_base.hpp"
 
 #include "context.hpp"
+#include "white_list_query_context.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 
@@ -11,6 +12,59 @@
 #include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
+
+class WhiteListQueryContextAdaptor : public WhiteListQueryContext
+{
+public:
+    WhiteListQueryContextAdaptor(Uri const& uri, StringRange const& siteKey)
+        : m_uri { uri }
+        , m_siteKey { siteKey }
+    {}
+
+    Uri const& origin() const override { return m_uri; }
+    StringRange siteKey() const override { return m_siteKey; }
+
+private:
+    Uri const& m_uri;
+    StringRange const& m_siteKey;
+};
+
+class BlockWhiteListQueryContext : public WhiteListQueryContextAdaptor
+{
+public:
+    using WhiteListQueryContextAdaptor::WhiteListQueryContextAdaptor;
+
+    // @override WhiteListQueryContext
+    bool blockDisablerMode() const override { return true; }
+};
+
+class GenericBlockWhiteListQueryContext : public WhiteListQueryContextAdaptor
+{
+public:
+    using WhiteListQueryContextAdaptor::WhiteListQueryContextAdaptor;
+
+    // @override WhiteListQueryContext
+    bool genericBlockDisablerMode() const override { return true; }
+};
+
+class HideWhiteListQueryContext : public WhiteListQueryContextAdaptor
+{
+public:
+    using WhiteListQueryContextAdaptor::WhiteListQueryContextAdaptor;
+
+    // @override WhiteListQueryContext
+    bool hideDisablerMode() const override { return true; }
+};
+
+class GenericHideWhiteListQueryContext : public WhiteListQueryContextAdaptor
+{
+public:
+    using WhiteListQueryContextAdaptor::WhiteListQueryContextAdaptor;
+
+    // @override WhiteListQueryContext
+    bool genericHideDisablerMode() const override { return true; }
+};
+
 
 void FilterRuleBase::
 put(const FilterRule &rule)
@@ -42,15 +96,47 @@ clear()
 std::pair<bool, const FilterRule*> FilterRuleBase::
 query(const Uri &uri, const Context &context) const
 {
-    assert(uri.is_valid());
-
-    if (const auto *rule = m_exception.query(uri, &context)) {
+    /*if (auto* rule = getFrameBlockDisabler(
+                            context.origin(), context.siteKey()))
+    {
+        return std::make_pair(false, rule);
+    }
+    else*/ if (auto* rule = m_exception.query(uri, &context)) {
         return std::make_pair(false, rule);
     }
     else {
-        rule = m_normal.query(uri, &context, genericDisabled(context));
+        bool const specificOnly = genericDisabled(context); //TODO
+        rule = m_normal.query(uri, &context, specificOnly);
         return std::make_pair(rule != nullptr, rule);
     }
+}
+
+FilterRule const* FilterRuleBase::
+getFrameBlockDisabler(Uri const& uri, StringRange const siteKey) const
+{
+    BlockWhiteListQueryContext const context { uri, siteKey };
+    return m_exception.query(uri, &context);
+}
+
+FilterRule const* FilterRuleBase::
+getGenericBlockDisabler(Uri const& uri, StringRange const siteKey) const
+{
+    GenericBlockWhiteListQueryContext const context { uri, siteKey };
+    return m_exception.query(uri, &context);
+}
+
+FilterRule const* FilterRuleBase::
+getFrameHideDisabler(Uri const& uri, StringRange const siteKey) const
+{
+    HideWhiteListQueryContext const context { uri, siteKey };
+    return m_exception.query(uri, &context);
+}
+
+FilterRule const* FilterRuleBase::
+getGenericHideDisabler(Uri const& uri, StringRange const siteKey) const
+{
+    GenericHideWhiteListQueryContext const context { uri, siteKey };
+    return m_exception.query(uri, &context);
 }
 
 bool FilterRuleBase::

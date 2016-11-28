@@ -47,9 +47,16 @@ TEST(FilterRuleBase, Basic)
     assert(rule);
     rb.put(*rule);
 
-    const auto &rv = rb.query("http://www.adblockplug.org"_u, cxt);
-    ASSERT_TRUE(rv.first);
-    EXPECT_EQ(&*rule, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule));
+    }
+    {
+        auto const& rv = rb.query("http://www.google.com"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == nullptr);
+    }
 }
 
 TEST(FilterRuleBase, Domain)
@@ -62,9 +69,16 @@ TEST(FilterRuleBase, Domain)
     assert(rule);
     rb.put(*rule);
 
-    const auto &rv = rb.query("http://www.adblock.org"_u, cxt);
-    ASSERT_TRUE(rv.first);
-    EXPECT_EQ(&*rule, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule));
+    }
+    {
+        auto const& rv = rb.query("http://www.google.com"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == nullptr);
+    }
 }
 
 TEST(FilterRuleBase, Regex)
@@ -77,9 +91,16 @@ TEST(FilterRuleBase, Regex)
     assert(rule);
     rb.put(*rule);
 
-    const auto &rv = rb.query("http://www.adblock.org"_u, cxt);
-    ASSERT_TRUE(rv.first);
-    EXPECT_EQ(&*rule, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule));
+    }
+    {
+        auto const& rv = rb.query("http://www.google.com"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == nullptr);
+    }
 }
 
 TEST(FilterRuleBase, ExceptionBasic)
@@ -88,18 +109,25 @@ TEST(FilterRuleBase, ExceptionBasic)
     MockContext cxt;
 
     const auto &rule1
-        = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+        = make_rule<BasicFilterRule, BasicMatchPattern>("org"_r);
     assert(rule1);
     rb.put(*rule1);
+
     const auto &rule2 =
-        make_rule<ExceptionFilterRule, BasicMatchPattern>("adblockplus"_r);
+        make_rule<ExceptionFilterRule, BasicMatchPattern>("adblock"_r);
     assert(rule2);
     rb.put(*rule2);
 
-    // match with basic but excluded by exception rule
-    const auto &rv = rb.query("http://www.adblockplus.org"_u, cxt);
-    ASSERT_FALSE(rv.first);
-    EXPECT_EQ(&*rule2, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule2));
+    }
+    {
+        auto const& rv = rb.query("http://www.foobar.org"_u, cxt);
+        EXPECT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule1)) << rv.second;
+    }
 }
 
 TEST(FilterRuleBase, ExceptionDomain)
@@ -108,7 +136,7 @@ TEST(FilterRuleBase, ExceptionDomain)
     MockContext cxt;
 
     const auto &rule1
-        = make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+        = make_rule<BasicFilterRule, BasicMatchPattern>("org"_r);
     assert(rule1);
     rb.put(*rule1);
 
@@ -117,10 +145,16 @@ TEST(FilterRuleBase, ExceptionDomain)
     assert(rule2);
     rb.put(*rule2);
 
-    // match with basic but excluded by exception rule
-    const auto &rv = rb.query("http://www.adblock.org"_u, cxt);
-    ASSERT_FALSE(rv.first);
-    EXPECT_EQ(&*rule2, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule2));
+    }
+    {
+        auto const& rv = rb.query("http://www.foobar.org"_u, cxt);
+        EXPECT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule1)) << rv.second;
+    }
 }
 
 TEST(FilterRuleBase, ExceptionRegex)
@@ -128,48 +162,26 @@ TEST(FilterRuleBase, ExceptionRegex)
     FilterRuleBase rb;
     MockContext cxt;
 
-    const auto &rule1 =
-        make_rule<BasicFilterRule, BasicMatchPattern>("adblock"_r);
+    const auto &rule1
+        = make_rule<BasicFilterRule, BasicMatchPattern>("org"_r);
     assert(rule1);
     rb.put(*rule1);
 
     const auto &rule2 = make_rule<ExceptionFilterRule,
-                            RegexPattern>(R"(.*adblock\.org.*)"_r);
+                            RegexPattern>(R"(.*adblock.*)"_r);
     assert(rule2);
     rb.put(*rule2);
 
-    // match with basic but excluded by exception rule
-    const auto &rv = rb.query("http://www.adblock.org"_u, cxt);
-    ASSERT_FALSE(rv.first);
-    EXPECT_EQ(&*rule2, rv.second);
-}
-
-TEST(FilterRuleBase, InverseOption)
-{
-    FilterRuleBase rb;
-
-    const auto &rule1 =
-        std::dynamic_pointer_cast<FilterRule>(parser::parse("/adsense/*"_r));
-    assert(rule1);
-    rb.put(*rule1);
-
-    const auto &rule2 = std::dynamic_pointer_cast<FilterRule>(
-                parser::parse("@@||www.google.*/adsense/$~third-party"_r));
-    assert(rule2);
-    rb.put(*rule2);
-
-    struct : public MockContext {
-        const Uri &origin() const {
-            static const auto &uri
-                        = "http://doc.qt.io/qt-4.8/qtwebkit-bridge.html"_u;
-            return uri;
-        }
-    } cxt;
-
-    const auto &rv = rb.query(
-            "http://www.google.com/adsense/search/async-ads.js"_u, cxt);
-    ASSERT_TRUE(rv.first) << *rv.second;
-    EXPECT_EQ(&*rule1, rv.second);
+    {
+        auto const& rv = rb.query("http://www.adblock.org"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule2));
+    }
+    {
+        auto const& rv = rb.query("http://www.foobar.org"_u, cxt);
+        EXPECT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule1)) << rv.second;
+    }
 }
 
 TEST(FilterRuleBase, Clear)

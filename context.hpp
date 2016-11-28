@@ -10,21 +10,21 @@ class Context
 public:
     virtual ~Context() = default;
 
-    virtual const Uri &origin() const = 0;
+    virtual Uri const& origin() const = 0;
 
-    virtual bool fromScriptTag() const = 0;
-    virtual bool fromImageTag() const = 0;
-    virtual bool fromAudioVideoTag() const = 0;
-    virtual bool isExternalStyleSheet() const = 0;
-    virtual bool fromObjectTag() const = 0;
-    virtual bool fromXmlHttpRequest() const = 0;
-    virtual bool fromPlugins() const = 0;
-    virtual bool isSubDocument() const = 0;
-    virtual bool isPopUp() const = 0;
-    virtual bool isFont() const = 0;
-    virtual bool isWebSocket() const = 0;
+    virtual bool fromScriptTag() const { return false; }
+    virtual bool fromImageTag() const  { return false; }
+    virtual bool fromAudioVideoTag() const { return false; }
+    virtual bool isExternalStyleSheet() const { return false; }
+    virtual bool fromObjectTag() const { return false; }
+    virtual bool fromXmlHttpRequest() const { return false; }
+    virtual bool fromPlugins() const { return false; }
+    virtual bool isSubDocument() const { return false; }
+    virtual bool isPopUp() const { return false; }
+    virtual bool isFont() const { return false; }
+    virtual bool isWebSocket() const { return false; }
 
-    virtual StringRange siteKey() const = 0;
+    virtual StringRange siteKey() const { return {}; }
 };
 
 } // namespace adblock

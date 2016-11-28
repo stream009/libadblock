@@ -16,11 +16,24 @@ public:
     // query
     std::pair<bool, const FilterRule*>
         query(const Uri&, const Context&) const;
+
+    FilterRule const* getFrameBlockDisabler(
+                         Uri const&, StringRange const siteKey) const;
+    FilterRule const* getGenericBlockDisabler(
+                         Uri const&, StringRange const siteKey) const;
+
+    FilterRule const* getFrameHideDisabler(
+                          Uri const&, StringRange const siteKey) const;
+    FilterRule const* getGenericHideDisabler(
+                          Uri const&, StringRange const siteKey) const;
+
     boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(const FilterRule&);
+
     void putGenericDisablerRule(const FilterRule&);
+
     void clear();
 
 private:

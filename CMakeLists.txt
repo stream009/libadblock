@@ -72,6 +72,7 @@ add_library(main
 target_link_libraries(main
     rule_set
     parser
+    option
 )
 
 add_subdirectory(rule)

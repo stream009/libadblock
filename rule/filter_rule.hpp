@@ -26,23 +26,30 @@ public:
     using OptionsRange = boost::iterator_range<Options::const_iterator>;
 
 public:
-    bool match(const Uri&, const Context* const) const;
+    bool match(Uri const&, Context const&,
+                           bool const specificOnly = false) const;
 
     const Pattern &pattern() const;
-    OptionsRange options() const;
+    Options options() const;
 
     template<typename OptionT>
     bool hasOption() const
     {
-        if (!m_options) return false;
+        namespace ba = boost::algorithm;
 
-        return boost::algorithm::any_of(*m_options,
-            [](const Options::value_type &option) {
-                assert(option);
-                const auto &theOption = *option;
-                return typeid(theOption) == typeid(OptionT);
-            }
-        );
+        auto isSameType =
+            [](std::shared_ptr<Option> const& opt) {
+                assert(opt);
+                auto const& option = *opt;
+                return typeid(option) == typeid(OptionT);
+            };
+
+        auto const rv = ba::any_of(m_typeOptions, isSameType)
+            || ba::any_of(m_restrictionOptions, isSameType)
+            || ba::any_of(m_whiteListOptions, isSameType)
+            || ba::any_of(m_otherOptions, isSameType);
+
+        return rv;
     }
 
 protected:
@@ -50,6 +57,7 @@ protected:
                const boost::optional<Options>&);
 
 private:
+    bool matchWhiteListOptions(Uri const&, Context const&) const;
     bool matchTypeOptions(Uri const&, Context const&) const;
     bool matchRestrictionOptions(Uri const&, Context const&) const;
 
@@ -63,7 +71,12 @@ private:
 
 private:
     std::shared_ptr<Pattern> m_pattern;
-    boost::optional<Options> m_options;
+    Options m_typeOptions;
+    Options m_restrictionOptions;
+    Options m_whiteListOptions;
+    Options m_otherOptions;
+    bool m_caseSensitive = false;
+    bool m_domainSpecific = false;
 };
 
 } // namespace adblock

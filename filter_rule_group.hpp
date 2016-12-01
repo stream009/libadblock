@@ -20,8 +20,9 @@ class FilterRuleGroup
 {
 public:
     // query
-    const FilterRule *query(const Uri&, const Context* const = nullptr,
-                            const bool genericDisabled = false) const;
+    FilterRule const* query(Uri const&, Context const&,
+                            bool const genericDisabled = false) const;
+
     boost::property_tree::ptree statistics() const;
 
     // modifier

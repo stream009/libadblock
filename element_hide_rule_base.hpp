@@ -12,6 +12,8 @@
 
 namespace adblock {
 
+class FilterRuleBase;
+
 class ElementHideRuleBase
 {
 private:
@@ -23,23 +25,22 @@ public:
     using ElementHideRules = std::vector<const ElementHideRule*>;
 
 public:
+    ElementHideRuleBase(FilterRuleBase const&);
+
     // query
-    std::string query(const Uri&) const;
+    std::string query(Uri const&, StringRange const& siteKey = {}) const;
+
     boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(const ElementHideRule&);
-    void putGenericDisablerRule(const FilterRule&);
     void clear();
-
-private:
-    bool genericDisabled(const Uri&) const;
 
 public:
     DomainedElementHideRuleSet m_domainedBlackList;
     DomainedElementHideRuleSet m_domainedWhiteList;
-    ElementHideRules m_blackList;
-    FilterRuleGroup m_genericDisabled;
+    ElementHideRules m_genericBlackList;
+    FilterRuleBase const& m_filterRuleBase;
 };
 
 } // namespace adblock

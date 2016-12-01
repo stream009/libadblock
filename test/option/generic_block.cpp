@@ -36,17 +36,19 @@ TEST(GenericBlock, Elementary)
     { // suppose to be blocked by rule "generic"
         const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
         ASSERT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule1));
     }
 
     const auto &disabler =
         std::dynamic_pointer_cast<FilterRule>(
                             parser::parse("@@||adblock.org$genericblock"_r));
     assert(disabler);
-    rb.putGenericDisablerRule(*disabler);
+    rb.put(*disabler);
 
     { // match with rule "generic" but be excluded by genricblock rule
         const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
         ASSERT_FALSE(rv.first) << *rv.second;
+        EXPECT_TRUE(rv.second == nullptr);
     }
 }
 
@@ -76,11 +78,12 @@ TEST(GenericBlock, OnlyGenericShouldBeHidden)
         std::dynamic_pointer_cast<FilterRule>(
                             parser::parse("@@||adblock.org$genericblock"_r));
     assert(disabler);
-    rb.putGenericDisablerRule(*disabler);
+    rb.put(*disabler);
 
     { // rule1 should be excluded by genericblock but rule2 should remain in effect.
         const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
-        EXPECT_EQ(rv.second, rule2.get());
+        EXPECT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule2)) << *rv.second;
     }
 }
 

@@ -3,13 +3,13 @@
 
 #include "type.hpp"
 #include "invertible_option.hpp"
-#include "type_option.hpp"
+#include "white_list_option.hpp"
 
 namespace adblock {
 
 class Context;
 
-class ElemHideOption : public InvertibleOption, public TypeOption //TODO test
+class ElemHideOption : public InvertibleOption, public WhiteListOption
 {
     using Base = InvertibleOption;
 public:

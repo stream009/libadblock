@@ -81,12 +81,6 @@ put(const FilterRule &rule)
 }
 
 void FilterRuleBase::
-putGenericDisablerRule(const FilterRule &rule)
-{
-    m_genericDisabled.put(rule);
-}
-
-void FilterRuleBase::
 clear()
 {
     m_normal.clear();
@@ -96,17 +90,20 @@ clear()
 std::pair<bool, const FilterRule*> FilterRuleBase::
 query(const Uri &uri, const Context &context) const
 {
-    /*if (auto* rule = getFrameBlockDisabler(
+    if (auto* rule = getFrameBlockDisabler(
                             context.origin(), context.siteKey()))
     {
         return std::make_pair(false, rule);
     }
-    else*/ if (auto* rule = m_exception.query(uri, &context)) {
+    else if (auto* rule = m_exception.query(uri, context)) {
         return std::make_pair(false, rule);
     }
     else {
-        bool const specificOnly = genericDisabled(context); //TODO
-        rule = m_normal.query(uri, &context, specificOnly);
+        auto* const disabler = getGenericBlockDisabler(
+                            context.origin(), context.siteKey());
+
+        rule = m_normal.query(uri, context, disabler != nullptr);
+
         return std::make_pair(rule != nullptr, rule);
     }
 }
@@ -115,37 +112,28 @@ FilterRule const* FilterRuleBase::
 getFrameBlockDisabler(Uri const& uri, StringRange const siteKey) const
 {
     BlockWhiteListQueryContext const context { uri, siteKey };
-    return m_exception.query(uri, &context);
+    return m_exception.query(uri, context);
 }
 
 FilterRule const* FilterRuleBase::
 getGenericBlockDisabler(Uri const& uri, StringRange const siteKey) const
 {
     GenericBlockWhiteListQueryContext const context { uri, siteKey };
-    return m_exception.query(uri, &context);
+    return m_exception.query(uri, context);
 }
 
 FilterRule const* FilterRuleBase::
 getFrameHideDisabler(Uri const& uri, StringRange const siteKey) const
 {
     HideWhiteListQueryContext const context { uri, siteKey };
-    return m_exception.query(uri, &context);
+    return m_exception.query(uri, context);
 }
 
 FilterRule const* FilterRuleBase::
 getGenericHideDisabler(Uri const& uri, StringRange const siteKey) const
 {
     GenericHideWhiteListQueryContext const context { uri, siteKey };
-    return m_exception.query(uri, &context);
-}
-
-bool FilterRuleBase::
-genericDisabled(const Context &context) const
-{
-    const auto &uri = context.origin();
-    const auto* const rule = m_genericDisabled.query(uri, &context);
-
-    return rule != nullptr;
+    return m_exception.query(uri, context);
 }
 
 boost::property_tree::ptree FilterRuleBase::

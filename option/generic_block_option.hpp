@@ -3,20 +3,17 @@
 
 #include "type.hpp"
 #include "option.hpp"
-#include "type_option.hpp"
+#include "white_list_option.hpp"
 
 namespace adblock {
 
 class Context;
 
-class GenericBlockOption : public Option, public TypeOption
+class GenericBlockOption : public Option, public WhiteListOption
 {
 private:
     // @override Option
-    bool doMatch(Uri const&, Context const&) const override
-    {
-        return true;
-    }
+    bool doMatch(Uri const&, Context const&) const override;
 };
 
 } // namespace adblock

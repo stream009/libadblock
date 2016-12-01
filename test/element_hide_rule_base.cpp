@@ -1,4 +1,5 @@
 #include "type.hpp"
+#include "filter_rule_base.hpp"
 #include "element_hide_rule_base.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
@@ -27,7 +28,9 @@ TEST(ElementHideRuleBase, Elementary)
     const auto &rule =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
     assert(rule);
-    ElementHideRuleBase ruleBase;
+
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
     ruleBase.put(*rule);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
@@ -38,12 +41,16 @@ TEST(ElementHideRuleBase, Domained)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
+    assert(rule1);
+
     const auto &rule2 = make_rule<BasicElementHideRule>(
                                     "table"_r, Domains { "adblock.org"_r });
-    ElementHideRuleBase ruleBase;
-    assert(rule1);
-    ruleBase.put(*rule1);
     assert(rule2);
+
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
+
+    ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
@@ -56,12 +63,16 @@ TEST(ElementHideRuleBase, ExcludedByExceptionRule)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
+    assert(rule1);
+
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
                                     "div"_r, Domains { "adblock.org"_r });
-    ElementHideRuleBase ruleBase;
-    assert(rule1);
-    ruleBase.put(*rule1);
     assert(rule2);
+
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
+
+    ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
@@ -72,12 +83,16 @@ TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
+    assert(rule1);
+
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
                                     "table"_r, Domains { "adblock.org"_r });
-    ElementHideRuleBase ruleBase;
-    assert(rule1);
-    ruleBase.put(*rule1);
     assert(rule2);
+
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
+
+    ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
@@ -88,12 +103,16 @@ TEST(ElementHideRuleBase, Clear)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
+    assert(rule1);
+
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
                                     "table"_r, Domains { "adblock.org"_r });
-    ElementHideRuleBase ruleBase;
-    assert(rule1);
-    ruleBase.put(*rule1);
     assert(rule2);
+
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
+
+    ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
     auto stats = ruleBase.statistics();

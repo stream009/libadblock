@@ -18,5 +18,7 @@ add_library(option
     font_option.cpp
     web_socket_option.cpp
     domain_data_base.cpp
+    generic_block_option.cpp
+    generic_hide_option.cpp
 )
 target_link_libraries(option reg_dom)

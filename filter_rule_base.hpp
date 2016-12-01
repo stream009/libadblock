@@ -32,17 +32,11 @@ public:
     // modifier
     void put(const FilterRule&);
 
-    void putGenericDisablerRule(const FilterRule&);
-
     void clear();
-
-private:
-    bool genericDisabled(const Context&) const;
 
 private:
     FilterRuleGroup m_normal;
     FilterRuleGroup m_exception;
-    FilterRuleGroup m_genericDisabled;
 };
 
 } // namespace adblock

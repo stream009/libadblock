@@ -1,6 +1,7 @@
 #include "filter_rule_group.hpp"
 
 #include "context.hpp"
+#include "rule/filter_rule.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
@@ -51,30 +52,25 @@ clear()
 }
 
 const FilterRule *FilterRuleGroup::
-query(const Uri &uri, const Context* const context/* = nullptr */,
-                      const bool genericDisabled/*= false*/) const
+query(Uri const& uri, Context const& context,
+                      bool const specificOnly/*= false*/) const
 {
     assert(uri.is_valid());
 
     for (const auto *rule: m_prefix.query(uri)) {
-        if (genericDisabled && !rule->hasOption<DomainOption>()) continue;
-        if (rule->match(uri, context)) return rule;
+        if (rule->match(uri, context, specificOnly)) return rule;
     }
     for (const auto *rule: m_suffix.query(uri)) {
-        if (genericDisabled && !rule->hasOption<DomainOption>()) continue;
-        if (rule->match(uri, context)) return rule;
+        if (rule->match(uri, context, specificOnly)) return rule;
     }
     for (const auto *rule: m_domain.query(uri)) {
-        if (genericDisabled && !rule->hasOption<DomainOption>()) continue;
-        if (rule->match(uri, context)) return rule;
+        if (rule->match(uri, context, specificOnly)) return rule;
     }
     for (const auto *rule: m_substring.query(uri)) {
-        if (genericDisabled && !rule->hasOption<DomainOption>()) continue;
-        if (rule->match(uri, context)) return rule;
+        if (rule->match(uri, context, specificOnly)) return rule;
     }
     for (const auto *rule: m_regex) {
-        if (genericDisabled && !rule->hasOption<DomainOption>()) continue;
-        if (rule->match(uri, context)) return rule;
+        if (rule->match(uri, context, specificOnly)) return rule;
     }
 
     return nullptr;

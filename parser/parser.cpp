@@ -36,7 +36,7 @@ parse(const StringRange &line)
     const auto end = line.end();
     const auto rv = qi::parse(begin, end, grammar, rule);
     if (!rv) { //TODO proper error reporting
-        std::cout << "Couldn't parse filter rune: " << line << "\n";
+        std::cout << "Couldn't parse filter rule: " << line << "\n";
         return nullptr;
     }
     if (begin != end) {

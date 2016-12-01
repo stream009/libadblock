@@ -92,9 +92,10 @@ add_executable(test_option
     option/generic_hide.cpp
     option/generic_block.cpp
     option/websocket.cpp
+    option/document.cpp
+    option/elem_hide.cpp
 )
 target_link_libraries(test_option
-    option
     reg_dom
     main
 )

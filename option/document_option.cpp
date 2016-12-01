@@ -8,7 +8,8 @@ namespace adblock {
 bool DocumentOption::
 doMatch2(Uri const&, Context const& cxt) const
 {
-    if (this->inverse()) return false;
+    // ignore inversed document option
+    if (this->inverse()) return true; // this true will turn into false
 
     auto* const context = dynamic_cast<WhiteListQueryContext const*>(&cxt);
     if (context == nullptr) return false;

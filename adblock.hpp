@@ -23,12 +23,9 @@ public:
     using FilterSetPtrs = std::vector<FilterSetPtr>;
     using FilterSetRng = boost::indirected_range<const FilterSetPtrs>;
     using Path = boost::filesystem::path;
-public:
-    // modifier
-    void addFilterSet(const Path &filePath);
-    void removeFilterSet(const FilterSet&);
 
-    void reload();
+public:
+    AdBlock();
 
     // query
     std::pair<bool, const FilterRule*>
@@ -39,6 +36,12 @@ public:
     const FilterSetRng filterSets() const;
 
     boost::property_tree::ptree statistics() const;
+
+    // modifier
+    void addFilterSet(const Path &filePath);
+    void removeFilterSet(const FilterSet&);
+
+    void reload();
 
 private:
     void registerFilterSetToRuleBases(const FilterSetPtr&);

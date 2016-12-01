@@ -1,5 +1,6 @@
 #include "element_hide_rule_base.hpp"
 
+#include "filter_rule_base.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 
@@ -50,13 +51,24 @@ removeWhiteRules(ElementHideRules &rules, const ElementHideRules &whiteRules)
 }
 
 
+ElementHideRuleBase::
+ElementHideRuleBase(FilterRuleBase const& filterRuleBase)
+    : m_filterRuleBase { filterRuleBase }
+{}
+
 std::string ElementHideRuleBase::
-query(const Uri &uri) const
+query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
 {
     ElementHideRules resultSet;
 
-    if (!genericDisabled(uri)) {
-        resultSet = m_blackList;
+    auto* const disabler = m_filterRuleBase.getFrameHideDisabler(uri, siteKey);
+    if (disabler != nullptr) return {};
+
+    auto* const genericDisabler
+                       = m_filterRuleBase.getGenericHideDisabler(uri, siteKey);
+
+    if (genericDisabler == nullptr) {
+        resultSet = m_genericBlackList;
     }
 
     const auto &domainedBlackList = m_domainedBlackList.query(uri);
@@ -78,7 +90,7 @@ put(const ElementHideRule &rule)
             m_domainedBlackList.put(rule);
         }
         else {
-            m_blackList.push_back(&rule);
+            m_genericBlackList.push_back(&rule);
         }
     }
     else if (typeid(rule) == typeid(ExceptionElementHideRule)) {
@@ -90,12 +102,6 @@ put(const ElementHideRule &rule)
     }
 }
 
-void ElementHideRuleBase::
-putGenericDisablerRule(const FilterRule &rule)
-{
-    m_genericDisabled.put(rule);
-}
-
 boost::property_tree::ptree ElementHideRuleBase::
 statistics() const
 {
@@ -103,7 +109,7 @@ statistics() const
 
     size_t total = 0u;
 
-    auto num = m_blackList.size();
+    auto num = m_genericBlackList.size();
     total += num;
     result.put("Normal element hide rule", num);
 
@@ -132,15 +138,7 @@ clear()
 {
     m_domainedBlackList.clear();
     m_domainedWhiteList.clear();
-    m_blackList.clear();
-}
-
-bool ElementHideRuleBase::
-genericDisabled(const Uri &uri) const
-{
-    const auto* const rule = m_genericDisabled.query(uri);
-
-    return rule != nullptr;
+    m_genericBlackList.clear();
 }
 
 } // namespace adblock

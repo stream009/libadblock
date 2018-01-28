@@ -58,6 +58,7 @@ enum content_type {
     TYPE_OBJECT = 5,
     TYPE_DOCUMENT = 6,
     TYPE_SUBDOCUMENT = 7,
+    TYPE_PING = 10,
     TYPE_XMLHTTPREQUEST = 11,
     TYPE_OBJECT_SUBREQUEST = 12,
     TYPE_FONT = 14,

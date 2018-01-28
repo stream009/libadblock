@@ -24,7 +24,7 @@ TEST(GenericHide, Elementary)
 
     { // elment hide rule "div" should be applied
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important }", result);
+        ASSERT_EQ("div { display: none !important } ", result);
     }
 
     const auto &disabler =
@@ -59,7 +59,7 @@ TEST(GenericHide, OnlyGenericShouldBeHidden)
 
     { // both generic and domain specific rule should be applied
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div, table { display: none !important }", result) << result;
+        ASSERT_EQ("div, table { display: none !important } ", result) << result;
     }
 
     const auto &disabler =
@@ -70,7 +70,7 @@ TEST(GenericHide, OnlyGenericShouldBeHidden)
 
     { // generic rule should be hidden but domained rule should remain
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("table { display: none !important }", result) << result;
+        ASSERT_EQ("table { display: none !important } ", result) << result;
     }
 }
 

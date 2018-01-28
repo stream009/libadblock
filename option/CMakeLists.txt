@@ -20,5 +20,6 @@ add_library(option
     domain_data_base.cpp
     generic_block_option.cpp
     generic_hide_option.cpp
+    ping_option.cpp
 )
 target_link_libraries(option reg_dom)

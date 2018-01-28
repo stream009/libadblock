@@ -98,6 +98,7 @@ add_executable(test_option
     option/websocket.cpp
     option/document.cpp
     option/elem_hide.cpp
+    option/ping.cpp
 )
 target_link_libraries(test_option
     reg_dom

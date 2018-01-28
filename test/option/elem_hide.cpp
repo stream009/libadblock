@@ -25,7 +25,7 @@ TEST(ElemHide, Elementary)
 
     { // elment hide rule "div" should be applied
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important }", result);
+        ASSERT_EQ("div { display: none !important } ", result);
     }
 
     const auto &disabler =
@@ -54,7 +54,7 @@ TEST(ElemHide, Inversed)
 
     { // elment hide rule "div" should be applied
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important }", result);
+        ASSERT_EQ("div { display: none !important } ", result);
     }
 
     const auto &disabler =
@@ -66,7 +66,7 @@ TEST(ElemHide, Inversed)
 
     { // inverted elemhide rule should be just ignored
         const auto &result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important }", result);
+        ASSERT_EQ("div { display: none !important } ", result);
     }
 }
 

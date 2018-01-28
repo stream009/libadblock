@@ -86,6 +86,11 @@ public:
         return m_cxt.content_type == TYPE_WEBSOCKET;
     }
 
+    bool isPing() const override
+    {
+        return m_cxt.content_type == TYPE_PING;
+    }
+
     adblock::StringRange siteKey() const override
     {
         return m_siteKey;

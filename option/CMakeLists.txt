@@ -21,5 +21,6 @@ add_library(option
     generic_block_option.cpp
     generic_hide_option.cpp
     ping_option.cpp
+    web_rtc_option.cpp
 )
 target_link_libraries(option reg_dom)

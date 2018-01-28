@@ -64,6 +64,7 @@ enum content_type {
     TYPE_FONT = 14,
     TYPE_MEDIA = 15,
     TYPE_WEBSOCKET = 16,
+    TYPE_WEBRTC = 17,
 };
 
 typedef struct adblock_context

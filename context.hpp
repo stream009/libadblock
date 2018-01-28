@@ -24,6 +24,7 @@ public:
     virtual bool isFont() const { return false; }
     virtual bool isWebSocket() const { return false; }
     virtual bool isPing() const { return false; }
+    virtual bool isWebRtc() const { return false; }
 
     virtual StringRange siteKey() const { return {}; }
 };

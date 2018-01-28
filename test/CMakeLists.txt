@@ -99,6 +99,7 @@ add_executable(test_option
     option/document.cpp
     option/elem_hide.cpp
     option/ping.cpp
+    option/webrtc.cpp
 )
 target_link_libraries(test_option
     reg_dom

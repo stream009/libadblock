@@ -23,6 +23,7 @@
 #include "option/font_option.hpp"
 #include "option/web_socket_option.hpp"
 #include "option/ping_option.hpp"
+#include "option/web_rtc_option.hpp"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -60,6 +61,7 @@ struct FilterOption::Impl
               | font_option
               | websocket_option
               | ping_option
+              | webrtc_option
               ;
 
         const auto &inverse = qi::char_('~');
@@ -137,6 +139,11 @@ struct FilterOption::Impl
               [
                 _val = make_shared<PingOption>(static_cast_<bool>(_1))
               ];
+        webrtc_option
+            = (-inverse >> "webrtc")
+              [
+                _val = make_shared<WebRtcOption>(static_cast_<bool>(_1))
+              ];
 
         domain_option_domain
             = qi::raw
@@ -157,7 +164,8 @@ struct FilterOption::Impl
         donottrack_option, image_option, websocket_option,
         stylesheet_option, object_option, xmlhttprequest_option,
         object_subrequest_option, subdocument_option, other_option,
-        third_party_option, collapse_option, popup_option, ping_option;
+        third_party_option, collapse_option, popup_option, ping_option,
+        webrtc_option;
 
     rule<StringRange()> domain_option_domain, base64_public_key;
 

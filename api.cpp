@@ -91,6 +91,11 @@ public:
         return m_cxt.content_type == TYPE_PING;
     }
 
+    bool isWebRtc() const override
+    {
+        return m_cxt.content_type == TYPE_WEBRTC;
+    }
+
     adblock::StringRange siteKey() const override
     {
         return m_siteKey;

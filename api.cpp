@@ -167,11 +167,7 @@ adblock_should_block(adblock_t adblock,
         *reason_len = 0;
 
         const adblock::Uri uri { uri_in_utf8, uri_in_utf8 + len };
-        if (!uri.is_valid()) {
-            std::cerr << __func__ << ": invalid URL: "
-                                  << uri.string() << "\n";
-            return false;
-        }
+
         if (cxt == nullptr) {
             std::cerr << __func__ << ": Null context is given.\n";
             return false;
@@ -196,6 +192,10 @@ adblock_should_block(adblock_t adblock,
         }
 
         return shouldBlock;
+    }
+    catch (adblock::Uri::ParseError const& e) {
+            std::cerr << __func__ << ": invalid URL: " << e.uri() << "\n";
+            return false;
     }
     catch (const std::exception &e) {
         std::cerr << __func__ << ": "
@@ -241,13 +241,7 @@ adblock_element_hide_css(adblock_t adblock,
 
     try {
         const adblock::Uri uri { uri_in_utf8, uri_in_utf8 + uri_len };
-        if (!uri.is_valid()) {
-            std::cerr << __func__ << ": invalid URL: "
-                                  << uri.string() << "\n";
-            *css = nullptr;
-            *css_len = 0;
-            return;
-        }
+
         auto &&cssStr = adBlock->elementHideCss(uri);
 
         if (cssStr.empty()) {
@@ -261,6 +255,12 @@ adblock_element_hide_css(adblock_t adblock,
             *css_len = str.size();
             return;
         }
+    }
+    catch (adblock::Uri::ParseError const& e) {
+            std::cerr << __func__ << ": invalid URL: " << e.uri() << "\n";
+            *css = nullptr;
+            *css_len = 0;
+            return;
     }
     catch (const std::exception &e) {
         std::cerr << __func__ << ": "

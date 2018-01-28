@@ -12,11 +12,14 @@ find_package(Boost 1.57 REQUIRED
                         program_options regex system timer chrono)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})
-link_libraries(${Boost_LIBRARIES} cppnetlib-uri)
+link_libraries(${Boost_LIBRARIES})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fvisibility=hidden")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#set(CMAKE_CXX_STANDARD 17)     # PCHCompiler doesn't support this
+#set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fvisibility=hidden")
@@ -62,6 +65,13 @@ install(FILES api.h
     DESTINATION include/adblock
 )
 
+add_library(uri
+    uri.cpp
+)
+target_link_libraries(uri
+    http_parser
+)
+
 add_library(main
     filter_rule_base.cpp
     filter_rule_group.cpp
@@ -73,6 +83,7 @@ target_link_libraries(main
     rule_set
     parser
     option
+    uri
 )
 
 add_subdirectory(rule)

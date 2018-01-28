@@ -32,6 +32,7 @@ add_executable(test_rule_set
 )
 target_link_libraries(test_rule_set
     rule_set
+    uri
 )
 add_test(rule_set test_rule_set)
 
@@ -42,6 +43,7 @@ add_executable(test_rule
 )
 target_link_libraries(test_rule
     rule
+    uri
 )
 add_test(rule test_rule)
 
@@ -52,6 +54,7 @@ add_executable(test_pattern
 )
 target_link_libraries(test_pattern
     pattern
+    uri
 )
 add_test(pattern test_pattern)
 
@@ -72,6 +75,7 @@ add_executable(test_parser
 )
 target_link_libraries(test_parser
     parser
+    uri
 )
 add_test(parser test_parser)
 

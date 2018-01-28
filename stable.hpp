@@ -13,7 +13,6 @@
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_unique.hpp>
-#include <boost/network/uri.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/phoenix/core/call.hpp>

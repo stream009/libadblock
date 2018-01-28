@@ -17,17 +17,21 @@ joinSelectors(const ElementHideRules &rules, const StringRange &separator)
 {
     if (rules.empty()) return "";
 
-    auto it = rules.begin();
-    const auto end = rules.end();
-    assert(it != end);
-
     std::string result;
     const auto &back_inserter = std::back_inserter(result);
 
-    boost::copy((*it)->cssSelector(), back_inserter);
-    while (++it != end) {
-        boost::copy(separator, back_inserter);
-        boost::copy((*it)->cssSelector(), back_inserter);
+    static const auto unit = 200;
+    auto const len = rules.size();
+
+    for (auto i = 0ul; i < len; i += unit) {
+        boost::copy(rules.at(i)->cssSelector(), back_inserter);
+
+        auto const to = std::min(len, i + unit);
+        for (auto j = i + 1; j < to; ++j) {
+            boost::copy(separator, back_inserter);
+            boost::copy(rules.at(j)->cssSelector(), back_inserter);
+        }
+        result.append(" { display: none !important } ");
     }
 
     return result;
@@ -78,8 +82,7 @@ query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
     const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
     removeWhiteRules(resultSet, domainedWhiteList);
 
-    return resultSet.empty() ? ""
-        : joinSelectors(resultSet, ", "_r) + " { display: none !important }";
+    return joinSelectors(resultSet, ", "_r);
 }
 
 void ElementHideRuleBase::

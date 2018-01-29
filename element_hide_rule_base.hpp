@@ -30,6 +30,9 @@ public:
     // query
     std::string query(Uri const&, StringRange const& siteKey = {}) const;
 
+    ElementHideRules
+        lookupExtendedRule(Uri const&, StringRange const& siteKey = {}) const;
+
     boost::property_tree::ptree statistics() const;
 
     // modifier
@@ -40,6 +43,10 @@ public:
     DomainedElementHideRuleSet m_domainedBlackList;
     DomainedElementHideRuleSet m_domainedWhiteList;
     ElementHideRules m_genericBlackList;
+
+    DomainedElementHideRuleSet m_domainedExtendedBlackList;
+    ElementHideRules m_genericExtendedBlackList;
+
     FilterRuleBase const& m_filterRuleBase;
 };
 

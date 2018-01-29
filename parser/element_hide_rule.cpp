@@ -3,6 +3,7 @@
 #include "make_shared.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
+#include "rule/extended_element_hide_rule.hpp"
 
 namespace adblock { namespace parser {
 
@@ -13,7 +14,7 @@ struct ElementHideRule::Impl
 {
     rule<std::shared_ptr<Rule>()>
         element_hide_rule, basic_element_hide_rule,
-        exception_element_hide_rule;
+        exception_element_hide_rule, extended_element_hide_rule;
 
     rule<StringRange()> domain, include_domain, exclude_domain;;
     rule<std::vector<StringRange>()> domains;
@@ -25,7 +26,9 @@ struct ElementHideRule::Impl
     Impl()
     {
         element_hide_rule = basic_element_hide_rule
-                          | exception_element_hide_rule;
+                          | exception_element_hide_rule
+                          | extended_element_hide_rule
+                          ;
 
         basic_element_hide_rule =
             (-domains >> "##" >> css_selector)
@@ -38,6 +41,12 @@ struct ElementHideRule::Impl
             [
                 qi::_val =
                     phx::make_shared<ExceptionElementHideRule>(qi::_2, qi::_1)
+            ];
+        extended_element_hide_rule =
+            (-domains >> "#?#" >> css_selector)
+            [
+                qi::_val =
+                    phx::make_shared<ExtendedElementHideRule>(qi::_2, qi::_1)
             ];
 
         domains = domain % ',';

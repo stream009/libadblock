@@ -41,6 +41,20 @@ elementHideCss(const Uri &uri) const
     return m_elementHideRuleBase.query(uri); //TODO site key
 }
 
+std::vector<StringRange> AdBlock::
+extendedElementHideSelector(Uri const& uri) const
+{
+    std::vector<StringRange> results;
+
+    auto const& rules = m_elementHideRuleBase.lookupExtendedRule(uri);
+
+    for (auto const& rule: rules) {
+        results.push_back(rule->cssSelector());
+    }
+
+    return results;
+}
+
 const FilterSetRng AdBlock::
 filterSets() const
 {

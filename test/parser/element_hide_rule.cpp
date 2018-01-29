@@ -1,6 +1,7 @@
 #include "parser/element_hide_rule.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
+#include "rule/extended_element_hide_rule.hpp"
 
 #include <memory>
 
@@ -178,3 +179,44 @@ TEST(ExceptionElementHideRuleParser, Wrong2)
 
     EXPECT_FALSE(rv);
 }
+
+// ExtendedElementHideRule
+
+TEST(ExtendedElementHideRuleParser, Basic)
+{
+    auto const& line = boost::as_literal("#?##ad");
+    std::shared_ptr<Rule> result;
+    auto it = line.begin();
+    auto const rv = qi::parse(it, line.end(), grammar, result);
+
+    ASSERT_TRUE(rv && it == line.end());
+    auto const& rule =
+            std::dynamic_pointer_cast<ExtendedElementHideRule>(result);
+    EXPECT_TRUE(!!rule);
+
+    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
+
+    EXPECT_EQ(0, rule->includeDomains().size());
+    EXPECT_EQ(0, rule->excludeDomains().size());
+}
+
+TEST(ExtendedElementHideRuleParser, Wrong1)
+{
+    auto const& line = boost::as_literal("#??##ad");
+    std::shared_ptr<Rule> result;
+    auto it = line.begin();
+    auto const rv = qi::parse(it, line.end(), grammar, result);
+
+    EXPECT_FALSE(rv);
+}
+
+TEST(ExtendedElementHideRuleParser, Wrong2)
+{
+    auto const& line = boost::as_literal("?##ad");
+    std::shared_ptr<Rule> result;
+    auto it = line.begin();
+    auto const rv = qi::parse(it, line.end(), grammar, result);
+
+    EXPECT_FALSE(rv);
+}
+

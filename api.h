@@ -12,6 +12,12 @@ extern "C" {
 
 typedef void * adblock_t;
 
+struct adblock_string_t
+{
+    const char *ptr;
+    size_t length;
+};
+
 struct adblock_context;
 
 adblock_t DLL_API adblock_create();
@@ -39,6 +45,12 @@ void DLL_API
             const char **css, size_t *css_len);
 
 void DLL_API
+adblock_extended_element_hide_selectors(adblock_t adblock,
+        const adblock_string_t *uri_in_utf8,
+        adblock_string_t **out_selectors,
+        size_t* out_selector_count);
+
+void DLL_API
     adblock_reload(adblock_t);
 
 void DLL_API
@@ -46,6 +58,9 @@ void DLL_API
 
 bool DLL_API
     adblock_free(const char *);
+
+bool DLL_API
+    adblock_free_selectors(adblock_string_t *);
 
 /*
  * https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIContentPolicy

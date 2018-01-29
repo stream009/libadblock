@@ -33,6 +33,8 @@ public:
 
     std::string elementHideCss(const Uri&) const;
 
+    std::vector<StringRange> extendedElementHideSelector(Uri const&) const;
+
     const FilterSetRng filterSets() const;
 
     boost::property_tree::ptree statistics() const;

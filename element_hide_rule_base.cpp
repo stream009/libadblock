@@ -3,6 +3,7 @@
 #include "filter_rule_base.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
+#include "rule/extended_element_hide_rule.hpp"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/range/adaptors.hpp>
@@ -85,6 +86,31 @@ query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
     return joinSelectors(resultSet, ", "_r);
 }
 
+ElementHideRules ElementHideRuleBase::
+lookupExtendedRule(Uri const& uri, StringRange const& siteKey/*= {}*/) const
+{
+    ElementHideRules resultSet;
+
+    auto* const disabler = m_filterRuleBase.getFrameHideDisabler(uri, siteKey);
+    if (disabler != nullptr) return {};
+
+    auto* const genericDisabler
+                       = m_filterRuleBase.getGenericHideDisabler(uri, siteKey);
+
+    if (genericDisabler == nullptr) {
+        resultSet = m_genericExtendedBlackList;
+    }
+
+    const auto &domainedBlackList = m_domainedExtendedBlackList.query(uri);
+    resultSet.insert(resultSet.end(),
+                     domainedBlackList.begin(), domainedBlackList.end());
+
+    const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
+    removeWhiteRules(resultSet, domainedWhiteList);
+
+    return resultSet;
+}
+
 void ElementHideRuleBase::
 put(const ElementHideRule &rule)
 {
@@ -99,6 +125,14 @@ put(const ElementHideRule &rule)
     else if (typeid(rule) == typeid(ExceptionElementHideRule)) {
         assert(rule.isDomainRestricted());
         m_domainedWhiteList.put(rule);
+    }
+    else if (typeid(rule) == typeid(ExtendedElementHideRule)) {
+        if (rule.isDomainRestricted()) {
+            m_domainedExtendedBlackList.put(rule);
+        }
+        else {
+            m_genericExtendedBlackList.push_back(&rule);
+        }
     }
     else {
         assert(false && "unknown type of element hide rule");
@@ -130,6 +164,17 @@ statistics() const
     result.put("Domained white list", num);
     detail.put_child("Domained white list", stats);
 
+    num = m_genericExtendedBlackList.size();
+    total += num;
+    result.put("Extended element hide rule", num);
+
+    stats = m_domainedExtendedBlackList.statistics();
+    num = stats.get<size_t>("Number of values");
+    num += stats.get<size_t>("Exception only rules");
+    total += num;
+    result.put("Domained extended black list", num);
+    detail.put_child("Domained extended black list", stats);
+
     result.put("Total", total);
     result.put_child("detail", detail);
 
@@ -142,6 +187,9 @@ clear()
     m_domainedBlackList.clear();
     m_domainedWhiteList.clear();
     m_genericBlackList.clear();
+
+    m_domainedExtendedBlackList.clear();
+    m_genericExtendedBlackList.clear();
 }
 
 } // namespace adblock

@@ -18,7 +18,6 @@ protected:
     using Token = StringRange;
     using Tokens = std::vector<Token>;
     using TokensRange = boost::iterator_range<Tokens::const_iterator>;
-    using UriRange = Uri::const_range_type;
 
 private:
     class Compare
@@ -52,7 +51,7 @@ protected:
                      const bool beginMatch,
                      const bool endMatch);
 
-    bool doMatch(const UriRange&, const TokensRange&) const;
+    bool doMatch(const StringRange&, const TokensRange&) const;
 
 private:
     // @override Pattern

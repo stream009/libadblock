@@ -41,7 +41,7 @@ BaseMatchPattern(const StringRange &range,
 {}
 
 bool BaseMatchPattern::
-doMatch(const UriRange &target, const TokensRange &tokens) const
+doMatch(const StringRange &target, const TokensRange &tokens) const
 {
     namespace ba = boost::algorithm;
 
@@ -61,7 +61,7 @@ doMatch(const UriRange &target, const TokensRange &tokens) const
     {
         uriCopy.emplace(range.begin(), range.end());
         uriCopy->push_back('/');
-        range = UriRange { uriCopy->begin(), uriCopy->end() };
+        range = StringRange { &*uriCopy->begin(), &*uriCopy->end() };
     }
 
     if (m_beginMatch) {

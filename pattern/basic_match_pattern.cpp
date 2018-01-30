@@ -22,7 +22,7 @@ BasicMatchPattern(const StringRange &pattern,
 bool BasicMatchPattern::
 doMatchUrl(const Uri &uri) const
 {
-    const UriRange range { uri.begin(), uri.end() };
+    StringRange const range { &*uri.begin(), &*uri.end() };
     return this->doMatch(range, m_tokens);
 }
 

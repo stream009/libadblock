@@ -18,7 +18,6 @@ public:
     using const_reference = std::string::const_reference;
     using const_pointer = std::string::const_pointer;
     using const_iterator = std::string::const_iterator;
-    using const_range_type = boost::iterator_range<const_iterator>;
 
     class ParseError;
 public:

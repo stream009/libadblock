@@ -43,6 +43,7 @@ public:
     DomainedElementHideRuleSet m_domainedBlackList;
     DomainedElementHideRuleSet m_domainedWhiteList;
     ElementHideRules m_genericBlackList;
+    ElementHideRules m_genericWhiteList;
 
     DomainedElementHideRuleSet m_domainedExtendedBlackList;
     ElementHideRules m_genericExtendedBlackList;

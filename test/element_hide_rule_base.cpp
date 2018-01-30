@@ -4,6 +4,7 @@
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
+#include "parser/parser.hpp"
 
 #include <memory>
 
@@ -77,6 +78,32 @@ TEST(ElementHideRuleBase, ExcludedByExceptionRule)
 
     const auto &result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("", result);
+}
+
+TEST(ElementHideRuleBase, ExcludedByGenericExceptionRule)
+{
+    FilterRuleBase fb;
+    ElementHideRuleBase ruleBase { fb };
+
+    auto const& rule1 = std::dynamic_pointer_cast<ElementHideRule>(
+                                 parser::parse("adblock.org##div"_r));
+    assert(rule1);
+    ruleBase.put(*rule1);
+
+    {
+        auto const& result = ruleBase.query("http://www.adblock.org"_u);
+        EXPECT_EQ("div { display: none !important } ", result);
+    }
+
+    auto const& rule2 = std::dynamic_pointer_cast<ElementHideRule>(
+                                 parser::parse("#@#div"_r));
+    assert(rule2);
+    ruleBase.put(*rule2);
+
+    {
+        auto const& result = ruleBase.query("http://www.adblock.org"_u);
+        EXPECT_EQ("", result);
+    }
 }
 
 TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)

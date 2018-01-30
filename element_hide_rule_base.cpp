@@ -83,6 +83,10 @@ query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
     const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
     removeWhiteRules(resultSet, domainedWhiteList);
 
+    if (genericDisabler == nullptr) {
+        removeWhiteRules(resultSet, m_genericWhiteList);
+    }
+
     return joinSelectors(resultSet, ", "_r);
 }
 
@@ -108,6 +112,10 @@ lookupExtendedRule(Uri const& uri, StringRange const& siteKey/*= {}*/) const
     const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
     removeWhiteRules(resultSet, domainedWhiteList);
 
+    if (genericDisabler == nullptr) {
+        removeWhiteRules(resultSet, m_genericWhiteList);
+    }
+
     return resultSet;
 }
 
@@ -123,8 +131,12 @@ put(const ElementHideRule &rule)
         }
     }
     else if (typeid(rule) == typeid(ExceptionElementHideRule)) {
-        assert(rule.isDomainRestricted());
-        m_domainedWhiteList.put(rule);
+        if (rule.isDomainRestricted()) {
+            m_domainedWhiteList.put(rule);
+        }
+        else {
+            m_genericWhiteList.push_back(&rule);
+        }
     }
     else if (typeid(rule) == typeid(ExtendedElementHideRule)) {
         if (rule.isDomainRestricted()) {

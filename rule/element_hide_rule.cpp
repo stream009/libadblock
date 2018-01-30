@@ -33,7 +33,7 @@ match(const Uri &uri) const
 {
     namespace ba = boost::algorithm;
 
-    const auto &host = uri.host_range();
+    auto const& host = uri.host();
     const auto &domainMatch = [&host] (const StringRange &domain) {
         return ba::ends_with(host, domain);
     };

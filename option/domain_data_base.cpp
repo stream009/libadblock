@@ -22,9 +22,9 @@ query(const Uri &uri) const
 {
     if (!uri.is_valid()) return {};
 
-    const auto &host = uri.host_range();
+    const auto &host = uri.host();
     if (host.empty()) return {};
-    const char *begin = &(*host.begin());
+    const char *begin = host.data();
     const auto len = host.size();
     const char *end = begin + len;
 

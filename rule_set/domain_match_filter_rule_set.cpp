@@ -27,14 +27,14 @@ doQuery(const Uri &uri) const
 {
     assert(uri.is_valid());
 
-    const auto &host = uri.host_range();
+    const auto &host = uri.host();
     if (host.empty()) return {};
 
     std::vector<const FilterRule*> results;
     const auto &inserter = std::back_inserter(results);
 
-    const char *begin = &(*host.begin());
-    const char* const end = begin + std::distance(host.begin(), host.end());
+    const char *begin = host.data();
+    const char* const end = begin + host.size();
 
     for (; begin != end; ++begin) {
         const StringRange suffix { begin, end, };

@@ -66,13 +66,6 @@ public:
     std::string_view fragment() const { return component(Field::Fragment); }
     std::string_view userInfo() const { return component(Field::UserInfo); }
 
-    //TODO wierd but some function still require iterator range
-    const_range_type host_range() const
-    {
-        auto const& h = host();
-        return { h.begin(), h.end() };
-    }
-
 private:
     enum Field {
         Schema = 0, Host = 1, Port = 2, Path = 3, Query = 4, Fragment = 5,

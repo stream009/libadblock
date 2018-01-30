@@ -31,11 +31,13 @@ DomainMatchPattern(const StringRange &domain,
 bool DomainMatchPattern::
 doMatchUrl(const Uri &url) const
 {
-    const auto &host = url.host_range();
-    if (!this->doMatch(host, m_domainTokens)) return false;
+    auto const& host = url.host();
+    UriRange const hostR  { host.begin(), host.end() };
+
+    if (!this->doMatch(hostR, m_domainTokens)) return false;
 
     return this->doMatch(
-            UriRange { host.end(), url.end() }, m_patternTokens);
+            UriRange { hostR.end(), url.end() }, m_patternTokens);
 }
 
 } // namespace adblock

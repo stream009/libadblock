@@ -35,8 +35,8 @@ TEST(ThirdPartyOption, ThirdPartyContext)
     const Uri origin { "http://adblock.org" };
     const ThirdPartyContext context { origin };
 
-    EXPECT_FALSE(option.match(uri, context)) << uri.host_range() << "\n"
-                                            << context.origin().host_range();
+    EXPECT_FALSE(option.match(uri, context)) << uri.host() << "\n"
+                                            << context.origin().host();
 }
 
 TEST(ThirdPartyOption, NotThirdPartyContext)

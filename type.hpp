@@ -21,7 +21,7 @@ operator"" _r(const char *str, const size_t len)
 inline Uri
 operator"" _u(const char *str, const size_t len)
 {
-    return { str, str + len };
+    return { str, len };
 }
 
 } // namespace adblock

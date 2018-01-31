@@ -19,18 +19,14 @@ public:
     using const_pointer = std::string::const_pointer;
     using const_iterator = std::string::const_iterator;
 
-    class ParseError;
 public:
     // constructors
+    Uri() = default;
     Uri(std::string const&);
     Uri(std::string&&);
 
-    Uri(const_pointer const b, const_pointer const e)
-        : Uri { std::string(b, e) }
-    {}
-
-    Uri(const_iterator const b, const_iterator const e)
-        : Uri { std::string(b, e) }
+    Uri(const_pointer const ptr, size_type const size)
+        : Uri { std::string(ptr, size) }
     {}
 
     Uri(Uri const&) = default;
@@ -55,7 +51,7 @@ public:
     const_iterator begin() const { return m_value.begin(); }
     const_iterator end() const { return m_value.end(); }
 
-    bool is_valid() const { return true; }
+    bool is_valid() const { return m_valid; }
 
     std::string_view schema() const { return component(Field::Schema); }
     std::string_view host() const { return component(Field::Host); }
@@ -90,20 +86,8 @@ private:
         uint16_t offset;
         uint16_t length;
     } m_fieldData[Field::Max];
-};
 
-class Uri::ParseError : public std::runtime_error
-{
-public:
-    ParseError(std::string_view const uri)
-        : std::runtime_error { "URI parse error" }
-        , m_uri { uri }
-    {}
-
-    std::string_view uri() const { return m_uri; }
-
-private:
-    std::string m_uri;
+    bool m_valid = false;
 };
 
 } // namespace adblock

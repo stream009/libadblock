@@ -37,10 +37,11 @@ parse()
     ::http_parser_url url;
     ::http_parser_url_init(&url);
 
+    //TODO http_parser_parse_url can't handle about:blank, data:fkgjf etc
     auto const fail =
         ::http_parser_parse_url(m_value.c_str(), m_value.size(), 0, &url);
     if (fail) {
-        throw ParseError { m_value };
+        return;
     }
 
     m_fieldSet = url.field_set;
@@ -50,6 +51,8 @@ parse()
         m_fieldData[i].offset = url.field_data[i].off;
         m_fieldData[i].length = url.field_data[i].len;
     }
+
+    m_valid = true;
 }
 
 

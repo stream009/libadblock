@@ -55,8 +55,8 @@ target_link_libraries(adblock
     main
 )
 set_target_properties(adblock PROPERTIES
-    VERSION 0.0.1
-    SOVERSION 0
+    VERSION 1.0.0
+    SOVERSION 1
 )
 install(TARGETS adblock
     LIBRARY DESTINATION lib

@@ -25,8 +25,6 @@ doPut(const FilterRule &rule)
 DomainMatchFilterRuleSet::FilterRules DomainMatchFilterRuleSet::
 doQuery(const Uri &uri) const
 {
-    assert(uri.is_valid());
-
     const auto &host = uri.host();
     if (host.empty()) return {};
 

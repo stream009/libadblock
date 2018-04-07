@@ -55,7 +55,7 @@ target_link_libraries(adblock
     main
 )
 set_target_properties(adblock PROPERTIES
-    VERSION 1.0.0
+    VERSION 1.0.1
     SOVERSION 1
 )
 install(TARGETS adblock
@@ -63,13 +63,6 @@ install(TARGETS adblock
 )
 install(FILES api.h
     DESTINATION include/adblock
-)
-
-add_library(uri
-    uri.cpp
-)
-target_link_libraries(uri
-    http_parser
 )
 
 add_library(main
@@ -92,6 +85,7 @@ add_subdirectory(pattern)
 add_subdirectory(parser)
 add_subdirectory(option)
 add_subdirectory(lib/reg_dom)
+add_subdirectory(lib/uri)
 
 if(BUILD_TESTING)
     add_subdirectory(test)

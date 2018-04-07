@@ -55,8 +55,6 @@ const FilterRule *FilterRuleGroup::
 query(Uri const& uri, Context const& context,
                       bool const specificOnly/*= false*/) const
 {
-    assert(uri.is_valid());
-
     for (const auto *rule: m_prefix.query(uri)) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }

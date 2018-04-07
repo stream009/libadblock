@@ -20,8 +20,6 @@ DomainDataBase()
 StringRange DomainDataBase::
 query(const Uri &uri) const
 {
-    if (!uri.is_valid()) return {};
-
     const auto &host = uri.host();
     if (host.empty()) return {};
     const char *begin = host.data();

@@ -41,8 +41,6 @@ bool DomainOption::
 doMatch(const Uri&, const Context &context) const
 {
     const auto &origin = context.origin();
-    if (!origin.is_valid()) return false;
-
     const auto &host = origin.host();
     if (host.empty()) return false;
 

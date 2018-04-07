@@ -178,7 +178,6 @@ adblock_should_block(adblock_t adblock,
         *reason_len = 0;
 
         adblock::Uri const uri { uri_in_utf8, len };
-        if (!uri.is_valid()) return false;
 
         if (cxt == nullptr) {
             std::cerr << __func__ << ": Null context is given.\n";
@@ -252,7 +251,6 @@ adblock_element_hide_css(adblock_t adblock,
 
     try {
         adblock::Uri const uri { uri_in_utf8, uri_len };
-        if (!uri.is_valid()) return;
 
         auto &&cssStr = adBlock->elementHideCss(uri);
 
@@ -286,7 +284,6 @@ adblock_extended_element_hide_selectors(adblock_t adblock,
 
     try {
         adblock::Uri const uri { uri_in_utf8->ptr, uri_in_utf8->length };
-        if (!uri.is_valid()) return;
 
         auto results = adBlock->extendedElementHideSelector(uri);
 

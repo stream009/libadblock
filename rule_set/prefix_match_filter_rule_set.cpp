@@ -25,8 +25,6 @@ doPut(const FilterRule &rule)
 PrefixMatchFilterRuleSet::FilterRules PrefixMatchFilterRuleSet::
 doQuery(const Uri &uri) const
 {
-    assert(uri.is_valid());
-
     std::vector<const FilterRule*> results;
     const auto &inserter = std::back_inserter(results);
 

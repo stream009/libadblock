@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_TYPE_HPP
 #define ADBLOCK_TYPE_HPP
 
-#include "uri.hpp"
+#include "uri/uri.hpp"
 
 #include <string>
 
@@ -9,6 +9,7 @@
 
 namespace adblock {
 
+using Uri = uri::uri;
 using StringIterator = const char*;
 using StringRange = boost::iterator_range<StringIterator>;
 

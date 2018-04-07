@@ -24,8 +24,6 @@ doPut(const FilterRule &rule)
 SubstringMatchFilterRuleSet::FilterRules SubstringMatchFilterRuleSet::
 doQuery(const Uri &uri) const
 {
-    assert(uri.is_valid());
-
     FilterRules results;
     const auto &inserter = std::back_inserter(results);
 

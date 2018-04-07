@@ -8,7 +8,7 @@ project(${MAIN} C CXX CXXPCH)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
-	         COMPONENTS filesystem locale iostreams
+	         COMPONENTS filesystem locale
                         program_options regex system timer chrono)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})
@@ -66,6 +66,7 @@ install(FILES api.h
 )
 
 add_library(main
+    file.cpp
     filter_rule_base.cpp
     filter_rule_group.cpp
     element_hide_rule_base.cpp

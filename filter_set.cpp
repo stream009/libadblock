@@ -4,11 +4,11 @@
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
-#include "rule/basic_filter_rule.hpp"
-#include "rule/exception_filter_rule.hpp"
 #include "rule/basic_element_hide_rule.hpp"
-#include "rule/exception_element_hide_rule.hpp"
+#include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"
+#include "rule/exception_element_hide_rule.hpp"
+#include "rule/exception_filter_rule.hpp"
 
 #include <iomanip>
 
@@ -43,34 +43,34 @@ struct Statistics
     ElementHideRule exceptionElementHideRule;
     size_t          commentRule = 0u;
 
-    Statistics(const FilterSet::Rules&);
+    Statistics(FilterSet::Rules const&);
 
 private:
-    void countFilterRule(const adblock::FilterRule &rule,
+    void countFilterRule(adblock::FilterRule const& rule,
                          FilterRule &stats);
-    void countElementHideRule(const adblock::ElementHideRule &rule,
+    void countElementHideRule(adblock::ElementHideRule const& rule,
                               ElementHideRule &stats);
 };
 
 Statistics::
-Statistics(const FilterSet::Rules &rules)
+Statistics(FilterSet::Rules const& rules)
 {
-    for (const auto &ptr: rules) {
+    for (auto const& ptr: rules) {
         assert(ptr);
-        if (const auto *rule = dynamic_cast<BasicFilterRule*>(&*ptr)) {
+        if (auto const* const rule = dynamic_cast<BasicFilterRule*>(&*ptr)) {
             countFilterRule(*rule, basicFilterRule);
         }
-        else if (const auto *rule =
+        else if (auto const* const rule =
                            dynamic_cast<ExceptionFilterRule*>(&*ptr))
         {
             countFilterRule(*rule, exceptionFilterRule);
         }
-        else if (const auto *rule =
+        else if (auto const* const rule =
                             dynamic_cast<BasicElementHideRule*>(&*ptr))
         {
             countElementHideRule(*rule, basicElementHideRule);
         }
-        else if (const auto *rule =
+        else if (auto const* const rule =
                            dynamic_cast<ExceptionElementHideRule*>(&*ptr))
         {
             countElementHideRule(*rule, exceptionElementHideRule);
@@ -85,10 +85,10 @@ Statistics(const FilterSet::Rules &rules)
 }
 
 void Statistics::
-countFilterRule(const adblock::FilterRule &rule, FilterRule &stats)
+countFilterRule(adblock::FilterRule const& rule, FilterRule &stats)
 {
     ++stats.total;
-    const auto &pattern = rule.pattern();
+    auto const& pattern = rule.pattern();
     if (typeid(pattern) == typeid(BasicMatchPattern)) {
         ++stats.basicMatchPattern;
     }
@@ -104,7 +104,7 @@ countFilterRule(const adblock::FilterRule &rule, FilterRule &stats)
 }
 
 void Statistics::
-countElementHideRule(const adblock::ElementHideRule &rule,
+countElementHideRule(adblock::ElementHideRule const& rule,
                     ElementHideRule &stats)
 {
     ++stats.total;
@@ -118,20 +118,16 @@ countElementHideRule(const adblock::ElementHideRule &rule,
 
 } // unnamed namespace
 
-const char*FilterSet::ParseError::
+char const* FilterSet::ParseError::
 what() const noexcept
 {
     return "Error: Fail to parse header.";
 }
 
 FilterSet::
-FilterSet(const Path &filePath)
-    : m_path { filePath }
+FilterSet(Path const& filePath)
+    : m_file { filePath }
 {
-    m_file.open(filePath);
-    assert(m_file.is_open());
-    assert(!m_path.empty());
-
     parse(m_file.data(), m_file.size());
 }
 
@@ -153,18 +149,17 @@ rules() const
     return m_rules | boost::adaptors::indirected;
 }
 
-const StringRange FilterSet::
+StringRange FilterSet::
 supportedVersion()
 {
-    static const StringRange &result = "2.0"_r; //TODO configurable
-    return result;
+    return "2.0"_r; //TODO configurable
 }
 
 void FilterSet::
 reload()
 {
-    m_file.close();
-    m_file.open(m_path);
+    m_file.reload();
+
     m_rules.clear();
     parse(m_file.data(), m_file.size());
 }
@@ -179,8 +174,8 @@ statistics() const
 
     Statistics stats { m_rules };
 
-    const auto &populateFilterRule =
-        [](const Statistics::FilterRule &rule, ptree &tree) {
+    auto const& populateFilterRule =
+        [](Statistics::FilterRule const& rule, ptree &tree) {
             tree.put<size_t>("Basic match pattern", rule.basicMatchPattern);
             tree.put<size_t>("Domain match pattern", rule.domainMatchPattern);
             tree.put<size_t>("Regex pattern", rule.regexPattern);
@@ -189,8 +184,8 @@ statistics() const
     populateFilterRule(stats.basicFilterRule, basicFilterRule);
     populateFilterRule(stats.exceptionFilterRule, exceptionFilterRule);
 
-    const auto &populateElementHideRule =
-        [](const Statistics::ElementHideRule &rule, ptree &tree) {
+    auto const& populateElementHideRule =
+        [](Statistics::ElementHideRule const& rule, ptree &tree) {
             tree.put<size_t>("Basic", rule.basic);
             tree.put<size_t>("Domain restricted", rule.domainRestricted);
             tree.put<size_t>("Total", rule.total);
@@ -219,15 +214,15 @@ statistics() const
 }
 
 void FilterSet::
-parse(const char *buffer, const size_t size)
+parse(char const* const buffer, size_t const size)
 {
-    const auto *begin = buffer, *end = buffer + size;
+    auto const* begin = buffer, *end = buffer + size;
 
     // first line have to be version string
-    const auto it = std::find(begin, end, '\n');
+    auto const it = std::find(begin, end, '\n');
     assert(it != end);
-    const StringRange firstLine { begin, it };
-    const auto &version = parser::parseHeader(firstLine);
+    StringRange const firstLine { begin, it };
+    auto const& version = parser::parseHeader(firstLine);
     if (version.empty()) {
         throw FilterSet::ParseError {};
     }
@@ -237,8 +232,8 @@ parse(const char *buffer, const size_t size)
                   << "Continuing process anyway.\n";
     }
 
-    const StringRange bufferR { it + 1, end };
-    const auto num = boost::count(bufferR, '\n');
+    StringRange const bufferR { it + 1, end };
+    auto const num = boost::count(bufferR, '\n');
     m_rules.reserve(num);
 
     for (auto &&lineIt = boost::make_split_iterator(
@@ -246,7 +241,7 @@ parse(const char *buffer, const size_t size)
          !lineIt.eof();
          ++lineIt)
     {
-        const auto &line = *lineIt;
+        auto const& line = *lineIt;
         if (line.empty()) continue;
 
         auto &&rule = parser::parse(line);

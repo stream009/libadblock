@@ -55,10 +55,22 @@ extendedElementHideSelector(Uri const& uri) const
     return results;
 }
 
-const FilterSetRng AdBlock::
+FilterSetRng AdBlock::
 filterSets() const
 {
     return boost::adaptors::indirect(m_filterSets);
+}
+
+FilterSet* AdBlock::
+filterSet(Path const& filePath) const
+{
+    for (auto const& filterSet: m_filterSets) {
+        if (filterSet->path() == filePath) {
+            return filterSet.get();
+        }
+    }
+
+    return nullptr;
 }
 
 boost::property_tree::ptree AdBlock::

@@ -40,7 +40,6 @@ public:
     bool isBeginMatch() const { return m_beginMatch; }
     bool isEndMatch() const { return m_endMatch; }
 
-    const Token &firstToken() const { return tokens().front(); } //TODO remove
     TokensRange tokens() const { return doTokens(); }
 
 protected:

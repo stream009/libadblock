@@ -29,7 +29,7 @@ uri_components
 
 template<typename T> using non_negative = T;
 
-class parse_error : std::exception
+class parse_error : public std::exception
 {
 public:
     parse_error(std::string_view uri, non_negative<int64_t> location);

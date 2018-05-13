@@ -77,3 +77,19 @@ TEST(FilterSet, DISABLED_EasyList)
 
     //boost::property_tree::write_json(std::cout, filterSet.statistics());
 }
+
+TEST(FilterSet, Parameter)
+{
+    const auto &path = projectRoot / "test/data/easylist.txt";
+    ASSERT_TRUE(bfs::exists(path)) << path;
+    FilterSet filterSet { path };
+
+    auto&& params = filterSet.parameters();
+
+    ASSERT_EQ(5, params.size());
+    EXPECT_EQ("bj7+igbVYKyRz2SssbmDOw"_r, params["Checksum"_r]);
+    EXPECT_EQ("4 days (update frequency)"_r, params["Expires"_r]);
+    EXPECT_EQ("https://easylist.adblockplus.org/"_r, params["Homepage"_r]);
+    EXPECT_EQ("EasyList"_r, params["Title"_r]);
+    EXPECT_EQ("201505100550"_r, params["Version"_r]);
+}

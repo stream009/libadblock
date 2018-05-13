@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/container/flat_map.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/range/adaptor/indirected.hpp>
@@ -27,6 +28,7 @@ public:
     using iterator = StringRange::iterator;
     using const_iterator = StringRange::const_iterator;
     using Path = boost::filesystem::path;
+    using Parameters = boost::container::flat_map<StringRange, StringRange>;
 
     class ParseError;
 
@@ -42,6 +44,8 @@ public:
     Path const& path() const { return m_file.path(); }
 
     // query
+    Parameters parameters() const;
+
     boost::property_tree::ptree statistics() const;
 
     static StringRange supportedVersion();

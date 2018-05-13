@@ -11,6 +11,7 @@
 #include "rule/exception_filter_rule.hpp"
 
 #include <iomanip>
+#include <regex>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -149,6 +150,76 @@ rules() const
     return m_rules | boost::adaptors::indirected;
 }
 
+static StringRange
+ltrim(StringRange const& range)
+{
+    if (range.empty()) return {};
+
+    auto it = range.begin(), end = range.end();
+    for(; it != end; ++it) {
+        if (*it != ' ') break;
+    }
+
+    return { it, end };
+}
+
+static StringRange
+rtrim(StringRange const& range)
+{
+    if (range.empty()) return {};
+
+    auto it = range.end() - 1, begin = range.begin();
+    for(; it != begin; --it) {
+        if (*it != ' ') break;
+    }
+
+    return { begin, it + 1 };
+}
+
+static StringRange
+trim(StringRange const& range)
+{
+    return rtrim(ltrim(range));
+}
+
+FilterSet::Parameters FilterSet::
+parameters() const
+{
+    namespace bad = boost::adaptors;
+
+    Parameters result;
+
+    auto isCommentRule = [](auto const& rule) -> bool {
+        return dynamic_cast<CommentRule*>(rule.get());
+    };
+
+    auto const& commentRules = m_rules | bad::filtered(isCommentRule);
+
+    static std::regex const re {
+        R"(^!\s*(checksum|redirect|homepage|title|version|expires)\s*:\s*(.*)$)",
+        std::regex_constants::icase
+    };
+
+    for (auto const& rule: commentRules) {
+        auto const& line = rule->line();
+
+        std::cmatch m;
+        auto const match = std::regex_match(
+            line.begin(), line.end(),
+            m,
+            re
+        );
+        if (!match) continue;
+
+        StringRange const key { m[1].first, m[1].second };
+        StringRange const value { m[2].first, m[2].second };
+
+        result.emplace(key, trim(value));
+    }
+
+    return result;
+}
+
 StringRange FilterSet::
 supportedVersion()
 {
@@ -227,9 +298,9 @@ parse(char const* const buffer, size_t const size)
         throw FilterSet::ParseError {};
     }
     else if (version != FilterSet::supportedVersion()) {
-        std::cerr << "Warning: Unsupported version of filter set is detected: "
+        std::cerr << "Warning: Unsupported version of filter set has detected: "
                   << version << "\n"
-                  << "Continuing process anyway.\n";
+                  << "Continue processing anyway.\n";
     }
 
     StringRange const bufferR { it + 1, end };

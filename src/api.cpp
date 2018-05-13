@@ -313,6 +313,69 @@ adblock_extended_element_hide_selectors(adblock_t adblock,
     }
 }
 
+bool
+adblock_filter_set_parameters(
+        adblock_t handle,
+        adblock_string_t const* const filepath_in_utf8,
+        adblock_string_t **keys, /* OUT */
+        size_t *keys_len, /* OUT */
+        adblock_string_t **values /* OUT */,
+        size_t *values_len /* OUT */)
+{
+    try {
+        auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
+        if (!adBlock) throw "wrong handle";
+
+        adblock::AdBlock::Path const filePath {
+            filepath_in_utf8->ptr,
+            filepath_in_utf8->ptr + filepath_in_utf8->length };
+
+        auto const& filterSet = adBlock->filterSet(filePath);
+        if (!filterSet) throw "invalid path";
+
+        auto const& params = filterSet->parameters();
+
+        std::vector<adblock_string_t> keysVector;
+        keysVector.reserve(params.size());
+
+        std::vector<adblock_string_t> valuesVector;
+        valuesVector.reserve(params.size());
+
+        for (auto const& [key, value]: params) {
+            keysVector.push_back({ key.begin(), key.size() });
+            valuesVector.push_back({ value.begin(), value.size() });
+        }
+
+        s_stringVectors.push_back(std::move(keysVector));
+        auto& keysRef = s_stringVectors.back();
+
+        *keys = keysRef.data();
+        *keys_len = keysRef.size();
+
+        s_stringVectors.push_back(std::move(valuesVector));
+        auto& valuesRef = s_stringVectors.back();
+
+        *values = valuesRef.data();
+        *values_len = valuesRef.size();
+
+        return true;
+    }
+    catch (std::exception const& e) {
+        std::cerr << __func__ << ": "
+                  << "Uncaught exception: " <<  e.what() << "\n";
+        return false;
+    }
+    catch (char const* const msg) {
+        std::cerr << __func__ << ": "
+                  << "Uncaught exception: " <<  msg << "\n";
+        return false;
+    }
+    catch (...) {
+        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        return false;
+    }
+}
+
 void
 adblock_reload(adblock_t adblock)
 {
@@ -368,10 +431,12 @@ adblock_free(const char *ptr)
     return false;
 }
 
-bool
-adblock_free_selectors(adblock_string_t *ptr)
+static bool
+removeStringVector(adblock_string_t* const ptr)
 {
     try {
+        if (ptr == nullptr) return false;
+
         auto const end = s_stringVectors.end();
         auto const it = std::remove_if(
             s_stringVectors.begin(), end,
@@ -391,4 +456,22 @@ adblock_free_selectors(adblock_string_t *ptr)
         std::cerr << __func__ << ": Unknown exception is caught.\n";
     }
     return false;
+}
+
+bool
+adblock_free_selectors(adblock_string_t* const ptr)
+{
+    return removeStringVector(ptr);
+}
+
+bool
+adblock_free_keys(adblock_string_t* const ptr)
+{
+    return removeStringVector(ptr);
+}
+
+bool
+adblock_free_values(adblock_string_t* const ptr)
+{
+    return removeStringVector(ptr);
 }

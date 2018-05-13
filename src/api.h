@@ -45,10 +45,18 @@ void DLL_API
             const char **css, size_t *css_len);
 
 void DLL_API
-adblock_extended_element_hide_selectors(adblock_t adblock,
-        const adblock_string_t *uri_in_utf8,
-        adblock_string_t **out_selectors,
-        size_t* out_selector_count);
+    adblock_extended_element_hide_selectors(adblock_t adblock,
+            const adblock_string_t *uri_in_utf8,
+            adblock_string_t **out_selectors,
+            size_t* out_selector_count);
+
+bool DLL_API
+    adblock_filter_set_parameters(adblock_t,
+            const adblock_string_t *filepath_in_utf8,
+            adblock_string_t **keys, /* OUT */
+            size_t *keys_len, /* OUT */
+            adblock_string_t **values /* OUT */,
+            size_t *values_len /* OUT */);
 
 void DLL_API
     adblock_reload(adblock_t);
@@ -61,6 +69,12 @@ bool DLL_API
 
 bool DLL_API
     adblock_free_selectors(adblock_string_t *);
+
+bool DLL_API
+    adblock_free_keys(adblock_string_t *);
+
+bool DLL_API
+    adblock_free_values(adblock_string_t *);
 
 /*
  * https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIContentPolicy

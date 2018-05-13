@@ -223,3 +223,57 @@ TEST(API, adblock_destroy)
     const auto rc = ::adblock_destroy(adblock);
     EXPECT_TRUE(rc);
 }
+
+TEST_F(API_F, adblock_filter_set_parameters)
+{
+    const auto &path = projectRoot / "test/data/fanboy.txt";
+    ASSERT_TRUE(bfs::exists(path)) << path;
+
+    ::adblock_add_filter_set(
+                this->adblock(), path.c_str(), strlen(path.c_str()));
+
+
+    ::adblock_string_t fsPath;
+    fsPath.ptr = path.c_str();
+    fsPath.length = path.size();
+
+    ::adblock_string_t *keys = nullptr, *values = nullptr;
+    size_t keys_len = 0, values_len = 0;
+
+    auto ok = ::adblock_filter_set_parameters(
+        this->adblock(),
+        &fsPath,
+        &keys, &keys_len,
+        &values, &values_len
+    );
+
+    ASSERT_TRUE(ok);
+
+    EXPECT_EQ(5, keys_len);
+    EXPECT_EQ(5, values_len);
+
+    auto to_sv = [](auto const& str) {
+        return std::string_view(str.ptr, str.length);
+    };
+
+    EXPECT_EQ("Checksum", to_sv(keys[0]));
+    EXPECT_EQ("PHWcd7bbJ8yORZTp1Xg3pQ", to_sv(values[0]));
+
+    EXPECT_EQ("Expires", to_sv(keys[1]));
+    EXPECT_EQ("4 days (update frequency)", to_sv(values[1]));
+
+    EXPECT_EQ("Homepage", to_sv(keys[2]));
+    EXPECT_EQ("https://easylist.adblockplus.org/", to_sv(values[2]));
+
+    EXPECT_EQ("Title", to_sv(keys[3]));
+    EXPECT_EQ("Fanboy's Social Blocking List", to_sv(values[3]));
+
+    EXPECT_EQ("Version", to_sv(keys[4]));
+    EXPECT_EQ("201505071651", to_sv(values[4]));
+
+    ok = ::adblock_free_keys(keys);
+    EXPECT_TRUE(ok);
+
+    ok = ::adblock_free_values(values);
+    EXPECT_TRUE(ok);
+}

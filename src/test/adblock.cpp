@@ -177,3 +177,18 @@ TEST(AdBlock, RemoveFilterSet)
     //std::cout << afterStats.get<size_t>("Total") << "\n";
     ASSERT_EQ(11922, afterStats.get<size_t>("Total"));
 }
+
+TEST(AdBlock, FilterSet)
+{
+    AdBlock adBlock;
+
+    const auto &path = projectRoot / "test/data/easylist.txt";
+    ASSERT_TRUE(bfs::exists(path)) << path;
+
+    adBlock.addFilterSet(path);
+
+    auto* const fs = adBlock.filterSet(path);
+    ASSERT_TRUE(fs);
+
+    EXPECT_EQ(path, fs->path());
+}

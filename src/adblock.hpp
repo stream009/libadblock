@@ -35,7 +35,8 @@ public:
 
     std::vector<StringRange> extendedElementHideSelector(Uri const&) const;
 
-    const FilterSetRng filterSets() const;
+    FilterSetRng filterSets() const;
+    FilterSet* filterSet(Path const& filePath) const;
 
     boost::property_tree::ptree statistics() const;
 

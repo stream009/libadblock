@@ -1,4 +1,5 @@
 #include "api.h"
+#include "type.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -11,6 +12,32 @@
 
 namespace bfs = boost::filesystem;
 static const bfs::path projectRoot { PROJECT_ROOT };
+
+class FilterFile : public std::ofstream
+{
+public:
+    FilterFile()
+        : m_path { std::tmpnam(nullptr) }
+    {
+        this->open(m_path);
+        if (this->fail()) {
+            std::cout << m_path << "\n";
+            throw std::runtime_error { "file open error" };
+        }
+
+        *this << "[Adblock Plus 2.0]\n";
+    }
+
+    ~FilterFile()
+    {
+        bfs::remove(m_path);
+    }
+
+    auto const& path() const { return m_path; }
+
+private:
+    bfs::path m_path;
+};
 
 class API_F : public ::testing::Test
 {
@@ -277,3 +304,37 @@ TEST_F(API_F, adblock_filter_set_parameters)
     ok = ::adblock_free_values(values);
     EXPECT_TRUE(ok);
 }
+
+TEST(API, ContentSecurityPolicy)
+{
+    using namespace adblock;
+    FilterFile fs;
+
+    fs << "||adblock.com$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
+    fs << "@@||adblock.com/search=$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
+    fs << std::flush;
+
+    auto const& path = fs.path().string();
+    auto const uri = "http://www.adblock.com"_r;
+
+    auto to_string_view = [](auto const& str) {
+        return std::string_view(str.ptr, str.length);
+    };
+
+    auto const handle = adblock_create();
+
+    adblock_add_filter_set(handle, path.data(), path.size());
+
+    adblock_string_t u;
+    u.ptr = uri.begin(); u.length = uri.size();
+
+    adblock_string_t p;
+    p.ptr = nullptr; p.length = 0;
+
+    adblock_content_security_policy(handle, &u, &p);
+
+    ASSERT_TRUE(p.ptr != nullptr);
+    ASSERT_TRUE(p.length != 0);
+    EXPECT_TRUE(to_string_view(p) == "script-src 'self' * 'unsafe-inline' 'unsafe-eval'");
+}
+

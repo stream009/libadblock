@@ -13,6 +13,7 @@
 
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/optional.hpp>
+#include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
@@ -31,6 +32,9 @@ public:
 
     const Pattern &pattern() const;
     Options options() const;
+
+    template<typename OptionT>
+    OptionT const* option() const;
 
     template<typename OptionT>
     bool hasOption() const
@@ -78,6 +82,41 @@ private:
     bool m_caseSensitive = false;
     bool m_domainSpecific = false;
 };
+
+template<typename OptionT>
+OptionT const* FilterRule::
+option() const
+{
+    namespace br = boost::range;
+
+    auto isSameType =
+        [](auto const& opt) {
+            assert(opt);
+            return typeid(*opt) == typeid(OptionT);
+        };
+
+    auto it = br::find_if(m_typeOptions, isSameType);
+    if (it != m_typeOptions.end()) {
+        return static_cast<OptionT*>(it->get());
+    }
+
+    it = br::find_if(m_restrictionOptions, isSameType);
+    if (it != m_restrictionOptions.end()) {
+        return static_cast<OptionT*>(it->get());
+    }
+
+    it = br::find_if(m_whiteListOptions, isSameType);
+    if (it != m_whiteListOptions.end()) {
+        return static_cast<OptionT*>(it->get());
+    }
+
+    it = br::find_if(m_otherOptions, isSameType);
+    if (it != m_otherOptions.end()) {
+        return static_cast<OptionT*>(it->get());
+    }
+
+    return nullptr;
+}
 
 } // namespace adblock
 

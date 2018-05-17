@@ -50,6 +50,11 @@ void DLL_API
             adblock_string_t **out_selectors,
             size_t* out_selector_count);
 
+void DLL_API
+    adblock_content_security_policy(adblock_t,
+            const adblock_string_t *uri_in_utf8,
+            adblock_string_t *policy /* OUT */);
+
 bool DLL_API
     adblock_filter_set_parameters(adblock_t,
             const adblock_string_t *filepath_in_utf8,

@@ -24,6 +24,7 @@
 #include "option/web_socket_option.hpp"
 #include "option/ping_option.hpp"
 #include "option/web_rtc_option.hpp"
+#include "option/csp_option.hpp"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -62,6 +63,7 @@ struct FilterOption::Impl
               | websocket_option
               | ping_option
               | webrtc_option
+              | csp_option
               ;
 
         const auto &inverse = qi::char_('~');
@@ -144,6 +146,11 @@ struct FilterOption::Impl
               [
                 _val = make_shared<WebRtcOption>(static_cast_<bool>(_1))
               ];
+        csp_option
+            = "csp=" >> (qi::raw[ +qi::char_ ])
+              [
+                _val = make_shared<CspOption>(qi::_1)
+              ];
 
         domain_option_domain
             = qi::raw
@@ -165,7 +172,7 @@ struct FilterOption::Impl
         stylesheet_option, object_option, xmlhttprequest_option,
         object_subrequest_option, subdocument_option, other_option,
         third_party_option, collapse_option, popup_option, ping_option,
-        webrtc_option;
+        webrtc_option, csp_option;
 
     rule<StringRange()> domain_option_domain, base64_public_key;
 

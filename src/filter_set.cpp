@@ -125,6 +125,8 @@ what() const noexcept
     return "Error: Fail to parse header.";
 }
 
+// FilterSet
+
 FilterSet::
 FilterSet(Path const& filePath)
     : m_file { filePath }

@@ -35,6 +35,8 @@ public:
 
     std::vector<StringRange> extendedElementHideSelector(Uri const&) const;
 
+    StringRange contentSecurityPolicy(Uri const&) const;
+
     FilterSetRng filterSets() const;
     FilterSet* filterSet(Path const& filePath) const;
 

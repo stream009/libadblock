@@ -25,6 +25,7 @@ public:
     virtual bool isWebSocket() const { return false; }
     virtual bool isPing() const { return false; }
     virtual bool isWebRtc() const { return false; }
+    virtual bool isCsp() const { return false; }
 
     virtual StringRange siteKey() const { return {}; }
 };

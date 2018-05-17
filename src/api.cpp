@@ -313,6 +313,35 @@ adblock_extended_element_hide_selectors(adblock_t adblock,
     }
 }
 
+void
+adblock_content_security_policy(adblock_t handle,
+            const adblock_string_t *uri_in_utf8,
+            adblock_string_t *policy /* OUT */)
+{
+    try {
+        auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
+        if (!adBlock) throw "wrong handle";
+
+        adblock::Uri const uri { uri_in_utf8->ptr, uri_in_utf8->length };
+
+        auto const p = adBlock->contentSecurityPolicy(uri);
+
+        policy->ptr = p.begin();
+        policy->length = p.size();
+    }
+    catch (std::exception const& e) {
+        std::cerr << __func__ << ": "
+                  << "Uncaught exception: " <<  e.what() << "\n";
+    }
+    catch (char const* const msg) {
+        std::cerr << __func__ << ": "
+                  << "Uncaught exception: " <<  msg << "\n";
+    }
+    catch (...) {
+        std::cerr << __func__ << ": Unknown exception is caught.\n";
+    }
+}
+
 bool
 adblock_filter_set_parameters(
         adblock_t handle,

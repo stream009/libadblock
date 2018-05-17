@@ -1,5 +1,8 @@
 #include "adblock.hpp"
 
+#include "option/csp_option.hpp"
+#include "option/generic_block_option.hpp"
+#include "option/generic_hide_option.hpp"
 #include "parser/parser.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"
@@ -7,8 +10,6 @@
 #include "rule/exception_filter_rule.hpp"
 #include "rule/filter_rule.hpp"
 #include "rule/rule.hpp"
-#include "option/generic_hide_option.hpp"
-#include "option/generic_block_option.hpp"
 
 #include <memory>
 
@@ -53,6 +54,28 @@ extendedElementHideSelector(Uri const& uri) const
     }
 
     return results;
+}
+
+StringRange AdBlock::
+contentSecurityPolicy(Uri const& uri) const
+{
+    struct CspContext : Context {
+        CspContext(Uri const& uri) : m_uri { uri } {}
+
+        Uri const& origin() const { return m_uri; }
+        bool isCsp() const override { return true; }
+
+        Uri const& m_uri;
+    } cxt { uri };
+
+    auto const& [found, rule] = m_filterRuleBase.query(uri, cxt);
+    if (!found) return {};
+
+    assert(rule);
+    auto* const option = rule->option<CspOption>();
+    assert(option);
+
+    return option->policy();
 }
 
 FilterSetRng AdBlock::

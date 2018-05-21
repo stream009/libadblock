@@ -215,16 +215,18 @@ template<typename K, typename V, typename T>
 inline void Node<K, V, T>::
 clear()
 {
-    if (!m_children) return;
-
-    for (auto &child: *m_children) {
-        if (child.hasChild()) {
-            child.clear();
+    if (m_children) {
+        for (auto &child: *m_children) {
+            if (child.hasChild()) {
+                child.clear();
+            }
         }
+
+        m_children->clear();
+        m_children.reset(nullptr);
     }
 
-    m_children->clear();
-    m_children.reset(nullptr);
+    m_values.reset(nullptr);
 }
 
 template<typename K, typename V, typename T>

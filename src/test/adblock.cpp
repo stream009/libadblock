@@ -176,6 +176,10 @@ TEST(AdBlock, RemoveFilterSet)
     const auto &afterStats = adBlock.statistics();
     //std::cout << afterStats.get<size_t>("Total") << "\n";
     ASSERT_EQ(11922, afterStats.get<size_t>("Total"));
+
+    adBlock.removeFilterSet(adBlock.filterSets().front());
+    EXPECT_EQ(0, adBlock.filterSets().size());
+    ASSERT_EQ(0, adBlock.statistics().get<size_t>("Total"));
 }
 
 TEST(AdBlock, FilterSet)

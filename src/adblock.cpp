@@ -123,7 +123,7 @@ statistics() const
 }
 
 void AdBlock::
-addFilterSet(const Path &filePath)
+addFilterSet(Path const& filePath)
 {
     auto &&filterSet = boost::make_unique<FilterSet>(filePath);
 
@@ -133,10 +133,24 @@ addFilterSet(const Path &filePath)
 }
 
 void AdBlock::
-removeFilterSet(const FilterSet &filterSet)
+removeFilterSet(Path const& filePath)
 {
     const auto &it = boost::find_if(m_filterSets,
-        [&filterSet](const FilterSetPtr &ptr) {
+        [&](const FilterSetPtr &ptr) {
+            return ptr->path() == filePath;
+        });
+    assert(it != m_filterSets.end());
+
+    m_filterSets.erase(it);
+
+    reload();
+}
+
+void AdBlock::
+removeFilterSet(FilterSet const& filterSet)
+{
+    const auto &it = boost::find_if(m_filterSets,
+        [&](const FilterSetPtr &ptr) {
             return ptr.get() == &filterSet;
         });
     assert(it != m_filterSets.end());

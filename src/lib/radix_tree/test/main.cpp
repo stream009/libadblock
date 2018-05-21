@@ -416,3 +416,22 @@ TEST(RadixTree, EmptyKey)
     ASSERT_EQ(1, cnt);
     EXPECT_EQ("", childKey);
 }
+
+TEST(RadixTree, BugFix_CantClearValueOfEmptyRoot)
+{
+    RadixTree t;
+
+    // root
+    EXPECT_EQ(1, t.node_count());
+    EXPECT_EQ(0, t.value_count());
+
+    // (root)
+    t.insert("", 0);
+    t.insert("", 1);
+    EXPECT_EQ(1, t.node_count());
+    EXPECT_EQ(2, t.value_count());
+
+    t.clear();
+    EXPECT_EQ(1, t.node_count());
+    EXPECT_EQ(0, t.value_count());
+}

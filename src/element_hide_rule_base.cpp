@@ -198,7 +198,9 @@ clear()
 {
     m_domainedBlackList.clear();
     m_domainedWhiteList.clear();
+
     m_genericBlackList.clear();
+    m_genericWhiteList.clear();
 
     m_domainedExtendedBlackList.clear();
     m_genericExtendedBlackList.clear();

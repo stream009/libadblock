@@ -43,8 +43,9 @@ public:
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void addFilterSet(const Path &filePath);
-    void removeFilterSet(const FilterSet&);
+    void addFilterSet(Path const& filePath);
+    void removeFilterSet(Path const& filePath);
+    void removeFilterSet(FilterSet const&);
 
     void reload();
 

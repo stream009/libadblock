@@ -98,4 +98,34 @@ TEST(Csp, DISABLED_CantInverseOption)
     adblock.addFilterSet(fs.path());
 }
 
+TEST(Csp, WontInterfereWithNormalFilterRule)
+{
+    FilterFile fs;
+
+    fs << "||adblock.com$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
+    fs << std::flush;
+
+    AdBlock adblock;
+    adblock.addFilterSet(fs.path());
+
+    struct MockContext : Context {
+        Uri const& origin() const override
+        {
+            static auto const& result =  "http://www.adblock.com"_u;
+            return result;
+        };
+
+        bool isCsp() const override
+        {
+            return false;
+        }
+    } cxt;
+
+    auto const [block, rule] =
+                adblock.shouldBlock("http://www.adblock.com"_u, cxt);
+
+    EXPECT_FALSE(block);
+    EXPECT_EQ(nullptr, rule);
+}
+
 } // namespace adblock

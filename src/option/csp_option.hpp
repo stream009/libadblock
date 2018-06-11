@@ -1,14 +1,15 @@
 #ifndef ADBLOCK_OPTION_CSP_OPTION_HPP
 #define ADBLOCK_OPTION_CSP_OPTION_HPP
 
-#include "type.hpp"
 #include "option.hpp"
+#include "type.hpp"
+#include "type_option.hpp"
 
 namespace adblock {
 
 class Context;
 
-class CspOption : public Option
+class CspOption : public Option, public TypeOption
 {
 public:
     CspOption(StringRange const policy)

@@ -1,0 +1,42 @@
+# libadblock
+- ADBlock engine library implemented with C++
+- Adblock Plus (https://adblockplus.org/) compatible
+- build as shared library that expose C API
+
+# motivation
+Adblock is a rather complicated component in the web browser and 
+naive implementation will incur startup delay and high runtime 
+memory usage. I wanted more efficient one for my own use.
+I originally wrote it as building block of [Qupzilla] (https://www.qupzilla.com/)'s
+additional plugin. Eventually I graduate Qupzilla and it become component of my
+own QtWebEngine base browser. Currently it is used as major component of Adblock
+deamon, JSON-RPC over HTTP/WebSocket service.
+
+## functionality
+### provided
+- parsing filter file
+- build database
+- response to the query from client
+
+### NOT provided (should be done by the client)
+- actual blocking
+- updating filter file from the Internet
+- editing custom filter list
+- providing UI
+
+## API
+see [api.h] (https://gitlab.com/stream9/libadblock/blob/master/src/api.h)
+
+## build 
+### requirement
+- C++17 compliant compiler
+- boost
+- cmake
+
+### typical instruction
+```shell
+$ mkdir release
+$ cd release
+$ cmake -DBUILD_TYPE=Release ../src
+$ make -j4
+```

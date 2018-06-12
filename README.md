@@ -9,8 +9,8 @@ naive implementation will incur startup delay and high runtime
 memory usage. I wanted more efficient one for my own use.
 I originally wrote it as building block of [Qupzilla] (https://www.qupzilla.com/)'s
 additional plugin. Eventually I graduate Qupzilla and it become component of my
-own QtWebEngine base browser. Currently it is used as major component of Adblock
-deamon, JSON-RPC over HTTP/WebSocket service.
+own QtWebEngine base browser. Currently it is used as an component of
+[adblockd](https://gitlab.com/stream9/adblockd).
 
 ## functionality
 ### provided

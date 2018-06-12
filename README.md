@@ -29,7 +29,7 @@ see [api.h] (https://gitlab.com/stream9/libadblock/blob/master/src/api.h)
 
 ## build 
 ### requirement
-- C++17 compliant compiler
+- C++17 compiler
 - boost
 - cmake
 

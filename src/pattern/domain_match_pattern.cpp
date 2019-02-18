@@ -14,6 +14,7 @@ DomainMatchPattern(const StringRange &domain,
                    const bool endMatch/*= false*/)
     : Base { StringRange { domain.begin(), pattern.end() },
              false, endMatch }
+    , m_pathPattern { pattern, true, endMatch }
 {
     namespace ba = boost::algorithm;
     assert(!domain.empty());
@@ -37,8 +38,8 @@ doMatchUrl(const Uri &url) const
 
     if (!this->doMatch(hostR, m_domainTokens)) return false;
 
-    return this->doMatch(
-            StringRange { hostR.end(), &*url.end() }, m_patternTokens);
+    StringRange range { hostR.end(), &*url.end() };
+    return m_pathPattern.match(range);
 }
 
 } // namespace adblock

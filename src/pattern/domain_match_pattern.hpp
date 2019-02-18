@@ -2,6 +2,7 @@
 #define DOMAIN_MATCH_PATTERN_HPP
 
 #include "base_match_pattern.hpp"
+#include "basic_match_pattern.hpp"
 #include "type.hpp"
 
 #include <boost/optional.hpp>
@@ -25,6 +26,7 @@ private:
 private:
     Tokens m_domainTokens;
     Tokens m_patternTokens;
+    BasicMatchPattern m_pathPattern;
 };
 
 } // namespace adblock

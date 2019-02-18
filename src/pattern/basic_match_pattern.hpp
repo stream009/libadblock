@@ -14,6 +14,14 @@ public:
     BasicMatchPattern(const StringRange &pattern,
                       const bool beginMatch = false,
                       const bool endMatch = false);
+
+    using BaseMatchPattern::match;
+
+    bool match(StringRange const& str) const
+    {
+        return this->doMatch(str, m_tokens);
+    }
+
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(const Uri&) const override;

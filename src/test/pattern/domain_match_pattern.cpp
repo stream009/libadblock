@@ -165,7 +165,7 @@ TEST(DomainMatchPatternTest, separator)
     {   // separator at middle of after the domain part
         DomainMatchPattern pattern {
             boost::as_literal("www.google.com"),
-            boost::as_literal("mail^foo"),
+            boost::as_literal("/mail^foo"),
             false
         };
 
@@ -176,7 +176,7 @@ TEST(DomainMatchPatternTest, separator)
     {   // separator at end of after the domain part
         DomainMatchPattern pattern {
             boost::as_literal("www.google.com"),
-            boost::as_literal("mail^"),
+            boost::as_literal("/mail^"),
             false
         };
 
@@ -188,7 +188,7 @@ TEST(DomainMatchPatternTest, separator)
         // and it has to match with end of the URL
         DomainMatchPattern pattern {
             boost::as_literal("www.google.com"),
-            boost::as_literal("mail^"),
+            boost::as_literal("/mail^"),
             false
         };
 
@@ -209,6 +209,19 @@ TEST(DomainMatchPatternTest, DomainOnly)
     Uri url { "http://www.google.com/mail" };
 
     EXPECT_TRUE(pattern.match(url));
+}
+
+TEST(DomainMatchPatternTest, Bugfix)
+{
+    DomainMatchPattern pattern {
+        boost::as_literal("openload.co"),
+        boost::as_literal("/r"), // this has to be begin match
+        false
+    };
+
+    Uri url { "https://openload.co/f/R" };
+
+    EXPECT_FALSE(pattern.match(url));
 }
 
 } // namespace adblock

@@ -211,11 +211,11 @@ TEST(DomainMatchPatternTest, DomainOnly)
     EXPECT_TRUE(pattern.match(url));
 }
 
-TEST(DomainMatchPatternTest, Bugfix)
+TEST(DomainMatchPatternTest, PathComponentMustMatchFromBeginning)
 {
     DomainMatchPattern pattern {
         boost::as_literal("openload.co"),
-        boost::as_literal("/r"), // this has to be begin match
+        boost::as_literal("/r"),
         false
     };
 

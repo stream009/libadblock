@@ -17,7 +17,7 @@ struct Domain::Impl
               ];
 
         // RFC1035 says label must start with letter but
-        // RFC1123 relux this rule and allow number on first character.
+        // RFC1123 relax this rule and allow number on first character.
         label
             = qi::raw
               [

@@ -25,7 +25,6 @@ private:
 
 private:
     Tokens m_domainTokens;
-    Tokens m_patternTokens;
     BasicMatchPattern m_pathPattern;
 };
 

@@ -12,8 +12,7 @@ DomainMatchPattern::
 DomainMatchPattern(const StringRange &domain,
                    const StringRange &pattern,
                    const bool endMatch/*= false*/)
-    : Base { StringRange { domain.begin(), pattern.end() },
-             false, endMatch }
+    : Base { StringRange { domain.begin(), pattern.end() }, false, endMatch }
     , m_pathPattern { pattern, true, endMatch }
 {
     namespace ba = boost::algorithm;
@@ -22,11 +21,6 @@ DomainMatchPattern(const StringRange &domain,
     const auto &trimmedDomain = ba::trim_copy_if(domain, ba::is_any_of("*"));
     ba::split(m_domainTokens, trimmedDomain,
               ba::is_any_of("*"), ba::token_compress_on);
-
-    const auto &trimmedPattern =
-        ba::trim_copy_if(pattern, ba::is_any_of("*"));
-    ba::split(m_patternTokens, trimmedPattern,
-            ba::is_any_of("*"), ba::token_compress_on);
 }
 
 bool DomainMatchPattern::

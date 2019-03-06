@@ -1,13 +1,6 @@
 find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
 
 add_definitions(-DPROJECT_ROOT=\"${CMAKE_SOURCE_DIR}\")
-
-link_libraries(
-    ${GTEST_BOTH_LIBRARIES}
-)
-
-enable_testing()
 
 add_executable(test_main
     reg_dom.cpp
@@ -18,10 +11,13 @@ add_executable(test_main
     adblock.cpp
     misc.cpp
 )
+target_include_directories(test_main PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_main
     main
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(main test_main)
 
 add_executable(test_rule_set
     rule_set/substring_match_filter_rule_set.cpp
@@ -30,33 +26,42 @@ add_executable(test_rule_set
     rule_set/domain_match_filter_rule_set.cpp
     rule_set/domained_element_hide_rule_set.cpp
 )
+target_include_directories(test_rule_set PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_rule_set
     rule_set
     uri
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(rule_set test_rule_set)
 
 add_executable(test_rule
     rule/filter_rule.cpp
     rule/element_hide_rule.cpp
     rule/comment_rule.cpp
 )
+target_include_directories(test_rule PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_rule
     rule
     uri
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(rule test_rule)
 
 add_executable(test_pattern
     pattern/basic_match_pattern.cpp
     pattern/domain_match_pattern.cpp
     pattern/regex_pattern.cpp
 )
+target_include_directories(test_pattern PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_pattern
     pattern
     uri
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(pattern test_pattern)
 
 add_executable(test_parser
     parser/domain.cpp
@@ -73,11 +78,14 @@ add_executable(test_parser
     parser/header.cpp
     parser/parser.cpp
 )
+target_include_directories(test_parser PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_parser
     parser
     uri
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(parser test_parser)
 
 add_executable(test_option
     option/script.cpp
@@ -102,16 +110,22 @@ add_executable(test_option
     option/webrtc.cpp
     option/csp.cpp
 )
+target_include_directories(test_option PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_option
     reg_dom
     main
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(option test_option)
 
 add_executable(test_api
     api.cpp
 )
+target_include_directories(test_api PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 target_link_libraries(test_api
     adblock
+    ${GTEST_BOTH_LIBRARIES}
 )
-add_test(api test_api)

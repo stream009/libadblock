@@ -6,7 +6,7 @@ project(${MAIN} C CXX)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
-	         COMPONENTS filesystem locale
+             COMPONENTS filesystem locale
                         program_options regex system timer chrono)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})

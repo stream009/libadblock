@@ -290,42 +290,8 @@ statistics() const
 void FilterSet::
 parse(char const* const buffer, size_t const size)
 {
-    auto const* begin = buffer, *end = buffer + size;
-
-    // first line have to be version string
-    auto const it = std::find(begin, end, '\n');
-    assert(it != end);
-    StringRange const firstLine { begin, it };
-    auto const& version = parser::parseHeader(firstLine);
-    if (version.empty()) {
-        throw FilterSet::ParseError {};
-    }
-    else if (version != FilterSet::supportedVersion()) {
-        std::cerr << "Warning: Unsupported version of filter set has detected: "
-                  << version << "\n"
-                  << "Continue processing anyway.\n";
-    }
-
-    StringRange const bufferR { it + 1, end };
-    auto const num = boost::count(bufferR, '\n');
-    m_rules.reserve(num);
-
-    for (auto &&lineIt = boost::make_split_iterator(
-                      bufferR, first_finder("\n", boost::is_equal()));
-         !lineIt.eof();
-         ++lineIt)
-    {
-        auto const& line = *lineIt;
-        if (line.empty()) continue;
-
-        auto &&rule = parser::parse(line);
-        if (!rule) continue;
-
-        rule->setFilterSet(*this);
-        rule->setLine(line);
-
-        m_rules.push_back(std::move(rule));
-    }
+    StringRange const buf { buffer, buffer + size };
+    m_rules = parser::parse(*this, buf);
 }
 
 } // namespace adblock

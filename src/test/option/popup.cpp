@@ -6,8 +6,6 @@
 
 namespace adblock {
 
-namespace qi = boost::spirit::qi;
-
 struct PopUpContext : MockContext
 {
     bool isPopUp() const override { return true; }

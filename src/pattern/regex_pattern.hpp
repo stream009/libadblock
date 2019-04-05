@@ -7,6 +7,7 @@
 #include <iosfwd>
 
 #include <boost/regex.hpp>
+#include <boost/optional.hpp>
 
 namespace adblock {
 

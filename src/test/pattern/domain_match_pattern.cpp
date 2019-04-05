@@ -1,6 +1,8 @@
 #include "pattern/domain_match_pattern.hpp"
 
+#include <boost/range/as_literal.hpp>
 #include <boost/range/iterator_range.hpp>
+
 #include <gtest/gtest.h>
 
 namespace adblock {

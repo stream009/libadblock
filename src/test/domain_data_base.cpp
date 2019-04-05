@@ -1,5 +1,6 @@
 #include "option/domain_data_base.hpp"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include <gtest/gtest.h>

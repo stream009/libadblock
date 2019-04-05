@@ -3,6 +3,7 @@
 
 #include <exception>
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm.hpp>
 

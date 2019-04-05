@@ -13,7 +13,7 @@ class MockContext : public Context
 public:
     MockContext()
         : m_uri { "http://www.adblock.org" },
-          m_siteKey { boost::as_literal("") }
+          m_siteKey { ""_r }
     {}
 
     const Uri &origin() const override { return m_uri; }

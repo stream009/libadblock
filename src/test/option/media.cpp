@@ -2,13 +2,9 @@
 #include "type.hpp"
 #include "../mock_context.hpp"
 
-#include <boost/spirit/include/qi.hpp>
-
 #include <gtest/gtest.h>
 
 namespace adblock {
-
-namespace qi = boost::spirit::qi;
 
 struct MediaContext : MockContext
 {

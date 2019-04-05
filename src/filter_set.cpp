@@ -14,6 +14,7 @@
 #include <regex>
 
 #include <boost/property_tree/ptree.hpp>
+#include <boost/range/adaptor/filtered.hpp>
 
 namespace adblock {
 

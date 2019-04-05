@@ -1,19 +1,18 @@
-#ifndef PARSER_PARSER_HPP
-#define PARSER_PARSER_HPP
-
-#include "type.hpp"
+#include "filter_set.hpp"
 #include "rule/rule.hpp"
+#include "type.hpp"
 
 #include <memory>
+#include <vector>
 
-namespace adblock { namespace parser {
+namespace adblock::parser {
 
-StringRange
-parseHeader(const StringRange&);
+// parse filter list
+std::vector<std::shared_ptr<Rule>>
+    parse(FilterSet const&, StringRange list);
 
+// parse single line
 std::shared_ptr<Rule>
-parse(const StringRange &header);
+    parse(StringRange line);
 
-}} // namespace adblock::parser
-
-#endif // PARSER_PARSER_HPP
+} // namespace adblock::parser

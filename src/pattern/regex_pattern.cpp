@@ -1,6 +1,6 @@
 #include "regex_pattern.hpp"
 
-#include <ostream>
+#include <iostream>
 
 namespace adblock {
 

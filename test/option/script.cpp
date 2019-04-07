@@ -19,13 +19,13 @@ struct ScriptContext : MockContext
 const static ScriptOption option { false };
 const static ScriptOption optionInv { true };
 
-TEST(ScriptOption, Constructor)
+TEST(Option_ScriptOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(ScriptOption, ScriptContext)
+TEST(Option_ScriptOption, ScriptContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ScriptContext context { true };
@@ -33,7 +33,7 @@ TEST(ScriptOption, ScriptContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(ScriptOption, NotScriptContext)
+TEST(Option_ScriptOption, NotScriptContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ScriptContext context { false };
@@ -41,7 +41,7 @@ TEST(ScriptOption, NotScriptContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(ScriptOption, ScriptContextWithInverseOption)
+TEST(Option_ScriptOption, ScriptContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ScriptContext context { true };
@@ -49,7 +49,7 @@ TEST(ScriptOption, ScriptContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(ScriptOption, NotScriptContextWithInverseOption)
+TEST(Option_ScriptOption, NotScriptContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ScriptContext context { false };

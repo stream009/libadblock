@@ -14,7 +14,7 @@
 
 using namespace adblock;
 
-TEST(BasicElementHideRule, Basic)
+TEST(Rule_BasicElementHideRule, Basic)
 {
     const auto &cssSelector = "div"_r;
     const BasicElementHideRule rule { cssSelector, boost::none };
@@ -27,7 +27,7 @@ TEST(BasicElementHideRule, Basic)
     EXPECT_TRUE(rule.match(uri));
 }
 
-TEST(BasicElementHideRule, Domain)
+TEST(Rule_BasicElementHideRule, Domain)
 {
     const auto &cssSelector = "div"_r;
     const std::vector<StringRange> domains {
@@ -45,7 +45,7 @@ TEST(BasicElementHideRule, Domain)
     EXPECT_FALSE(rule.match("http://www.google.com"_u));
 }
 
-TEST(BasicElementHideRule, MultipleDomains)
+TEST(Rule_BasicElementHideRule, MultipleDomains)
 {
     const auto &cssSelector = "div"_r;
     const std::vector<StringRange> domains {

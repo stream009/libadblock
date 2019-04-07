@@ -19,13 +19,13 @@ struct ObjectSubRequestContext : MockContext
 const static ObjectSubRequestOption option { false };
 const static ObjectSubRequestOption optionInv { true };
 
-TEST(ObjectSubRequestOption, Constructor)
+TEST(Option_ObjectSubRequestOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(ObjectSubRequestOption, ObjectSubRequestContext)
+TEST(Option_ObjectSubRequestOption, ObjectSubRequestContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ObjectSubRequestContext context { true };
@@ -33,7 +33,7 @@ TEST(ObjectSubRequestOption, ObjectSubRequestContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(ObjectSubRequestOption, NotObjectSubRequestContext)
+TEST(Option_ObjectSubRequestOption, NotObjectSubRequestContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ObjectSubRequestContext context { false };
@@ -41,7 +41,7 @@ TEST(ObjectSubRequestOption, NotObjectSubRequestContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(ObjectSubRequestOption, ObjectSubRequestContextWithInverseOption)
+TEST(Option_ObjectSubRequestOption, ObjectSubRequestContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ObjectSubRequestContext context { true };
@@ -49,7 +49,7 @@ TEST(ObjectSubRequestOption, ObjectSubRequestContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(ObjectSubRequestOption, NotObjectSubRequestContextWithInverseOption)
+TEST(Option_ObjectSubRequestOption, NotObjectSubRequestContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ObjectSubRequestContext context { false };

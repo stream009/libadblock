@@ -12,7 +12,7 @@
 
 namespace adblock {
 
-TEST(ElemHide, Elementary)
+TEST(Option_ElemHide, Elementary)
 {
     FilterRuleBase fb;
     ElementHideRuleBase rb { fb };
@@ -41,7 +41,7 @@ TEST(ElemHide, Elementary)
     }
 }
 
-TEST(ElemHide, Inversed)
+TEST(Option_ElemHide, Inversed)
 {
     FilterRuleBase fb;
     ElementHideRuleBase rb { fb };

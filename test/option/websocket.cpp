@@ -18,7 +18,7 @@ struct WebSocketContext : MockContext
     bool isWebSocket() const override { return true; }
 };
 
-TEST(WebSoket, Elementary)
+TEST(Option_WebSoket, Elementary)
 {
     FilterRuleBase rb;
 
@@ -39,7 +39,7 @@ TEST(WebSoket, Elementary)
     }
 }
 
-TEST(WebSoket, Invert)
+TEST(Option_WebSoket, Invert)
 {
     FilterRuleBase rb;
 

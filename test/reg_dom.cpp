@@ -6,7 +6,7 @@ extern "C" {
 #include "reg_dom/regdom.h"
 };
 
-TEST(LibRegDom, LoadAndFreeTree)
+TEST(Main_LibRegDom, LoadAndFreeTree)
 {
     auto *tree = loadTldTree();
     ASSERT_TRUE(!!tree);
@@ -14,7 +14,7 @@ TEST(LibRegDom, LoadAndFreeTree)
     freeTldTree(tree);
 }
 
-TEST(LibRegDom, OriginalAPI)
+TEST(Main_LibRegDom, OriginalAPI)
 {
     auto *tree = loadTldTree();
     ASSERT_TRUE(!!tree);
@@ -44,7 +44,7 @@ TEST(LibRegDom, OriginalAPI)
     freeTldTree(tree);
 }
 
-TEST(LibRegDom, CustomAPI)
+TEST(Main_LibRegDom, CustomAPI)
 {
     auto *tree = loadTldTree();
     ASSERT_TRUE(!!tree);

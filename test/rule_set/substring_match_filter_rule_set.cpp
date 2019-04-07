@@ -18,7 +18,7 @@ make_rule(const StringRange &pattern)
             std::make_shared<BasicMatchPattern>(pattern), boost::none);
 }
 
-TEST(SubstringMatchFilterRuleSet, Basic)
+TEST(RuleSet_SubstringMatchFilterRuleSet, Basic)
 {
     const auto &rule1 = make_rule("adblock"_r);
     const auto &rule2 = make_rule("adblockplus"_r);
@@ -32,7 +32,7 @@ TEST(SubstringMatchFilterRuleSet, Basic)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(SubstringMatchFilterRuleSet, MultipleHit)
+TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("adblock"_r);
     const auto &rule2 = make_rule("adblock*g"_r);
@@ -54,7 +54,7 @@ TEST(SubstringMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule4) == results.end());
 }
 
-TEST(SubstringMatchFilterRuleSet, NoHit)
+TEST(RuleSet_SubstringMatchFilterRuleSet, NoHit)
 {
     const auto &rule1 = make_rule("adblocks"_r);
     const auto &rule2 = make_rule("google.com"_r);
@@ -67,7 +67,7 @@ TEST(SubstringMatchFilterRuleSet, NoHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(SubstringMatchFilterRuleSet, MultiToken)
+TEST(RuleSet_SubstringMatchFilterRuleSet, MultiToken)
 {
     const auto &rule1 = make_rule("adblock*jpg"_r);
     const auto &rule2 = make_rule("adblockplus"_r);
@@ -81,7 +81,7 @@ TEST(SubstringMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(SubstringMatchFilterRuleSet, Clear)
+TEST(RuleSet_SubstringMatchFilterRuleSet, Clear)
 {
     const auto &rule1 = make_rule("adblock*jpg"_r);
     const auto &rule2 = make_rule("adblockplus"_r);

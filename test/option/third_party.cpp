@@ -19,13 +19,13 @@ struct ThirdPartyContext : MockContext
 const static ThirdPartyOption option { false };
 const static ThirdPartyOption optionInv { true };
 
-TEST(ThirdPartyOption, Constructor)
+TEST(Option_ThirdPartyOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(ThirdPartyOption, ThirdPartyContext)
+TEST(Option_ThirdPartyOption, ThirdPartyContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const Uri origin { "http://adblock.org" };
@@ -35,7 +35,7 @@ TEST(ThirdPartyOption, ThirdPartyContext)
                                             << context.origin().host();
 }
 
-TEST(ThirdPartyOption, NotThirdPartyContext)
+TEST(Option_ThirdPartyOption, NotThirdPartyContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const Uri origin { "http://www.google.com" };
@@ -44,7 +44,7 @@ TEST(ThirdPartyOption, NotThirdPartyContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(ThirdPartyOption, NotThirdPartyContextWithInverseOption)
+TEST(Option_ThirdPartyOption, NotThirdPartyContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const Uri origin { "http://adblock.org" };
@@ -53,7 +53,7 @@ TEST(ThirdPartyOption, NotThirdPartyContextWithInverseOption)
     EXPECT_TRUE(optionInv.match(uri, context));
 }
 
-TEST(ThirdPartyOption, ThirdPartyContextWithInverseOption)
+TEST(Option_ThirdPartyOption, ThirdPartyContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const Uri origin { "http://www.google.com" };
@@ -62,7 +62,7 @@ TEST(ThirdPartyOption, ThirdPartyContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(ThirdPartyOption, PolymorphicInverseOption)
+TEST(Option_ThirdPartyOption, PolymorphicInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const Uri origin { "http://www.google.com" };

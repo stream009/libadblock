@@ -20,13 +20,13 @@ struct MediaContext : MockContext
 const static MediaOption option { false };
 const static MediaOption optionInv { true };
 
-TEST(MediaOption, Constructor)
+TEST(Option_MediaOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(MediaOption, MediaContext)
+TEST(Option_MediaOption, MediaContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const MediaContext context { true };
@@ -34,7 +34,7 @@ TEST(MediaOption, MediaContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(MediaOption, NotMediaContext)
+TEST(Option_MediaOption, NotMediaContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const MediaContext context { false };
@@ -42,7 +42,7 @@ TEST(MediaOption, NotMediaContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(MediaOption, MediaContextWithInverseOption)
+TEST(Option_MediaOption, MediaContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const MediaContext context { true };
@@ -50,7 +50,7 @@ TEST(MediaOption, MediaContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(MediaOption, NotMediaContextWithInverseOption)
+TEST(Option_MediaOption, NotMediaContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const MediaContext context { false };

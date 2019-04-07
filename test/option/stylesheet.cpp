@@ -19,13 +19,13 @@ struct StyleSheetContext : MockContext
 const static StyleSheetOption option { false };
 const static StyleSheetOption optionInv { true };
 
-TEST(StyleSheetOption, Constructor)
+TEST(Option_StyleSheetOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(StyleSheetOption, StyleSheetContext)
+TEST(Option_StyleSheetOption, StyleSheetContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const StyleSheetContext context { true };
@@ -33,7 +33,7 @@ TEST(StyleSheetOption, StyleSheetContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(StyleSheetOption, NotStyleSheetContext)
+TEST(Option_StyleSheetOption, NotStyleSheetContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const StyleSheetContext context { false };
@@ -41,7 +41,7 @@ TEST(StyleSheetOption, NotStyleSheetContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(StyleSheetOption, StyleSheetContextWithInverseOption)
+TEST(Option_StyleSheetOption, StyleSheetContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const StyleSheetContext context { true };
@@ -49,7 +49,7 @@ TEST(StyleSheetOption, StyleSheetContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(StyleSheetOption, NotStyleSheetContextWithInverseOption)
+TEST(Option_StyleSheetOption, NotStyleSheetContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const StyleSheetContext context { false };

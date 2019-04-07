@@ -18,7 +18,7 @@ make_rule(const StringRange &pattern)
             std::make_shared<BasicMatchPattern>(pattern, true), boost::none);
 }
 
-TEST(PrefixMatchFilterRuleSet, OneHit)
+TEST(RuleSet_PrefixMatchFilterRuleSet, OneHit)
 {
     const auto &rule1 = make_rule("http://www.adblock"_r);
     const auto &rule2 = make_rule("adblock"_r);
@@ -32,7 +32,7 @@ TEST(PrefixMatchFilterRuleSet, OneHit)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(PrefixMatchFilterRuleSet, MultipleHit)
+TEST(RuleSet_PrefixMatchFilterRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("http://www.adblock"_r);
     const auto &rule2 = make_rule("http://www.adblock.org"_r);
@@ -51,7 +51,7 @@ TEST(PrefixMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule3) == results.end());
 }
 
-TEST(PrefixMatchFilterRuleSet, NoHit)
+TEST(RuleSet_PrefixMatchFilterRuleSet, NoHit)
 {
     const auto &rule1 = make_rule("http://www.adblock.net"_r);
     const auto &rule2 = make_rule("http://www.adblock.gov"_r);
@@ -66,7 +66,7 @@ TEST(PrefixMatchFilterRuleSet, NoHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(PrefixMatchFilterRuleSet, MultiToken)
+TEST(RuleSet_PrefixMatchFilterRuleSet, MultiToken)
 {
     const auto &rule1 = make_rule("http://www.adblock*jpg"_r);
     const auto &rule2 = make_rule("adblock"_r);
@@ -80,7 +80,7 @@ TEST(PrefixMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(PrefixMatchFilterRuleSet, Clear)
+TEST(RuleSet_PrefixMatchFilterRuleSet, Clear)
 {
     const auto &rule1 = make_rule("http://www.adblock*jpg"_r);
     const auto &rule2 = make_rule("adblock"_r);

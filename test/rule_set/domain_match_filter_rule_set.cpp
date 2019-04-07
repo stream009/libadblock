@@ -24,7 +24,7 @@ make_rule(const StringRange &domain,
             boost::none);
 }
 
-TEST(DomainMatchFilterRuleSet, OneHit)
+TEST(RuleSet_DomainMatchFilterRuleSet, OneHit)
 {
     const auto &rule1 = make_rule("adblock.org"_r);
     const auto &rule2 = make_rule("ban"_r);
@@ -38,7 +38,7 @@ TEST(DomainMatchFilterRuleSet, OneHit)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(DomainMatchFilterRuleSet, MultipleHit)
+TEST(RuleSet_DomainMatchFilterRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("adblock.org"_r);
     const auto &rule2 = make_rule("www.*.org"_r);
@@ -57,7 +57,7 @@ TEST(DomainMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule3) == results.end());
 }
 
-TEST(DomainMatchFilterRuleSet, NoHit)
+TEST(RuleSet_DomainMatchFilterRuleSet, NoHit)
 {
     const auto &rule1 = make_rule("foo.adblock.org"_r);
     const auto &rule2 = make_rule("adblock.com"_r);
@@ -70,7 +70,7 @@ TEST(DomainMatchFilterRuleSet, NoHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(DomainMatchFilterRuleSet, MultiToken)
+TEST(RuleSet_DomainMatchFilterRuleSet, MultiToken)
 {
     const auto &rule1 = make_rule("adblock*org"_r);
     const auto &rule2 = make_rule("ban"_r);
@@ -84,7 +84,7 @@ TEST(DomainMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(DomainMatchFilterRuleSet, Clear)
+TEST(RuleSet_DomainMatchFilterRuleSet, Clear)
 {
     const auto &rule1 = make_rule("adblock*org"_r);
     const auto &rule2 = make_rule("ban"_r);

@@ -7,7 +7,7 @@
 
 namespace adblock {
 
-TEST(DomainMatchPatternTest, standard)
+TEST(Pattern_DomainMatchPatternTest, standard)
 {
     {   // match
         DomainMatchPattern pattern {
@@ -55,7 +55,7 @@ TEST(DomainMatchPatternTest, standard)
     }
 }
 
-TEST(DomainMatchPatternTest, withEndMatch)
+TEST(Pattern_DomainMatchPatternTest, withEndMatch)
 {
     {   // match
         DomainMatchPattern pattern {
@@ -114,7 +114,7 @@ TEST(DomainMatchPatternTest, withEndMatch)
     }
 }
 
-TEST(DomainMatchPatternTest, wildCard)
+TEST(Pattern_DomainMatchPatternTest, wildCard)
 {
     {   // asterisk in the domain part
         DomainMatchPattern pattern {
@@ -151,7 +151,7 @@ TEST(DomainMatchPatternTest, wildCard)
     }
 }
 
-TEST(DomainMatchPatternTest, separator)
+TEST(Pattern_DomainMatchPatternTest, separator)
 {
     {   // separator at right after the domain part
         DomainMatchPattern pattern {
@@ -200,7 +200,7 @@ TEST(DomainMatchPatternTest, separator)
     }
 }
 
-TEST(DomainMatchPatternTest, DomainOnly)
+TEST(Pattern_DomainMatchPatternTest, DomainOnly)
 {
     DomainMatchPattern pattern {
         boost::as_literal("www.google.com"),
@@ -213,7 +213,7 @@ TEST(DomainMatchPatternTest, DomainOnly)
     EXPECT_TRUE(pattern.match(url));
 }
 
-TEST(DomainMatchPatternTest, PathComponentMustMatchFromBeginning)
+TEST(Pattern_DomainMatchPatternTest, PathComponentMustMatchFromBeginning)
 {
     DomainMatchPattern pattern {
         boost::as_literal("openload.co"),

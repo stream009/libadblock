@@ -11,7 +11,7 @@ struct PopUpContext : MockContext
     bool isPopUp() const override { return true; }
 };
 
-TEST(PopUpOption, PopUpContext)
+TEST(Option_PopUpOption, PopUpContext)
 {
     const PopUpOption option {};
     const PopUpContext context {};
@@ -20,7 +20,7 @@ TEST(PopUpOption, PopUpContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(PopUpOption, NotPopUpContext)
+TEST(Option_PopUpOption, NotPopUpContext)
 {
     const PopUpOption option {};
     const MockContext context {};

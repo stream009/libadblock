@@ -23,7 +23,7 @@ struct SiteKeyContext : MockContext
     std::string m_siteKey;
 };
 
-TEST(SiteKeyOption, Init)
+TEST(Option_SiteKeyOption, Init)
 {
     const SiteKeyOption option {
         { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
@@ -35,7 +35,7 @@ TEST(SiteKeyOption, Init)
     EXPECT_EQ(1, boost::count(siteKeys, "bcdesitekeyedcb"_r));
 }
 
-TEST(SiteKeyOption, Match)
+TEST(Option_SiteKeyOption, Match)
 {
     const SiteKeyOption option {
         { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
@@ -47,7 +47,7 @@ TEST(SiteKeyOption, Match)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(SiteKeyOption, NoMatch)
+TEST(Option_SiteKeyOption, NoMatch)
 {
     const SiteKeyOption option {
         { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }

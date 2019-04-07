@@ -19,13 +19,13 @@ struct SubDocumentContext : MockContext
 const static SubDocumentOption option { false };
 const static SubDocumentOption optionInv { true };
 
-TEST(SubDocumentOption, Constructor)
+TEST(Option_SubDocumentOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(SubDocumentOption, SubDocumentContext)
+TEST(Option_SubDocumentOption, SubDocumentContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const SubDocumentContext context { true };
@@ -33,7 +33,7 @@ TEST(SubDocumentOption, SubDocumentContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(SubDocumentOption, NotSubDocumentContext)
+TEST(Option_SubDocumentOption, NotSubDocumentContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const SubDocumentContext context { false };
@@ -41,7 +41,7 @@ TEST(SubDocumentOption, NotSubDocumentContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(SubDocumentOption, SubDocumentContextWithInverseOption)
+TEST(Option_SubDocumentOption, SubDocumentContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const SubDocumentContext context { true };
@@ -49,7 +49,7 @@ TEST(SubDocumentOption, SubDocumentContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(SubDocumentOption, NotSubDocumentContextWithInverseOption)
+TEST(Option_SubDocumentOption, NotSubDocumentContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const SubDocumentContext context { false };

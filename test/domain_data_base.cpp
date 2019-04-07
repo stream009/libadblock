@@ -7,7 +7,7 @@
 
 using namespace adblock;
 
-TEST(DomainDataBase, Query)
+TEST(Main_DomainDataBase, Query)
 {
     DomainDataBase db;
     const Uri uri { "http://www.adblock.org" };
@@ -17,7 +17,7 @@ TEST(DomainDataBase, Query)
     EXPECT_TRUE(boost::equals("adblock.org", range));
 }
 
-TEST(DomainDataBase, QueryDeepDomain)
+TEST(Main_DomainDataBase, QueryDeepDomain)
 {
     DomainDataBase db;
     const Uri uri { "http://www.adblock.org.uk" };
@@ -27,7 +27,7 @@ TEST(DomainDataBase, QueryDeepDomain)
     EXPECT_TRUE(boost::equals("adblock.org.uk", range));
 }
 
-TEST(DomainDataBase, WrongQuery)
+TEST(Main_DomainDataBase, WrongQuery)
 {
     DomainDataBase db;
     const Uri uri { "http://com/com/com" };
@@ -37,7 +37,7 @@ TEST(DomainDataBase, WrongQuery)
     EXPECT_TRUE(range.empty());
 }
 
-TEST(DomainDataBase, DISABLED_ValidUriButNoHost)
+TEST(Main_DomainDataBase, DISABLED_ValidUriButNoHost)
 {
     DomainDataBase db;
     const Uri uri { "about:blank" }; // http_parser cant support this type of URI

@@ -17,7 +17,7 @@ using namespace adblock;
 namespace bfs = boost::filesystem;
 static const bfs::path projectRoot { PROJECT_ROOT };
 
-TEST(AdBlock, Statistics)
+TEST(Main_AdBlock, Statistics)
 {
     std::locale locale { "" };
     std::locale::global(locale);
@@ -37,7 +37,7 @@ TEST(AdBlock, Statistics)
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 }
 
-TEST(AdBlock, DISABLED_EasyList)
+TEST(Main_AdBlock, DISABLED_EasyList)
 {
     const auto &path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -49,7 +49,7 @@ TEST(AdBlock, DISABLED_EasyList)
     std::cout << t.format();
 }
 
-TEST(AdBlock, DISABLED_Fanboy)
+TEST(Main_AdBlock, DISABLED_Fanboy)
 {
     const auto &path = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -58,7 +58,7 @@ TEST(AdBlock, DISABLED_Fanboy)
     adBlock.addFilterSet(path);
 }
 
-TEST(AdBlock, DISABLED_elementHideRule)
+TEST(Main_AdBlock, DISABLED_elementHideRule)
 {
     const auto &path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -71,7 +71,7 @@ TEST(AdBlock, DISABLED_elementHideRule)
     std::cout << css.size() << "\n" << t.format();
 }
 
-TEST(AdBlock, Reload)
+TEST(Main_AdBlock, Reload)
 {
     const auto &path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -102,7 +102,7 @@ TEST(AdBlock, Reload)
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 }
 
-TEST(AdBlock, FilterSets)
+TEST(Main_AdBlock, FilterSets)
 {
     AdBlock adBlock;
 
@@ -143,7 +143,7 @@ TEST(AdBlock, FilterSets)
     EXPECT_NE(it, filterSets.end());
 }
 
-TEST(AdBlock, RemoveFilterSet)
+TEST(Main_AdBlock, RemoveFilterSet)
 {
     AdBlock adBlock;
 
@@ -182,7 +182,7 @@ TEST(AdBlock, RemoveFilterSet)
     ASSERT_EQ(0, adBlock.statistics().get<size_t>("Total"));
 }
 
-TEST(AdBlock, FilterSet)
+TEST(Main_AdBlock, FilterSet)
 {
     AdBlock adBlock;
 

@@ -19,13 +19,13 @@ struct ImageContext : MockContext
 const static ImageOption option { false };
 const static ImageOption optionInv { true };
 
-TEST(ImageOption, Constructor)
+TEST(Option_ImageOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(ImageOption, ImageContext)
+TEST(Option_ImageOption, ImageContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ImageContext context { true };
@@ -33,7 +33,7 @@ TEST(ImageOption, ImageContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(ImageOption, NotImageContext)
+TEST(Option_ImageOption, NotImageContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ImageContext context { false };
@@ -41,7 +41,7 @@ TEST(ImageOption, NotImageContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(ImageOption, ImageContextWithInverseOption)
+TEST(Option_ImageOption, ImageContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const ImageContext context { true };
@@ -49,7 +49,7 @@ TEST(ImageOption, ImageContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(ImageOption, NotImageContextWithInverseOption)
+TEST(Option_ImageOption, NotImageContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const ImageContext context { false };

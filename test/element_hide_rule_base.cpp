@@ -24,7 +24,7 @@ make_rule(const StringRange &cssSelector,
     return std::make_shared<T>(cssSelector, domains);
 }
 
-TEST(ElementHideRuleBase, Elementary)
+TEST(Main_ElementHideRuleBase, Elementary)
 {
     const auto &rule =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
@@ -38,7 +38,7 @@ TEST(ElementHideRuleBase, Elementary)
     EXPECT_EQ("div { display: none !important } ", result);
 }
 
-TEST(ElementHideRuleBase, Domained)
+TEST(Main_ElementHideRuleBase, Domained)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
@@ -60,7 +60,7 @@ TEST(ElementHideRuleBase, Domained)
     EXPECT_EQ("div, table { display: none !important } ", result);
 }
 
-TEST(ElementHideRuleBase, ExcludedByExceptionRule)
+TEST(Main_ElementHideRuleBase, ExcludedByExceptionRule)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
@@ -80,7 +80,7 @@ TEST(ElementHideRuleBase, ExcludedByExceptionRule)
     EXPECT_EQ("", result);
 }
 
-TEST(ElementHideRuleBase, ExcludedByGenericExceptionRule)
+TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
 {
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -106,7 +106,7 @@ TEST(ElementHideRuleBase, ExcludedByGenericExceptionRule)
     }
 }
 
-TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
+TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
@@ -126,7 +126,7 @@ TEST(ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
     EXPECT_EQ("div { display: none !important } ", result);
 }
 
-TEST(ElementHideRuleBase, Clear)
+TEST(Main_ElementHideRuleBase, Clear)
 {
     const auto &rule1 =
                 make_rule<BasicElementHideRule>("div"_r, boost::none);
@@ -151,7 +151,7 @@ TEST(ElementHideRuleBase, Clear)
     EXPECT_EQ(0, stats.get<size_t>("Total"));
 }
 
-TEST(ElementHideRuleBase, ExtendedRule)
+TEST(Main_ElementHideRuleBase, ExtendedRule)
 {
     auto const& rule =
                 make_rule<ExtendedElementHideRule>("div"_r, boost::none);
@@ -173,7 +173,7 @@ TEST(ElementHideRuleBase, ExtendedRule)
     EXPECT_TRUE("div"_r == selector) << selector;
 }
 
-TEST(ElementHideRuleBase, DomainedExtendedRule)
+TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
 {
     auto const& rule1 =
                 make_rule<ExtendedElementHideRule>("div"_r, boost::none);
@@ -201,7 +201,7 @@ TEST(ElementHideRuleBase, DomainedExtendedRule)
     EXPECT_TRUE("table"_r == rules[1]->cssSelector());
 }
 
-TEST(ElementHideRuleBase, Extended_ExcludedByExceptionRule)
+TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 {
     auto const& rule1 =
                 make_rule<ExtendedElementHideRule>("div"_r, boost::none);
@@ -226,7 +226,7 @@ TEST(ElementHideRuleBase, Extended_ExcludedByExceptionRule)
     EXPECT_TRUE(rules.empty());
 }
 
-TEST(ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
+TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     auto const& rule1 =
                 make_rule<ExtendedElementHideRule>("div"_r, boost::none);
@@ -252,7 +252,7 @@ TEST(ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIs
     EXPECT_EQ("div"_r, rules[0]->cssSelector());
 }
 
-TEST(ElementHideRuleBase, ExtendedRule_Clear)
+TEST(Main_ElementHideRuleBase, ExtendedRule_Clear)
 {
     auto const& rule1 =
                 make_rule<ExtendedElementHideRule>("div"_r, boost::none);

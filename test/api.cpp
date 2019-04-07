@@ -236,13 +236,13 @@ TEST_F(API_F, remove_filter_set)
     EXPECT_EQ(54322, after.get<size_t>("Total"));
 }
 
-TEST(API, adblock_create)
+TEST(Main_API, adblock_create)
 {
     const auto adblock = ::adblock_create();
     EXPECT_NE(nullptr, adblock);
 }
 
-TEST(API, adblock_destroy)
+TEST(Main_API, adblock_destroy)
 {
     const auto adblock = ::adblock_create();
     EXPECT_NE(nullptr, adblock);
@@ -305,7 +305,7 @@ TEST_F(API_F, adblock_filter_set_parameters)
     EXPECT_TRUE(ok);
 }
 
-TEST(API, ContentSecurityPolicy)
+TEST(Main_API, ContentSecurityPolicy)
 {
     using namespace adblock;
     FilterFile fs;

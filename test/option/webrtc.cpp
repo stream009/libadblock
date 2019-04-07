@@ -16,7 +16,7 @@ struct WebRtcContext : MockContext
     bool isWebRtc() const override { return true; }
 };
 
-TEST(WebRtc, Elementary)
+TEST(Option_WebRtc, Elementary)
 {
     FilterRuleBase rb;
 
@@ -37,7 +37,7 @@ TEST(WebRtc, Elementary)
     }
 }
 
-TEST(WebRtc, Invert)
+TEST(Option_WebRtc, Invert)
 {
     FilterRuleBase rb;
 

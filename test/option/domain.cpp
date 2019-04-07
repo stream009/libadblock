@@ -18,7 +18,7 @@ struct DomainContext : MockContext
     Uri m_uri;
 };
 
-TEST(DomainOption, Init1)
+TEST(Option_DomainOption, Init1)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -29,7 +29,7 @@ TEST(DomainOption, Init1)
     EXPECT_TRUE(option.excludeDomains().empty());
 }
 
-TEST(DomainOption, Init2)
+TEST(Option_DomainOption, Init2)
 {
     const DomainOption::Domains domains {
         "~adblock.org"_r,
@@ -40,7 +40,7 @@ TEST(DomainOption, Init2)
     EXPECT_EQ(1, option.excludeDomains().size());
 }
 
-TEST(DomainOption, Init3)
+TEST(Option_DomainOption, Init3)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -52,7 +52,7 @@ TEST(DomainOption, Init3)
     EXPECT_EQ(1, option.excludeDomains().size());
 }
 
-TEST(DomainOption, Init4)
+TEST(Option_DomainOption, Init4)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -66,7 +66,7 @@ TEST(DomainOption, Init4)
     EXPECT_EQ(2, option.excludeDomains().size());
 }
 
-TEST(DomainOption, Match)
+TEST(Option_DomainOption, Match)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -79,7 +79,7 @@ TEST(DomainOption, Match)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(DomainOption, NoMatch)
+TEST(Option_DomainOption, NoMatch)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -92,7 +92,7 @@ TEST(DomainOption, NoMatch)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(DomainOption, MatchToNegative)
+TEST(Option_DomainOption, MatchToNegative)
 {
     const DomainOption::Domains domains {
         "adblock.org"_r,
@@ -106,7 +106,7 @@ TEST(DomainOption, MatchToNegative)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(DomainOption, ExcludeDomainOnlyOption)
+TEST(Option_DomainOption, ExcludeDomainOnlyOption)
 {
     const DomainOption::Domains domains {
         "~adblock.org"_r,

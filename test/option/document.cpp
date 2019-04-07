@@ -23,7 +23,7 @@ struct TestContext : MockContext
     Uri m_uri;
 };
 
-TEST(Document, Elementary)
+TEST(Option_Document, Elementary)
 {
     FilterRuleBase rb;
 
@@ -61,7 +61,7 @@ TEST(Document, Elementary)
     }
 }
 
-TEST(Document, Inversed)
+TEST(Option_Document, Inversed)
 {
     FilterRuleBase rb;
 

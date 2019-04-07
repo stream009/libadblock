@@ -8,7 +8,7 @@
 
 using namespace adblock;
 
-TEST(CommentRule, Basic)
+TEST(Rule_CommentRule, Basic)
 {
     const auto &comment = "!comment"_r;
     const CommentRule rule { comment };

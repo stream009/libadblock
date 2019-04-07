@@ -15,7 +15,7 @@
 
 using namespace adblock;
 
-TEST(BasicFilterRule, Basic)
+TEST(Rule_BasicFilterRule, Basic)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
@@ -29,7 +29,7 @@ TEST(BasicFilterRule, Basic)
     EXPECT_TRUE(rule.match(uri, context));
 }
 
-TEST(BasicFilterRule, WithOption)
+TEST(Rule_BasicFilterRule, WithOption)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("adblock"_r);
@@ -53,7 +53,7 @@ TEST(BasicFilterRule, WithOption)
     EXPECT_TRUE(rule.match(uri, context));
 }
 
-TEST(BasicFilterRule, CaseSensitiveMatch)
+TEST(Rule_BasicFilterRule, CaseSensitiveMatch)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
@@ -72,7 +72,7 @@ TEST(BasicFilterRule, CaseSensitiveMatch)
     }
 }
 
-TEST(ExceptionFilterRule, Basic)
+TEST(Rule_ExceptionFilterRule, Basic)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
@@ -86,7 +86,7 @@ TEST(ExceptionFilterRule, Basic)
     EXPECT_TRUE(rule.match(uri, context));
 }
 
-TEST(ExceptionFilterRule, WithOption)
+TEST(Rule_ExceptionFilterRule, WithOption)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("adblock"_r);
@@ -110,7 +110,7 @@ TEST(ExceptionFilterRule, WithOption)
     EXPECT_TRUE(rule.match(uri, context));
 }
 
-TEST(ExceptionFilterRule, CaseSensitiveMatch)
+TEST(Rule_ExceptionFilterRule, CaseSensitiveMatch)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
@@ -128,4 +128,3 @@ TEST(ExceptionFilterRule, CaseSensitiveMatch)
         EXPECT_TRUE(rule.match(uri, context));
     }
 }
-

@@ -19,13 +19,13 @@ struct XmlHttpRequestContext : MockContext
 const static XmlHttpRequestOption option { false };
 const static XmlHttpRequestOption optionInv { true };
 
-TEST(XmlHttpRequestOption, Constructor)
+TEST(Option_XmlHttpRequestOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(XmlHttpRequestOption, XmlHttpRequestContext)
+TEST(Option_XmlHttpRequestOption, XmlHttpRequestContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const XmlHttpRequestContext context { true };
@@ -33,7 +33,7 @@ TEST(XmlHttpRequestOption, XmlHttpRequestContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(XmlHttpRequestOption, NotXmlHttpRequestContext)
+TEST(Option_XmlHttpRequestOption, NotXmlHttpRequestContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const XmlHttpRequestContext context { false };
@@ -41,7 +41,7 @@ TEST(XmlHttpRequestOption, NotXmlHttpRequestContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(XmlHttpRequestOption, XmlHttpRequestContextWithInverseOption)
+TEST(Option_XmlHttpRequestOption, XmlHttpRequestContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const XmlHttpRequestContext context { true };
@@ -49,7 +49,7 @@ TEST(XmlHttpRequestOption, XmlHttpRequestContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(XmlHttpRequestOption, NotXmlHttpRequestContextWithInverseOption)
+TEST(Option_XmlHttpRequestOption, NotXmlHttpRequestContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const XmlHttpRequestContext context { false };

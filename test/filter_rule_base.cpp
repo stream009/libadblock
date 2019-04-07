@@ -37,7 +37,7 @@ make_domain_rule(const StringRange &domain,
             options);
 }
 
-TEST(FilterRuleBase, Basic)
+TEST(Main_FilterRuleBase, Basic)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -59,7 +59,7 @@ TEST(FilterRuleBase, Basic)
     }
 }
 
-TEST(FilterRuleBase, Domain)
+TEST(Main_FilterRuleBase, Domain)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -81,7 +81,7 @@ TEST(FilterRuleBase, Domain)
     }
 }
 
-TEST(FilterRuleBase, Regex)
+TEST(Main_FilterRuleBase, Regex)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -103,7 +103,7 @@ TEST(FilterRuleBase, Regex)
     }
 }
 
-TEST(FilterRuleBase, ExceptionBasic)
+TEST(Main_FilterRuleBase, ExceptionBasic)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -130,7 +130,7 @@ TEST(FilterRuleBase, ExceptionBasic)
     }
 }
 
-TEST(FilterRuleBase, ExceptionDomain)
+TEST(Main_FilterRuleBase, ExceptionDomain)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -157,7 +157,7 @@ TEST(FilterRuleBase, ExceptionDomain)
     }
 }
 
-TEST(FilterRuleBase, ExceptionRegex)
+TEST(Main_FilterRuleBase, ExceptionRegex)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -184,7 +184,7 @@ TEST(FilterRuleBase, ExceptionRegex)
     }
 }
 
-TEST(FilterRuleBase, Clear)
+TEST(Main_FilterRuleBase, Clear)
 {
     FilterRuleBase rb;
 

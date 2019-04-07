@@ -10,3 +10,6 @@ add_library(parser_test STATIC
     element_hide_rule.cpp
     comment_rule.cpp
 )
+target_link_libraries(parser_test
+    parser
+)

@@ -22,7 +22,7 @@ struct TestContext : MockContext
     Uri m_uri;
 };
 
-TEST(GenericBlock, Elementary)
+TEST(Option_GenericBlock, Elementary)
 {
     FilterRuleBase rb;
 
@@ -52,7 +52,7 @@ TEST(GenericBlock, Elementary)
     }
 }
 
-TEST(GenericBlock, OnlyGenericShouldBeHidden)
+TEST(Option_GenericBlock, OnlyGenericShouldBeHidden)
 {
     FilterRuleBase rb;
 

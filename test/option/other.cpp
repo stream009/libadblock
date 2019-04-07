@@ -26,13 +26,13 @@ struct OtherContext : MockContext
 const static OtherOption option { false };
 const static OtherOption optionInv { true };
 
-TEST(OtherOption, Constructor)
+TEST(Option_OtherOption, Constructor)
 {
     EXPECT_FALSE(option.inverse());
     EXPECT_TRUE(optionInv.inverse());
 }
 
-TEST(OtherOption, OtherContext)
+TEST(Option_OtherOption, OtherContext)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const OtherContext context { true };
@@ -40,7 +40,7 @@ TEST(OtherOption, OtherContext)
     EXPECT_TRUE(option.match(uri, context));
 }
 
-TEST(OtherOption, NotOtherContext)
+TEST(Option_OtherOption, NotOtherContext)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const OtherContext context { false };
@@ -48,7 +48,7 @@ TEST(OtherOption, NotOtherContext)
     EXPECT_FALSE(option.match(uri, context));
 }
 
-TEST(OtherOption, OtherContextWithInverseOption)
+TEST(Option_OtherOption, OtherContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/image.jpg" };
     const OtherContext context { true };
@@ -56,7 +56,7 @@ TEST(OtherOption, OtherContextWithInverseOption)
     EXPECT_FALSE(optionInv.match(uri, context));
 }
 
-TEST(OtherOption, NotOtherContextWithInverseOption)
+TEST(Option_OtherOption, NotOtherContextWithInverseOption)
 {
     const Uri uri { "http://adblock.org/script.js" };
     const OtherContext context { false };

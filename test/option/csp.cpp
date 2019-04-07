@@ -43,7 +43,7 @@ bool operator==(char const lhs[], StringRange const& rhs)
     return std::string_view(rhs.begin(), rhs.size()) == lhs;
 }
 
-TEST(Csp, Elementary)
+TEST(Option_Csp, Elementary)
 {
     FilterFile fs;
 
@@ -63,7 +63,7 @@ TEST(Csp, Elementary)
     EXPECT_TRUE(policy.empty());
 }
 
-TEST(Csp, ExceptionRule)
+TEST(Option_Csp, ExceptionRule)
 {
     FilterFile fs;
 
@@ -87,7 +87,7 @@ TEST(Csp, ExceptionRule)
     EXPECT_TRUE(policy.empty());
 }
 
-TEST(Csp, DISABLED_CantInverseOption)
+TEST(Option_Csp, DISABLED_CantInverseOption)
 {
     FilterFile fs;
 
@@ -98,7 +98,7 @@ TEST(Csp, DISABLED_CantInverseOption)
     adblock.addFilterSet(fs.path());
 }
 
-TEST(Csp, WontInterfereWithNormalFilterRule)
+TEST(Option_Csp, WontInterfereWithNormalFilterRule)
 {
     FilterFile fs;
 

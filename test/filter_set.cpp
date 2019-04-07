@@ -14,7 +14,7 @@ using namespace adblock;
 namespace bfs = boost::filesystem;
 static const bfs::path projectRoot { PROJECT_ROOT };
 
-TEST(FilterSet, Elementary)
+TEST(Main_FilterSet, Elementary)
 {
     const auto &path = projectRoot / "test/data/elementary.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -26,21 +26,21 @@ TEST(FilterSet, Elementary)
     EXPECT_EQ(31, filterSet.rules().size());
 }
 
-TEST(FilterSet, FileDoesNotExist)
+TEST(Main_FilterSet, FileDoesNotExist)
 {
     const auto &path = projectRoot / "test/data/xxxxx.txt";
     ASSERT_FALSE(bfs::exists(path)) << path;
     EXPECT_THROW(FilterSet filterSet { path }, std::ios_base::failure);
 }
 
-TEST(FilterSet, WrongVersion)
+TEST(Main_FilterSet, WrongVersion)
 {
     const auto &path = projectRoot / "test/data/wrong_version.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
     EXPECT_NO_THROW(FilterSet filterSet { path });
 }
 
-TEST(FilterSet, Statistics)
+TEST(Main_FilterSet, Statistics)
 {
     const auto &path = projectRoot / "test/data/elementary.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -57,7 +57,7 @@ TEST(FilterSet, Statistics)
     //boost::property_tree::write_json(std::cout, stats);
 }
 
-TEST(FilterSet, DISABLED_EasyList)
+TEST(Main_FilterSet, DISABLED_EasyList)
 {
     const auto &path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -71,7 +71,7 @@ TEST(FilterSet, DISABLED_EasyList)
     //boost::property_tree::write_json(std::cout, filterSet.statistics());
 }
 
-TEST(FilterSet, Parameter)
+TEST(Main_FilterSet, Parameter)
 {
     const auto &path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;

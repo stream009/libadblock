@@ -20,7 +20,7 @@ make_rule(const StringRange &cssSelector,
     return std::make_shared<BasicElementHideRule>(cssSelector, domains);
 }
 
-TEST(DomainedElementHideRuleSet, Basic)
+TEST(RuleSet_DomainedElementHideRuleSet, Basic)
 {
     const auto &rule = make_rule("div"_r, Domains { "adblock.org"_r });
     assert(rule);
@@ -36,7 +36,7 @@ TEST(DomainedElementHideRuleSet, Basic)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(DomainedElementHideRuleSet, MultipleDomain)
+TEST(RuleSet_DomainedElementHideRuleSet, MultipleDomain)
 {
     const Domains &domains {
         "adblock.org"_r,
@@ -62,7 +62,7 @@ TEST(DomainedElementHideRuleSet, MultipleDomain)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(DomainedElementHideRuleSet, ExcludedByInverseDomain)
+TEST(RuleSet_DomainedElementHideRuleSet, ExcludedByInverseDomain)
 {
     const Domains &domains {
         "adblock.org"_r,
@@ -84,7 +84,7 @@ TEST(DomainedElementHideRuleSet, ExcludedByInverseDomain)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(DomainedElementHideRuleSet, MultipleHit)
+TEST(RuleSet_DomainedElementHideRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("div"_r, Domains { "adblock.org"_r, });
     assert(rule1);
@@ -109,7 +109,7 @@ TEST(DomainedElementHideRuleSet, MultipleHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(DomainedElementHideRuleSet, ExcludeOnlyRule)
+TEST(RuleSet_DomainedElementHideRuleSet, ExcludeOnlyRule)
 {
     const auto &rule = make_rule("div"_r, Domains { "~adblock.org"_r, });
     assert(rule);
@@ -129,7 +129,7 @@ TEST(DomainedElementHideRuleSet, ExcludeOnlyRule)
     EXPECT_EQ(&*rule, results.front());
 }
 
-TEST(DomainedElementHideRuleSet, Statistics)
+TEST(RuleSet_DomainedElementHideRuleSet, Statistics)
 {
     const auto &rule1 = make_rule("div"_r, Domains { "adblock.org"_r, });
     assert(rule1);
@@ -171,7 +171,7 @@ TEST(DomainedElementHideRuleSet, Statistics)
     EXPECT_EQ(1, stats.get<size_t>("Exception only rules"));
 }
 
-TEST(DomainedElementHideRuleSet, Clear)
+TEST(RuleSet_DomainedElementHideRuleSet, Clear)
 {
     const auto &rule1 = make_rule("div"_r, Domains { "adblock.org"_r, });
     assert(rule1);

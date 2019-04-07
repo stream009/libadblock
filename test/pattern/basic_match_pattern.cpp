@@ -13,7 +13,7 @@
 
 namespace adblock {
 
-TEST(BasicMatchPattern, SubstringMatch)
+TEST(Pattern_BasicMatchPattern, SubstringMatch)
 {
     {   // substring match
         BasicMatchPattern pattern { boost::as_literal("google") };
@@ -41,7 +41,7 @@ TEST(BasicMatchPattern, SubstringMatch)
     }
 }
 
-TEST(BasicMatchPattern, BeginMatch)
+TEST(Pattern_BasicMatchPattern, BeginMatch)
 {
     {   // begin match
         BasicMatchPattern pattern { boost::as_literal("http://www"), true };
@@ -69,7 +69,7 @@ TEST(BasicMatchPattern, BeginMatch)
     }
 }
 
-TEST(BasicMatchPattern, EndMatch)
+TEST(Pattern_BasicMatchPattern, EndMatch)
 {
     {   // match at the ending
         BasicMatchPattern pattern { boost::as_literal(".com"), false, true };
@@ -97,7 +97,7 @@ TEST(BasicMatchPattern, EndMatch)
     }
 }
 
-TEST(BasicMatchPattern, ExactMatch)
+TEST(Pattern_BasicMatchPattern, ExactMatch)
 {
     {   // exact match
         BasicMatchPattern pattern {
@@ -136,7 +136,7 @@ TEST(BasicMatchPattern, ExactMatch)
     }
 }
 
-TEST(BasicMatchPattern, WildcardMatch)
+TEST(Pattern_BasicMatchPattern, WildcardMatch)
 {
     {   // single asterisk at middle of the pattern
         BasicMatchPattern pattern {
@@ -228,7 +228,7 @@ TEST(BasicMatchPattern, WildcardMatch)
     }
 }
 
-TEST(BasicMatchPattern, Separator)
+TEST(Pattern_BasicMatchPattern, Separator)
 {
     BasicMatchPattern pattern {
         boost::as_literal("image^")
@@ -283,7 +283,7 @@ TEST(BasicMatchPattern, Separator)
     isSeparator(notSeparator, false);
 }
 
-TEST(BasicMatchPattern, EndOfLineAsSeparator)
+TEST(Pattern_BasicMatchPattern, EndOfLineAsSeparator)
 {
     {
         BasicMatchPattern pattern { boost::as_literal("com^") };
@@ -299,28 +299,28 @@ TEST(BasicMatchPattern, EndOfLineAsSeparator)
     }
 }
 
-TEST(BasicMatchPattern, MatchShouldBeCaseInsensitive1)
+TEST(Pattern_BasicMatchPattern, MatchShouldBeCaseInsensitive1)
 {
     BasicMatchPattern pattern { ".jpg"_r };
     const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
     EXPECT_TRUE(pattern.match(uri));
 }
 
-TEST(BasicMatchPattern, MatchShouldBeCaseInsensitive2)
+TEST(Pattern_BasicMatchPattern, MatchShouldBeCaseInsensitive2)
 {
     BasicMatchPattern pattern { ".Jpg"_r };
     const auto &uri = "http://www.adblock.org/something.jpg"_u;
     EXPECT_TRUE(pattern.match(uri));
 }
 
-TEST(BasicMatchPattern, CaseSensitiveMatch)
+TEST(Pattern_BasicMatchPattern, CaseSensitiveMatch)
 {
     BasicMatchPattern pattern { ".Jpg"_r };
     const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
     EXPECT_TRUE(pattern.match(uri, true));
 }
 
-TEST(BasicMatchPattern, CaseSensitiveUnmatch)
+TEST(Pattern_BasicMatchPattern, CaseSensitiveUnmatch)
 {
     BasicMatchPattern pattern { ".jpg"_r };
     const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;

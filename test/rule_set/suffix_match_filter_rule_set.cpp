@@ -19,7 +19,7 @@ make_rule(const StringRange &pattern)
             boost::none);
 }
 
-TEST(SuffixMatchFilterRuleSet, OneHit)
+TEST(RuleSet_SuffixMatchFilterRuleSet, OneHit)
 {
     const auto &rule1 = make_rule("adblock.org"_r);
     const auto &rule2 = make_rule("adblock.com"_r);
@@ -33,7 +33,7 @@ TEST(SuffixMatchFilterRuleSet, OneHit)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(SuffixMatchFilterRuleSet, MultipleHit)
+TEST(RuleSet_SuffixMatchFilterRuleSet, MultipleHit)
 {
     const auto &rule1 = make_rule("adblock.org"_r);
     const auto &rule2 = make_rule("www.adblock.org"_r);
@@ -52,7 +52,7 @@ TEST(SuffixMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule3) == results.end());
 }
 
-TEST(SuffixMatchFilterRuleSet, NoNit)
+TEST(RuleSet_SuffixMatchFilterRuleSet, NoNit)
 {
     const auto &rule1 = make_rule("google.com"_r);
     const auto &rule2 = make_rule("foo.adblock.org"_r);
@@ -67,7 +67,7 @@ TEST(SuffixMatchFilterRuleSet, NoNit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(SuffixMatchFilterRuleSet, MultiToken)
+TEST(RuleSet_SuffixMatchFilterRuleSet, MultiToken)
 {
     const auto &rule1 = make_rule("adblock.org*jpg"_r);
     const auto &rule2 = make_rule("adblock.com"_r);
@@ -85,7 +85,7 @@ TEST(SuffixMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(SuffixMatchFilterRuleSet, Clear)
+TEST(RuleSet_SuffixMatchFilterRuleSet, Clear)
 {
     const auto &rule1 = make_rule("adblock.org*jpg"_r);
     const auto &rule2 = make_rule("adblock.com"_r);

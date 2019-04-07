@@ -16,7 +16,7 @@ struct PingContext : MockContext
     bool isPing() const override { return true; }
 };
 
-TEST(Ping, Elementary)
+TEST(Option_Ping, Elementary)
 {
     FilterRuleBase rb;
 
@@ -37,7 +37,7 @@ TEST(Ping, Elementary)
     }
 }
 
-TEST(Ping, Invert)
+TEST(Option_Ping, Invert)
 {
     FilterRuleBase rb;
 

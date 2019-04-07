@@ -10,7 +10,7 @@
 
 namespace adblock {
 
-TEST(RegexPattern, Match)
+TEST(Pattern_RegexPattern, Match)
 {
     const RegexPattern pattern { ".*adblock.*"_r };
     const auto &uri = "http://adblock.org"_u;
@@ -18,7 +18,7 @@ TEST(RegexPattern, Match)
     EXPECT_TRUE(pattern.match(uri));
 }
 
-TEST(RegexPattern, MatchWithDifferentCase1)
+TEST(Pattern_RegexPattern, MatchWithDifferentCase1)
 {
     const RegexPattern pattern { ".*adblock.*"_r };
     const auto &uri = "http://Adblock.Org"_u;
@@ -26,7 +26,7 @@ TEST(RegexPattern, MatchWithDifferentCase1)
     EXPECT_TRUE(pattern.match(uri));
 }
 
-TEST(RegexPattern, MatchWithDifferentCase2)
+TEST(Pattern_RegexPattern, MatchWithDifferentCase2)
 {
     const RegexPattern pattern { ".*AdBlock.*"_r };
     const auto &uri = "http://adblock.org"_u;
@@ -34,7 +34,7 @@ TEST(RegexPattern, MatchWithDifferentCase2)
     EXPECT_TRUE(pattern.match(uri));
 }
 
-TEST(RegexPattern, CaseSensitiveMatch)
+TEST(Pattern_RegexPattern, CaseSensitiveMatch)
 {
     const RegexPattern pattern { ".*AdBlock.*"_r };
     const auto &uri1 = "http://AdBlock.org"_u;

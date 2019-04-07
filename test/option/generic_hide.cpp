@@ -11,7 +11,7 @@
 
 namespace adblock {
 
-TEST(GenericHide, Elementary)
+TEST(Option_GenericHide, Elementary)
 {
     FilterRuleBase fb;
     ElementHideRuleBase rb { fb };
@@ -40,7 +40,7 @@ TEST(GenericHide, Elementary)
     }
 }
 
-TEST(GenericHide, OnlyGenericShouldBeHidden)
+TEST(Option_GenericHide, OnlyGenericShouldBeHidden)
 {
     FilterRuleBase fb;
     ElementHideRuleBase rb { fb };

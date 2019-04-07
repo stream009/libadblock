@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.1)
-
-project(libadblock C CXX)
-
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
              COMPONENTS filesystem locale
@@ -22,8 +18,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fvisibility=hidden")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--exclude-libs=ALL")
 
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 add_library(adblock SHARED
     api.cpp
@@ -32,7 +28,7 @@ target_link_libraries(adblock
     main
 )
 set_target_properties(adblock PROPERTIES
-    VERSION 1.0.5
+    VERSION 1.0.6
     SOVERSION 1
 )
 install(TARGETS adblock
@@ -64,7 +60,3 @@ add_subdirectory(parser)
 add_subdirectory(option)
 add_subdirectory(lib/reg_dom)
 add_subdirectory(lib/uri)
-
-if(BUILD_TESTING)
-    add_subdirectory(test)
-endif()

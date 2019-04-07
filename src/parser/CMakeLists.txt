@@ -9,5 +9,5 @@ target_include_directories(parser PRIVATE
 
 target_link_libraries(parser
     rule
-    -L/home/stream/work/adblock_parser/debug/src -ladblock_parser
+    adblock_parser
 )

@@ -73,7 +73,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
 
         if (!m_endMatch || tokensCopy.size() > 1) {
             tokensCopy.drop_front();
-            range.drop_front(firstToken.size());
+            range.drop_front(static_cast<ptrdiff_t>(firstToken.size()));
         }
     }
 
@@ -84,7 +84,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
         }
 
         tokensCopy.drop_back();
-        range.drop_back(lastToken.size());
+        range.drop_back(static_cast<ptrdiff_t>(lastToken.size()));
     }
 
     for (const auto &token: tokensCopy) {

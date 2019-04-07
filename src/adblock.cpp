@@ -125,7 +125,7 @@ statistics() const
 void AdBlock::
 addFilterSet(Path const& filePath)
 {
-    auto &&filterSet = boost::make_unique<FilterSet>(filePath);
+    auto &&filterSet = std::make_unique<FilterSet>(filePath);
 
     registerFilterSetToRuleBases(filterSet);
 

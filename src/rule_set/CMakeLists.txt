@@ -6,5 +6,6 @@ add_library(rule_set
     domained_element_hide_rule_set.cpp
 )
 target_link_libraries(rule_set
+    radix_tree
     rule
 )

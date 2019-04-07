@@ -20,7 +20,7 @@ namespace boost::spirit::x3::traits {
 template<typename It>
 void move_to(It const b, It const e, std::string_view& v)
 {
-    v = std::string_view(b, e - b);
+    v = std::string_view(b, static_cast<size_t>(e - b));
 }
 
 } // namespace boost::spirit::x3::traits

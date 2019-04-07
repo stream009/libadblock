@@ -9,7 +9,7 @@
 #if defined(USE_TRIE)
 #include "trie/trie.hpp"
 #elif defined(USE_RADIX_TREE)
-#include "radix_tree/radix_tree.hpp"
+#include <radix_tree/radix_tree.hpp>
 #else
 #error "either USE_TRIE or USE_RADIX_TREE must be defined"
 #endif

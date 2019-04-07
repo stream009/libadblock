@@ -33,14 +33,6 @@ TEST(FilterSet, FileDoesNotExist)
     EXPECT_THROW(FilterSet filterSet { path }, std::ios_base::failure);
 }
 
-TEST(FilterSet, WrongHeader)
-{
-    const auto &path = projectRoot / "test/data/wrong_header.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
-    EXPECT_THROW(FilterSet filterSet { path },
-                 FilterSet::ParseError);
-}
-
 TEST(FilterSet, WrongVersion)
 {
     const auto &path = projectRoot / "test/data/wrong_version.txt";

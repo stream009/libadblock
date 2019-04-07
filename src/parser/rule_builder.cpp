@@ -40,6 +40,7 @@
 #include <string_view>
 
 #include <boost/optional.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 namespace adblock::parser {
 
@@ -328,9 +329,14 @@ void RuleBuilder::
 site_key_option(iterator /*begin*/, iterator /*end*/,
                 iterator const value_begin, iterator const value_end)
 {
-    std::vector<StringRange> keys; //TODO
+    std::vector<StringRange> keys;
+    StringRange const value { value_begin, value_end };
 
-    keys.push_back({ value_begin, value_end });
+    boost::algorithm::split(
+        keys,
+        value,
+        [](auto c) { return c == '|'; }
+    );
 
     m_options.push_back(
         std::make_shared<SiteKeyOption>(keys)

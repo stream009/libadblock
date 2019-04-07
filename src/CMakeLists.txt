@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(MAIN "libadblock")
-
-project(${MAIN} C CXX)
+project(libadblock C CXX)
 
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
@@ -20,15 +18,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -fvisibility=hidden")
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-endif()
+
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--exclude-libs=ALL")
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DBOOST_SPIRIT_DEBUG)
-endif()
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 

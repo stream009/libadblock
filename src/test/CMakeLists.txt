@@ -105,3 +105,18 @@ target_link_libraries(test_api
     adblock
     ${GTEST_BOTH_LIBRARIES}
 )
+
+add_subdirectory(parser)
+
+add_executable(test_all
+    all.cpp
+)
+
+target_link_libraries(test_all
+    -Wl,--whole-archive
+        parser_test
+    -Wl,--no-whole-archive
+    parser
+    ${GTEST_BOTH_LIBRARIES}
+)
+

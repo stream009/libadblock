@@ -1,10 +1,8 @@
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
-             COMPONENTS filesystem locale
-                        program_options regex system timer chrono)
+             COMPONENTS filesystem regex system timer)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})
-link_libraries(${Boost_LIBRARIES})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -fvisibility=hidden")
 
@@ -51,6 +49,7 @@ target_link_libraries(main
     parser
     option
     uri
+    ${Boost_LIBRARIES}
 )
 
 add_subdirectory(rule)

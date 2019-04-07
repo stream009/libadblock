@@ -63,30 +63,6 @@ target_link_libraries(test_pattern
     ${GTEST_BOTH_LIBRARIES}
 )
 
-add_executable(test_parser
-    parser/domain.cpp
-    parser/regex_pattern.cpp
-    parser/basic_match_pattern.cpp
-    parser/domain_match_pattern.cpp
-    parser/filter_option.cpp
-    parser/domain_option.cpp
-    parser/sitekey_option.cpp
-    parser/filter_rule.cpp
-    parser/element_hide_rule.cpp
-    parser/comment_rule.cpp
-    parser/white_list_option.cpp
-    parser/header.cpp
-    parser/parser.cpp
-)
-target_include_directories(test_parser PRIVATE
-    ${GTEST_INCLUDE_DIRS}
-)
-target_link_libraries(test_parser
-    parser
-    uri
-    ${GTEST_BOTH_LIBRARIES}
-)
-
 add_executable(test_option
     option/script.cpp
     option/image.cpp
@@ -129,3 +105,18 @@ target_link_libraries(test_api
     adblock
     ${GTEST_BOTH_LIBRARIES}
 )
+
+add_subdirectory(parser)
+
+add_executable(test_all
+    all.cpp
+)
+
+target_link_libraries(test_all
+    -Wl,--whole-archive
+        parser_test
+    -Wl,--no-whole-archive
+    parser
+    ${GTEST_BOTH_LIBRARIES}
+)
+

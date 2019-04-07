@@ -1,9 +1,12 @@
 #include "pattern/basic_match_pattern.hpp"
 
+#include "type.hpp"
+
 #include <iostream>
 
 #include <boost/format.hpp>
 #include <boost/range/algorithm.hpp>
+#include <boost/range/as_literal.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #include <gtest/gtest.h>

@@ -1,222 +1,118 @@
-#include "parser/element_hide_rule.hpp"
+#include "parser/parser.hpp"
+
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
 
 #include <memory>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/spirit/include/qi.hpp>
-
 #include <gtest/gtest.h>
 
 using namespace adblock;
-namespace qi = boost::spirit::qi;
 
-const static parser::ElementHideRule grammar;
-
-TEST(ElementHideRuleParser, Basic)
+TEST(Parser_BasicElementHideRule, Basic)
 {
-    const auto &line = boost::as_literal("###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "###ad"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &rule = std::dynamic_pointer_cast<BasicElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
+    auto const filter = dynamic_cast<BasicElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
 
-    EXPECT_EQ(0, rule->includeDomains().size());
-    EXPECT_EQ(0, rule->excludeDomains().size());
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
+    EXPECT_TRUE(filter->includeDomains().empty());
+    EXPECT_TRUE(filter->excludeDomains().empty());
 }
 
-TEST(ElementHideRuleParser, SingleDomain1)
+TEST(Parser_BasicElementHideRule, SingleDomain1)
 {
-    const auto &line = boost::as_literal("adblock.org###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock.org###ad"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &rule = std::dynamic_pointer_cast<BasicElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
+    auto const filter = dynamic_cast<BasicElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
 
-    const auto &domains = rule->includeDomains();
-    EXPECT_EQ(1, domains.size());
-    EXPECT_TRUE(boost::equals("adblock.org", domains[0]));
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    EXPECT_EQ(0, rule->excludeDomains().size());
+    auto const& domains = filter->includeDomains();
+    ASSERT_EQ(1, domains.size());
+    EXPECT_EQ("adblock.org"_r, domains[0]);
+
+    EXPECT_TRUE(filter->excludeDomains().empty());
 }
 
-TEST(ElementHideRuleParser, SingleDomain2)
+TEST(Parser_BasicElementHideRule, SingleDomain2)
 {
-    const auto &line = boost::as_literal("~adblock.org###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "~adblock.org###ad"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &rule = std::dynamic_pointer_cast<BasicElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
+    auto const filter = dynamic_cast<BasicElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
 
-    EXPECT_EQ(0, rule->includeDomains().size());
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    const auto &domains = rule->excludeDomains();
-    EXPECT_EQ(1, domains.size());
-    EXPECT_TRUE(boost::equals("adblock.org", domains[0])) << domains[0];
+    EXPECT_TRUE(filter->includeDomains().empty());
+
+    auto const& domains = filter->excludeDomains();
+    ASSERT_EQ(1, domains.size());
+    EXPECT_EQ("adblock.org"_r, domains[0]);
 }
 
-TEST(ElementHideRuleParser, MultipleDomain)
+TEST(Parser_BasicElementHideRule, MultipleDomain)
 {
-    const auto &line =
-              boost::as_literal("adblock.org,~google.com,facebook.com###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock.org,~google.com,facebook.com###ad"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &rule = std::dynamic_pointer_cast<BasicElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
+    auto const filter = dynamic_cast<BasicElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
 
-    auto &&domains = rule->includeDomains();
-    EXPECT_EQ(2, domains.size());
-    EXPECT_TRUE(boost::equals("adblock.org", domains[0]));
-    EXPECT_TRUE(boost::equals("facebook.com", domains[1]));
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    domains = rule->excludeDomains();
-    EXPECT_EQ(1, domains.size());
-    EXPECT_TRUE(boost::equals("google.com", domains[0]));
+    auto const& domains1 = filter->includeDomains();
+    ASSERT_EQ(2, domains1.size());
+    EXPECT_EQ("adblock.org"_r, domains1[0]);
+    EXPECT_EQ("facebook.com"_r, domains1[1]);
+
+    auto const& domains2 = filter->excludeDomains();
+    ASSERT_EQ(1, domains2.size());
+    EXPECT_EQ("google.com"_r, domains2[0]);
 }
 
-TEST(ElementHideRuleParser, WrongDomain1)
+TEST(Parser_ExceptionElementHideRule, Basic)
 {
-    const auto &line =
-              boost::as_literal("ad|block.org###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "#@##ad"_r;
 
-    EXPECT_FALSE(rv);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<ExceptionElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
+
+    EXPECT_TRUE(filter->includeDomains().empty());
+    EXPECT_TRUE(filter->excludeDomains().empty());
 }
 
-TEST(ElementHideRuleParser, WrongDomain2)
+TEST(Parser_ExtendedElementHideRule, Basic)
 {
-    const auto &line =
-              boost::as_literal("adblock.org,###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "#?##ad"_r;
 
-    EXPECT_FALSE(rv);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<ExtendedElementHideRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    EXPECT_EQ("#ad"_r, filter->cssSelector());
+
+    EXPECT_TRUE(filter->includeDomains().empty());
+    EXPECT_TRUE(filter->excludeDomains().empty());
 }
-
-TEST(ElementHideRuleParser, WrongDomain3)
-{
-    const auto &line =
-              boost::as_literal(",adblock.org###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(ElementHideRuleParser, WrongDomain4)
-{
-    const auto &line =
-              boost::as_literal("adblock.org, google.com###ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(ExceptionElementHideRuleParser, Basic)
-{
-    const auto &line = boost::as_literal("#@##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &rule =
-            std::dynamic_pointer_cast<ExceptionElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
-
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
-
-    EXPECT_EQ(0, rule->includeDomains().size());
-    EXPECT_EQ(0, rule->excludeDomains().size());
-}
-
-TEST(ExceptionElementHideRuleParser, Wrong1)
-{
-    const auto &line = boost::as_literal("#@@##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(ExceptionElementHideRuleParser, Wrong2)
-{
-    const auto &line = boost::as_literal("@##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-// ExtendedElementHideRule
-
-TEST(ExtendedElementHideRuleParser, Basic)
-{
-    auto const& line = boost::as_literal("#?##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    auto const rv = qi::parse(it, line.end(), grammar, result);
-
-    ASSERT_TRUE(rv && it == line.end());
-    auto const& rule =
-            std::dynamic_pointer_cast<ExtendedElementHideRule>(result);
-    EXPECT_TRUE(!!rule);
-
-    EXPECT_TRUE(boost::equals("#ad", rule->cssSelector()));
-
-    EXPECT_EQ(0, rule->includeDomains().size());
-    EXPECT_EQ(0, rule->excludeDomains().size());
-}
-
-TEST(ExtendedElementHideRuleParser, Wrong1)
-{
-    auto const& line = boost::as_literal("#??##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    auto const rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(ExtendedElementHideRuleParser, Wrong2)
-{
-    auto const& line = boost::as_literal("?##ad");
-    std::shared_ptr<Rule> result;
-    auto it = line.begin();
-    auto const rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-

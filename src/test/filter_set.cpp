@@ -3,6 +3,7 @@
 
 #include <exception>
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm.hpp>
 
@@ -30,14 +31,6 @@ TEST(FilterSet, FileDoesNotExist)
     const auto &path = projectRoot / "test/data/xxxxx.txt";
     ASSERT_FALSE(bfs::exists(path)) << path;
     EXPECT_THROW(FilterSet filterSet { path }, std::ios_base::failure);
-}
-
-TEST(FilterSet, WrongHeader)
-{
-    const auto &path = projectRoot / "test/data/wrong_header.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
-    EXPECT_THROW(FilterSet filterSet { path },
-                 FilterSet::ParseError);
 }
 
 TEST(FilterSet, WrongVersion)

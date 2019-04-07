@@ -1,105 +1,121 @@
-#include "parser/filter_pattern.hpp"
+#include "parser/parser.hpp"
+
 #include "pattern/basic_match_pattern.hpp"
+#include "rule/basic_filter_rule.hpp"
+#include "type.hpp"
 
 #include <memory>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/spirit/include/qi.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
-namespace qi = boost::spirit::qi;
 
-const static parser::FilterPattern grammar;
-
-TEST(BasicMatchPatternParser, Basic)
+TEST(Parser_BasicMatchPatternParser, Basic)
 {
-    const auto &line = boost::as_literal("adblock");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "adblock"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_FALSE(pattern->isBeginMatch());
-    EXPECT_FALSE(pattern->isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
+    EXPECT_FALSE(pattern.isBeginMatch());
+    EXPECT_FALSE(pattern.isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(BasicMatchPatternParser, BeginMatch)
+TEST(Parser_BasicMatchPatternParser, BeginMatch)
 {
-    const auto &line = boost::as_literal("|adblock");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "|adblock"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_TRUE(pattern->isBeginMatch());
-    EXPECT_FALSE(pattern->isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
+    EXPECT_TRUE(pattern.isBeginMatch());
+    EXPECT_FALSE(pattern.isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(BasicMatchPatternParser, EndMatch)
+TEST(Parser_BasicMatchPatternParser, EndMatch)
 {
-    const auto &line = boost::as_literal("adblock|");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "adblock|"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_FALSE(pattern->isBeginMatch());
-    EXPECT_TRUE(pattern->isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
+    EXPECT_FALSE(pattern.isBeginMatch());
+    EXPECT_TRUE(pattern.isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(BasicMatchPatternParser, ExactMatch)
+TEST(Parser_BasicMatchPatternParser, ExactMatch)
 {
-    const auto &line = boost::as_literal("|adblock|");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "|adblock|"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_TRUE(pattern->isBeginMatch());
-    EXPECT_TRUE(pattern->isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
+    EXPECT_TRUE(pattern.isBeginMatch());
+    EXPECT_TRUE(pattern.isEndMatch());
+    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(BasicMatchPatternParser, BarInMiddleOfPattern)
+TEST(Parser_BasicMatchPatternParser, BarInMiddleOfPattern)
 {
-    const auto &line = boost::as_literal("ad|block");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "ad|block"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("ad|block", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_FALSE(pattern->isBeginMatch());
-    EXPECT_FALSE(pattern->isEndMatch());
-    EXPECT_EQ("ad|block"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("ad|block", boost::lexical_cast<std::string>(pattern));
+    EXPECT_FALSE(pattern.isBeginMatch());
+    EXPECT_FALSE(pattern.isEndMatch());
+    EXPECT_EQ("ad|block"_r, pattern.tokens().front());
 }
 
-TEST(BasicMatchPatternParser, MultiTokenPattern)
+TEST(Parser_BasicMatchPatternParser, MultiTokenPattern)
 {
-    const auto &line = boost::as_literal("ad*block");
-    std::shared_ptr<Pattern> result;
-    const auto rv = qi::parse(line.begin(), line.end(), grammar, result);
+    auto const& line = "ad*block"_r;
 
-    ASSERT_TRUE(rv);
-    const auto &pattern = std::dynamic_pointer_cast<BasicMatchPattern>(result);
-    EXPECT_TRUE(!!pattern);
-    EXPECT_EQ("ad*block", boost::lexical_cast<std::string>(*pattern));
-    EXPECT_FALSE(pattern->isBeginMatch());
-    EXPECT_FALSE(pattern->isEndMatch());
-    EXPECT_EQ("ad"_r, pattern->tokens().front());
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& pattern = dynamic_cast<BasicMatchPattern const&>(filter->pattern());
+
+    EXPECT_EQ("ad*block", boost::lexical_cast<std::string>(pattern));
+    EXPECT_FALSE(pattern.isBeginMatch());
+    EXPECT_FALSE(pattern.isEndMatch());
+    EXPECT_EQ("ad"_r, pattern.tokens().front());
 }

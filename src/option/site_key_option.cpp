@@ -3,6 +3,7 @@
 #include "context.hpp"
 
 #include <boost/algorithm/cxx11/any_of.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace adblock {
 

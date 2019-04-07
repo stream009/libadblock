@@ -1,52 +1,43 @@
 #include "parser.hpp"
 
-#include "grammar.hpp"
-#include "header.hpp"
+#include "filter_set.hpp"
+#include "rule_builder.hpp"
 
-#include <algorithm>
-#include <iostream>
-#include <iterator>
+#include <string_view>
+#include <memory>
+#include <vector>
 
-namespace adblock { namespace parser {
+namespace adblock::parser {
 
-StringRange
-parseHeader(const StringRange &line)
+std::vector<std::shared_ptr<Rule>>
+parse(FilterSet const& set, StringRange const text)
 {
-    namespace qi = boost::spirit::qi;
+    std::vector<std::shared_ptr<Rule>> rules;
+    std::string_view sv { text.begin(), text.size() };
 
-    static const Header grammar;
+    RuleBuilder builder { set, rules };
 
-    StringRange result;
-    auto begin = line.begin();
-    const auto end = line.end();
-    qi::phrase_parse(begin, end, grammar, qi::ascii::space, result);
+    adblock_parser::parse_filter_list(sv, builder);
 
-    return result;
+    return rules;
 }
 
 std::shared_ptr<Rule>
-parse(const StringRange &line)
+parse(StringRange const line)
 {
-    namespace qi = boost::spirit::qi;
+    std::vector<std::shared_ptr<Rule>> rules;
+    RuleBuilder builder { rules };
 
-    static const Grammar grammar;
-    std::shared_ptr<Rule> rule;
+    std::string_view const line_ { line.begin(), line.size() };
 
-    auto begin = line.begin();
-    const auto end = line.end();
-    const auto rv = qi::parse(begin, end, grammar, rule);
-    if (!rv) { //TODO proper error reporting
-        std::cout << "Couldn't parse filter rule: " << line << "\n";
+    adblock_parser::parse_filter(line_, builder);
+
+    if (rules.empty()) {
         return nullptr;
     }
-    if (begin != end) {
-        std::cout << "Couldn't parse filter rule: " << line << " [";
-        std::copy(begin, end, std::ostream_iterator<char>(std::cout));
-        std::cout << "]\n";
-        return nullptr;
+    else {
+        return rules.front();
     }
-
-    return rule;
 }
 
-}} // namespace adblock::parser
+} // namespace adblock::parser

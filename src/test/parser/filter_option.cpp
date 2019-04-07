@@ -1,352 +1,509 @@
-#include "parser/filter_option.hpp"
+#include "parser/parser.hpp"
+
 #include "option.hpp"
-#include "option/script_option.hpp"
-#include "option/image_option.hpp"
-#include "option/style_sheet_option.hpp"
-#include "option/object_option.hpp"
-#include "option/xml_http_request_option.hpp"
-#include "option/object_subrequest_option.hpp"
-#include "option/subdocument_option.hpp"
-#include "option/other_option.hpp"
-#include "option/third_party_option.hpp"
-#include "option/match_case_option.hpp"
 #include "option/collapse_option.hpp"
 #include "option/do_not_track_option.hpp"
-#include "option/popup_option.hpp"
+#include "option/font_option.hpp"
+#include "option/image_option.hpp"
+#include "option/match_case_option.hpp"
 #include "option/media_option.hpp"
+#include "option/object_option.hpp"
+#include "option/object_subrequest_option.hpp"
+#include "option/other_option.hpp"
+#include "option/popup_option.hpp"
+#include "option/script_option.hpp"
+#include "option/style_sheet_option.hpp"
+#include "option/subdocument_option.hpp"
+#include "option/third_party_option.hpp"
+#include "option/xml_http_request_option.hpp"
+#include "rule/filter_rule.hpp"
+#include "type.hpp"
 
 #include <memory>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/spirit/include/qi.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
-namespace qi = boost::spirit::qi;
 
-const static parser::FilterOption grammar;
-
-TEST(FilterOptionParser, Script)
+TEST(Parser_FilterOption, Script_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("script");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$script"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ScriptOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~script");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ScriptOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ScriptOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, Image)
+TEST(Parser_FilterOption, Script_Inverse)
 {
-    {   // normal
-        const auto &line = boost::as_literal("image");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~script"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ImageOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~image");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ImageOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ScriptOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, StyleSheet)
+TEST(Parser_FilterOption, Image_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("stylesheet");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$image"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<StyleSheetOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~stylesheet");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<StyleSheetOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ImageOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, Object)
+TEST(Parser_FilterOption, Image_Inverse)
 {
-    {   // normal
-        const auto &line = boost::as_literal("object");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~image"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ObjectOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~object");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ObjectOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ImageOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, XMLHttpRequest)
+TEST(Parser_FilterOption, StyleSheet_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("xmlhttprequest");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$stylesheet"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<XmlHttpRequestOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~xmlhttprequest");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<XmlHttpRequestOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<StyleSheetOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, ObjectSubRequest)
+TEST(Parser_FilterOption, StyleSheet_Inverse)
 {
-    {   // normal
-        const auto &line = boost::as_literal("object-subrequest");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~stylesheet"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ObjectSubRequestOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~object-subrequest");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ObjectSubRequestOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<StyleSheetOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, SubDocument)
+TEST(Parser_FilterOption, Object_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("subdocument");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$object"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<SubDocumentOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~subdocument");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<SubDocumentOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ObjectOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, Other)
+TEST(Parser_FilterOption, Object_Inverse)
 {
-    {   // normal
-        const auto &line = boost::as_literal("other");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~object"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<OtherOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~other");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<OtherOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ObjectOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, ThirdParty)
+TEST(Parser_FilterOption, XmlHttpRequest_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("third-party");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$xmlhttprequest"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ThirdPartyOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~third-party");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<ThirdPartyOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<XmlHttpRequestOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, MatchCase)
+TEST(Parser_FilterOption, XmlHttpRequest_Inverse)
 {
-    const auto &line = boost::as_literal("match-case");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~xmlhttprequest"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<MatchCaseOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<XmlHttpRequestOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, Collapse)
+TEST(Parser_FilterOption, ObjectSubRequest_Normal)
 {
-    {   // normal
-        const auto &line = boost::as_literal("collapse");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$object-subrequest"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<CollapseOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~collapse");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<CollapseOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ObjectSubRequestOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, DoNotTrack)
+TEST(Parser_FilterOption, ObjectSubRequest_Inverse)
 {
-    const auto &line = boost::as_literal("donottrack");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~object-subrequest"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<DoNotTrackOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ObjectSubRequestOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }
 
-TEST(FilterOptionParser, PopUp)
+TEST(Parser_FilterOption, SubDocument_Normal)
 {
-    const auto &line = boost::as_literal("popup");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$subdocument"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<PopUpOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<SubDocumentOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
 }
 
-TEST(FilterOptionParser, Media)
+TEST(Parser_FilterOption, SubDocument_Inverse)
 {
-    {   // normal
-        const auto &line = boost::as_literal("media");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$~subdocument"_r;
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<MediaOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_FALSE(option->inverse());
-    }
-    {   // inverse
-        const auto &line = boost::as_literal("~media");
-        std::shared_ptr<Option> result;
-        auto it = line.begin();
-        const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
 
-        ASSERT_TRUE(rv && it == line.end());
-        const auto &option = std::dynamic_pointer_cast<MediaOption>(result);
-        EXPECT_TRUE(!!option);
-        EXPECT_TRUE(option->inverse());
-    }
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<SubDocumentOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Other_Normal)
+{
+    auto const& line = "adblock$other"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<OtherOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Other_Inverse)
+{
+    auto const& line = "adblock$~other"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<OtherOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
+}
+
+TEST(Parser_FilterOption, ThirdParty_Normal)
+{
+    auto const& line = "adblock$third-party"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ThirdPartyOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
+}
+
+TEST(Parser_FilterOption, ThirdParty_Inverse)
+{
+    auto const& line = "adblock$~third-party"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<ThirdPartyOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
+}
+
+TEST(Parser_FilterOption, MatchCase)
+{
+    auto const& line = "adblock$match-case"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<MatchCaseOption*>(options.front().get());
+    EXPECT_TRUE(option);
+}
+
+TEST(Parser_FilterOption, Collapse_Normal)
+{
+    auto const& line = "adblock$collapse"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<CollapseOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Collapse_Inverse)
+{
+    auto const& line = "adblock$~collapse"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<CollapseOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
+}
+
+TEST(Parser_FilterOption, DoNotTrack)
+{
+    auto const& line = "adblock$donottrack"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<DoNotTrackOption*>(options.front().get());
+    EXPECT_TRUE(option);
+}
+
+TEST(Parser_FilterOption, PopUp)
+{
+    auto const& line = "adblock$popup"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<PopUpOption*>(options.front().get());
+    EXPECT_TRUE(option);
+}
+
+TEST(Parser_FilterOption, Media_Normal)
+{
+    auto const& line = "adblock$media"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<MediaOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Media_Inverse)
+{
+    auto const& line = "adblock$~media"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<MediaOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Font_Normal)
+{
+    auto const& line = "adblock$font"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<FontOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_FALSE(option->inverse());
+}
+
+TEST(Parser_FilterOption, Font_Inverse)
+{
+    auto const& line = "adblock$~font"_r;
+
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<FontOption*>(options.front().get());
+    ASSERT_TRUE(option);
+    EXPECT_TRUE(option->inverse());
 }

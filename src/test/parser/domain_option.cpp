@@ -1,188 +1,94 @@
-#include "parser/filter_option.hpp"
+#include "parser/parser.hpp"
+
 #include "option.hpp"
 #include "option/domain_option.hpp"
+#include "rule/filter_rule.hpp"
+#include "type.hpp"
 
 #include <memory>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/spirit/include/qi.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
-namespace qi = boost::spirit::qi;
 
-const static parser::FilterOption grammar;
-
-TEST(FilterOptionParser, Domain_Basic)
+TEST(Parser_FilterOption, Domain_Basic)
 {
-    const auto &line = boost::as_literal("domain=adblock.org");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$domain=adblock.org"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    ASSERT_TRUE(option);
     EXPECT_EQ(1, option->includeDomains().size());
     EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->includeDomains()[0]));
+    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
 }
 
-TEST(FilterOptionParser, Domain_ExcludeDomain)
+TEST(Parser_FilterOption, Domain_ExcludeDomain)
 {
-    const auto &line = boost::as_literal("domain=~adblock.org");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$domain=~adblock.org"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    ASSERT_TRUE(option);
     EXPECT_EQ(0, option->includeDomains().size());
     EXPECT_EQ(1, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->excludeDomains()[0]));
+    EXPECT_EQ("adblock.org"_r, option->excludeDomains()[0]);
 }
 
-TEST(FilterOptionParser, Domain_MultipleDomain1)
+TEST(Parser_FilterOption, Domain_MultipleDomain1)
 {
-    const auto &line = boost::as_literal("domain=adblock.org|google.com");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$domain=adblock.org|google.com"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    ASSERT_TRUE(option);
     EXPECT_EQ(2, option->includeDomains().size());
     EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->includeDomains()[0]));
-    EXPECT_TRUE(boost::equals("google.com", option->includeDomains()[1]));
+    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
+    EXPECT_EQ("google.com"_r, option->includeDomains()[1]);
 }
 
-TEST(FilterOptionParser, Domain_MultipleDomain2)
+TEST(Parser_FilterOption, Domain_MultipleDomain2)
 {
-    const auto &line = boost::as_literal("domain=adblock.org|~google.com");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
+    auto const& line = "adblock$domain=adblock.org|~google.com"_r;
 
-    ASSERT_TRUE(rv && it == line.end());
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
+    auto const rule = parser::parse(line);
+    ASSERT_TRUE(rule);
+
+    auto const filter = dynamic_cast<FilterRule*>(rule.get());
+    ASSERT_TRUE(filter);
+
+    auto const& options = filter->options();
+    ASSERT_EQ(options.size(), 1);
+
+    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    ASSERT_TRUE(option);
     EXPECT_EQ(1, option->includeDomains().size());
     EXPECT_EQ(1, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->includeDomains()[0]));
-    EXPECT_TRUE(boost::equals("google.com", option->excludeDomains()[0]));
+    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
+    EXPECT_EQ("google.com"_r, option->excludeDomains()[0]);
 }
-
-TEST(FilterOptionParser, Domain_NoOption1)
-{
-    const auto &line = boost::as_literal("domain");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(FilterOptionParser, Domain_NoOption2)
-{
-    const auto &line = boost::as_literal("domain=");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(FilterOptionParser, Domain_NoOption3)
-{
-    const auto &line = boost::as_literal("domain=~");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(FilterOptionParser, Domain_WrongDomain1)
-{
-    const auto &line = boost::as_literal("domain=a$dblock.org");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_TRUE(rv); // partial match
-    EXPECT_FALSE(it == line.end());
-
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("a", option->includeDomains()[0]));
-}
-
-TEST(FilterOptionParser, Domain_WrongDomain2)
-{
-    const auto &line = boost::as_literal("domain=ad,block.org");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_TRUE(rv); // partial match
-    EXPECT_FALSE(it == line.end());
-
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("ad", option->includeDomains()[0]));
-}
-
-TEST(FilterOptionParser, Domain_WrongDomain3)
-{
-    const auto &line = boost::as_literal("domain=adblock.org|");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_TRUE(rv); // partial match
-    EXPECT_FALSE(it == line.end());
-
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->includeDomains()[0]));
-}
-
-TEST(FilterOptionParser, Domain_WrongDomain4)
-{
-    const auto &line = boost::as_literal("domain=|adblock.org");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_FALSE(rv);
-}
-
-TEST(FilterOptionParser, Domain_WrongDomain5)
-{
-    const auto &line = boost::as_literal("domain=adblock.org~");
-    std::shared_ptr<Option> result;
-    auto it = line.begin();
-    const auto rv = qi::parse(it, line.end(), grammar, result);
-
-    EXPECT_TRUE(rv); // partial match
-    EXPECT_FALSE(it == line.end());
-
-    const auto &option = std::dynamic_pointer_cast<DomainOption>(result);
-    EXPECT_TRUE(!!option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_TRUE(boost::equals("adblock.org", option->includeDomains()[0]));
-}
-

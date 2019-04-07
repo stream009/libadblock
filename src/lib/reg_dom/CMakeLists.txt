@@ -5,6 +5,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
 	-Wredundant-decls -Wcast-qual -Wcast-align -Winline \
 	-Wno-unused-parameter -Wno-overlength-strings"
 )
-_add_library(reg_dom
+add_library(reg_dom
     regdom.c
 )

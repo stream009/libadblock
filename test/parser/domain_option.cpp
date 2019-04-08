@@ -24,7 +24,7 @@ TEST(Parser_FilterOption, Domain_Basic)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    auto* const option = dynamic_cast<DomainOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_EQ(1, option->includeDomains().size());
     EXPECT_EQ(0, option->excludeDomains().size());
@@ -44,7 +44,7 @@ TEST(Parser_FilterOption, Domain_ExcludeDomain)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    auto* const option = dynamic_cast<DomainOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_EQ(0, option->includeDomains().size());
     EXPECT_EQ(1, option->excludeDomains().size());
@@ -64,7 +64,7 @@ TEST(Parser_FilterOption, Domain_MultipleDomain1)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    auto* const option = dynamic_cast<DomainOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_EQ(2, option->includeDomains().size());
     EXPECT_EQ(0, option->excludeDomains().size());
@@ -85,7 +85,7 @@ TEST(Parser_FilterOption, Domain_MultipleDomain2)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DomainOption*>(options.front().get());
+    auto* const option = dynamic_cast<DomainOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_EQ(1, option->includeDomains().size());
     EXPECT_EQ(1, option->excludeDomains().size());

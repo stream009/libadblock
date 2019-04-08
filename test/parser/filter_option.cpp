@@ -36,9 +36,9 @@ TEST(Parser_FilterOption, Script_Normal)
     ASSERT_TRUE(filter);
 
     auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, options.size());
 
-    auto* const option = dynamic_cast<ScriptOption*>(options.front().get());
+    auto* const option = dynamic_cast<ScriptOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -56,7 +56,7 @@ TEST(Parser_FilterOption, Script_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ScriptOption*>(options.front().get());
+    auto* const option = dynamic_cast<ScriptOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -74,7 +74,7 @@ TEST(Parser_FilterOption, Image_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ImageOption*>(options.front().get());
+    auto* const option = dynamic_cast<ImageOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -92,7 +92,7 @@ TEST(Parser_FilterOption, Image_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ImageOption*>(options.front().get());
+    auto* const option = dynamic_cast<ImageOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -110,7 +110,7 @@ TEST(Parser_FilterOption, StyleSheet_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<StyleSheetOption*>(options.front().get());
+    auto* const option = dynamic_cast<StyleSheetOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -128,7 +128,7 @@ TEST(Parser_FilterOption, StyleSheet_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<StyleSheetOption*>(options.front().get());
+    auto* const option = dynamic_cast<StyleSheetOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -146,7 +146,7 @@ TEST(Parser_FilterOption, Object_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ObjectOption*>(options.front().get());
+    auto* const option = dynamic_cast<ObjectOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -164,7 +164,7 @@ TEST(Parser_FilterOption, Object_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ObjectOption*>(options.front().get());
+    auto* const option = dynamic_cast<ObjectOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -182,7 +182,7 @@ TEST(Parser_FilterOption, XmlHttpRequest_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<XmlHttpRequestOption*>(options.front().get());
+    auto* const option = dynamic_cast<XmlHttpRequestOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -200,7 +200,7 @@ TEST(Parser_FilterOption, XmlHttpRequest_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<XmlHttpRequestOption*>(options.front().get());
+    auto* const option = dynamic_cast<XmlHttpRequestOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -218,7 +218,7 @@ TEST(Parser_FilterOption, ObjectSubRequest_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ObjectSubRequestOption*>(options.front().get());
+    auto* const option = dynamic_cast<ObjectSubRequestOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -236,7 +236,7 @@ TEST(Parser_FilterOption, ObjectSubRequest_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ObjectSubRequestOption*>(options.front().get());
+    auto* const option = dynamic_cast<ObjectSubRequestOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -254,7 +254,7 @@ TEST(Parser_FilterOption, SubDocument_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<SubDocumentOption*>(options.front().get());
+    auto* const option = dynamic_cast<SubDocumentOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -272,7 +272,7 @@ TEST(Parser_FilterOption, SubDocument_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<SubDocumentOption*>(options.front().get());
+    auto* const option = dynamic_cast<SubDocumentOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -290,7 +290,7 @@ TEST(Parser_FilterOption, Other_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<OtherOption*>(options.front().get());
+    auto* const option = dynamic_cast<OtherOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -308,7 +308,7 @@ TEST(Parser_FilterOption, Other_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<OtherOption*>(options.front().get());
+    auto* const option = dynamic_cast<OtherOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -326,7 +326,7 @@ TEST(Parser_FilterOption, ThirdParty_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ThirdPartyOption*>(options.front().get());
+    auto* const option = dynamic_cast<ThirdPartyOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -344,7 +344,7 @@ TEST(Parser_FilterOption, ThirdParty_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ThirdPartyOption*>(options.front().get());
+    auto* const option = dynamic_cast<ThirdPartyOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -362,7 +362,7 @@ TEST(Parser_FilterOption, MatchCase)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<MatchCaseOption*>(options.front().get());
+    auto* const option = dynamic_cast<MatchCaseOption const*>(options.front());
     EXPECT_TRUE(option);
 }
 
@@ -379,7 +379,7 @@ TEST(Parser_FilterOption, Collapse_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<CollapseOption*>(options.front().get());
+    auto* const option = dynamic_cast<CollapseOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -397,7 +397,7 @@ TEST(Parser_FilterOption, Collapse_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<CollapseOption*>(options.front().get());
+    auto* const option = dynamic_cast<CollapseOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -415,7 +415,7 @@ TEST(Parser_FilterOption, DoNotTrack)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DoNotTrackOption*>(options.front().get());
+    auto* const option = dynamic_cast<DoNotTrackOption const*>(options.front());
     EXPECT_TRUE(option);
 }
 
@@ -432,7 +432,7 @@ TEST(Parser_FilterOption, PopUp)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<PopUpOption*>(options.front().get());
+    auto* const option = dynamic_cast<PopUpOption const*>(options.front());
     EXPECT_TRUE(option);
 }
 
@@ -449,7 +449,7 @@ TEST(Parser_FilterOption, Media_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<MediaOption*>(options.front().get());
+    auto* const option = dynamic_cast<MediaOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -467,7 +467,7 @@ TEST(Parser_FilterOption, Media_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<MediaOption*>(options.front().get());
+    auto* const option = dynamic_cast<MediaOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -485,7 +485,7 @@ TEST(Parser_FilterOption, Font_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<FontOption*>(options.front().get());
+    auto* const option = dynamic_cast<FontOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -503,7 +503,7 @@ TEST(Parser_FilterOption, Font_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<FontOption*>(options.front().get());
+    auto* const option = dynamic_cast<FontOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }

@@ -23,7 +23,7 @@ TEST(Parser_FilterOption, SiteKey_Basic)
     auto const& options = filter->options();
     ASSERT_EQ(1, options.size());
 
-    auto* const option = dynamic_cast<SiteKeyOption*>(options.front().get());
+    auto* const option = dynamic_cast<SiteKeyOption const*>(options.front());
     ASSERT_TRUE(option);
     ASSERT_EQ(1, option->siteKeys().size());
     EXPECT_EQ("abcdefg"_r, option->siteKeys().front());
@@ -42,7 +42,7 @@ TEST(Parser_FilterOption, SiteKey_MultipleSiteKey)
     auto const& options = filter->options();
     ASSERT_EQ(1, options.size());
 
-    auto* const option = dynamic_cast<SiteKeyOption*>(options.front().get());
+    auto* const option = dynamic_cast<SiteKeyOption const*>(options.front());
     ASSERT_TRUE(option);
     ASSERT_EQ(2, option->siteKeys().size());
     EXPECT_EQ("abcdefg"_r, option->siteKeys()[0]);

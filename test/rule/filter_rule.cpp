@@ -36,16 +36,15 @@ TEST(Rule_BasicFilterRule, WithOption)
         std::make_unique<BasicMatchPattern>("adblock"_r);
 
     FilterRule::Options theOptions;
-    theOptions.push_back(std::make_shared<ScriptOption>(false));
+    theOptions.push_back(std::make_unique<ScriptOption>(false));
 
-    BasicFilterRule rule { std::move(pattern), theOptions };
+    BasicFilterRule rule { std::move(pattern), std::move(theOptions) };
 
     auto const& options = rule.options();
     ASSERT_EQ(1, options.size());
 
-    auto const& option = std::dynamic_pointer_cast<ScriptOption>(options[0]);
-    ASSERT_TRUE(!!option);
-    EXPECT_EQ(theOptions[0], option);
+    auto* const option = options[0];
+    ASSERT_TRUE(dynamic_cast<ScriptOption const*>(option));
 
     struct ScriptContext : MockContext {
         bool fromScriptTag() const { return true; }
@@ -62,9 +61,9 @@ TEST(Rule_BasicFilterRule, CaseSensitiveMatch)
         std::make_unique<BasicMatchPattern>("Adblock"_r);
 
     FilterRule::Options theOptions;
-    theOptions.push_back(std::make_shared<MatchCaseOption>());
+    theOptions.push_back(std::make_unique<MatchCaseOption>());
 
-    BasicFilterRule const rule { std::move(pattern), theOptions };
+    BasicFilterRule const rule { std::move(pattern), std::move(theOptions) };
 
     const MockContext context {};
     {
@@ -98,16 +97,15 @@ TEST(Rule_ExceptionFilterRule, WithOption)
         std::make_unique<BasicMatchPattern>("adblock"_r);
 
     FilterRule::Options theOptions;
-    theOptions.push_back(std::make_shared<ScriptOption>(false));
+    theOptions.push_back(std::make_unique<ScriptOption>(false));
 
-    ExceptionFilterRule const rule { std::move(pattern), theOptions };
+    ExceptionFilterRule const rule { std::move(pattern), std::move(theOptions) };
 
     auto const& options = rule.options();
     ASSERT_EQ(1, options.size());
 
-    auto const& option = std::dynamic_pointer_cast<ScriptOption>(options[0]);
-    ASSERT_TRUE(!!option);
-    EXPECT_EQ(theOptions[0], option);
+    auto* const option = options[0];
+    ASSERT_TRUE(dynamic_cast<ScriptOption const*>(option));
 
     struct ScriptContext : MockContext {
         bool fromScriptTag() const { return true; }
@@ -124,9 +122,9 @@ TEST(Rule_ExceptionFilterRule, CaseSensitiveMatch)
         std::make_unique<BasicMatchPattern>("Adblock"_r);
 
     FilterRule::Options theOptions;
-    theOptions.push_back(std::make_shared<MatchCaseOption>());
+    theOptions.push_back(std::make_unique<MatchCaseOption>());
 
-    ExceptionFilterRule const rule { std::move(pattern), theOptions };
+    ExceptionFilterRule const rule { std::move(pattern), std::move(theOptions) };
     const MockContext context {};
     {
         auto const& uri = "http://adblock.org"_u;

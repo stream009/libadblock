@@ -16,8 +16,8 @@ class ExceptionFilterRule : public FilterRule
     using Base = FilterRule;
 public:
     ExceptionFilterRule(std::unique_ptr<Pattern> pattern,
-                        std::vector<std::shared_ptr<Option>> const& options)
-        : Base { std::move(pattern), options }
+                        std::vector<std::unique_ptr<Option>> options)
+        : Base { std::move(pattern), std::move(options) }
     {}
 };
 

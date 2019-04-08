@@ -27,7 +27,7 @@ TEST(Parser_WhiteListOption, Document_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DocumentOption*>(options.front().get());
+    auto* const option = dynamic_cast<DocumentOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -45,7 +45,7 @@ TEST(Parser_WhiteListOption, Document_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<DocumentOption*>(options.front().get());
+    auto* const option = dynamic_cast<DocumentOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -63,7 +63,7 @@ TEST(Parser_WhiteListOption, ElemHide_Normal)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ElemHideOption*>(options.front().get());
+    auto* const option = dynamic_cast<ElemHideOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_FALSE(option->inverse());
 }
@@ -81,7 +81,7 @@ TEST(Parser_WhiteListOption, ElemHide_Inverse)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<ElemHideOption*>(options.front().get());
+    auto* const option = dynamic_cast<ElemHideOption const*>(options.front());
     ASSERT_TRUE(option);
     EXPECT_TRUE(option->inverse());
 }
@@ -99,7 +99,7 @@ TEST(Parser_WhiteListOption, GenericBlock)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<GenericBlockOption*>(options.front().get());
+    auto* const option = dynamic_cast<GenericBlockOption const*>(options.front());
     ASSERT_TRUE(option);
 }
 
@@ -116,6 +116,6 @@ TEST(Parser_WhiteListOption, GenericHide)
     auto const& options = filter->options();
     ASSERT_EQ(options.size(), 1);
 
-    auto* const option = dynamic_cast<GenericHideOption*>(options.front().get());
+    auto* const option = dynamic_cast<GenericHideOption const*>(options.front());
     ASSERT_TRUE(option);
 }

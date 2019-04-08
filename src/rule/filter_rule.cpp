@@ -16,23 +16,23 @@ namespace adblock {
 
 FilterRule::
 FilterRule(std::unique_ptr<Pattern> pattern,
-           Options const& options)
+           Options options)
     : m_pattern { std::move(pattern) }
 {
-    for (auto const& opt: options) {
-        if (std::dynamic_pointer_cast<TypeOption>(opt)) {
-            m_typeOptions.push_back(opt);
+    for (auto& opt: options) {
+        if (dynamic_cast<TypeOption*>(opt.get())) {
+            m_typeOptions.push_back(std::move(opt));
         }
-        else if (std::dynamic_pointer_cast<RestrictionOption>(opt)) {
+        else if (dynamic_cast<RestrictionOption*>(opt.get())) {
             auto const& option = *opt;
             if (typeid(option) == typeid(DomainOption)) {
                 m_domainSpecific = true;
             }
 
-            m_restrictionOptions.push_back(opt);
+            m_restrictionOptions.push_back(std::move(opt));
         }
-        else if (std::dynamic_pointer_cast<WhiteListOption>(opt)) {
-            m_whiteListOptions.push_back(opt);
+        else if (dynamic_cast<WhiteListOption*>(opt.get())) {
+            m_whiteListOptions.push_back(std::move(opt));
         }
         else {
             auto const& option = *opt;
@@ -40,7 +40,7 @@ FilterRule(std::unique_ptr<Pattern> pattern,
                 m_caseSensitive = true;
             }
 
-            m_otherOptions.push_back(opt);
+            m_otherOptions.push_back(std::move(opt));
         }
     }
 
@@ -75,19 +75,23 @@ pattern() const
     return *m_pattern;
 }
 
-FilterRule::Options FilterRule::
+FilterRule::OptionRefs FilterRule::
 options() const
 {
-    Options result;
+    OptionRefs result;
 
-    auto push_back = [&](Options const options) {
-        result.insert(result.end(), options.begin(), options.end());
-    };
-
-    push_back(m_typeOptions);
-    push_back(m_restrictionOptions);
-    push_back(m_whiteListOptions);
-    push_back(m_otherOptions);
+    for (auto const& o: m_typeOptions) {
+        result.push_back(o.get());
+    }
+    for (auto const& o: m_restrictionOptions) {
+        result.push_back(o.get());
+    }
+    for (auto const& o: m_whiteListOptions) {
+        result.push_back(o.get());
+    }
+    for (auto const& o: m_otherOptions) {
+        result.push_back(o.get());
+    }
 
     return result;
 }
@@ -98,7 +102,7 @@ matchWhiteListOptions(Uri const& uri, Context const& context) const
     namespace ba = boost::algorithm;
 
     auto const rv =  ba::any_of(m_whiteListOptions,
-            [&](std::shared_ptr<Option> const& option) {
+            [&](auto const& option) {
                 return option->match(uri, context);
             }
         );
@@ -116,7 +120,7 @@ matchTypeOptions(Uri const& uri, Context const& context) const
     }
 
     auto const rv = ba::any_of(m_typeOptions,
-            [&](std::shared_ptr<Option> const& option) {
+            [&](auto const& option) {
                 return option->match(uri, context);
             }
     );
@@ -130,7 +134,7 @@ matchRestrictionOptions(Uri const& uri, Context const& context) const
     namespace ba = boost::algorithm;
 
     return ba::all_of(m_restrictionOptions,
-        [&](std::shared_ptr<Option> const& option) {
+        [&](auto const& option) {
             return option->match(uri, context);
         }
     );
@@ -143,8 +147,8 @@ print(std::ostream &os) const
     auto const& options = this->options();
     if (!options.empty()) {
         os << "Option: ";
-        for (const auto option: options) {
-            os << *option << " ";
+        for (auto const& option: options) {
+            os << option << " ";
         }
     }
 }

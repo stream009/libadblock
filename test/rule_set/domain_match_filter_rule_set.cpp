@@ -21,7 +21,7 @@ make_rule(StringRange const& domain,
 {
     return std::make_shared<BasicFilterRule>(
         std::make_unique<DomainMatchPattern>(domain, pattern, false),
-        std::vector<std::shared_ptr<Option>>()
+        std::vector<std::unique_ptr<Option>>()
     );
 }
 

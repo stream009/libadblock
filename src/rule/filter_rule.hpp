@@ -22,8 +22,8 @@ class FilterRule : public Rule
 {
     using Base = Rule;
 public:
-    using Options = std::vector<std::shared_ptr<Option>>;
-    using OptionsRange = boost::iterator_range<Options::const_iterator>;
+    using Options = std::vector<std::unique_ptr<Option>>;
+    using OptionRefs = std::vector<Option const*>;
 
 public:
     ~FilterRule() override;
@@ -32,7 +32,7 @@ public:
                            bool const specificOnly = false) const;
 
     Pattern const& pattern() const;
-    Options options() const;
+    OptionRefs options() const;
 
     template<typename OptionT>
     OptionT const* option() const;
@@ -43,7 +43,7 @@ public:
         namespace ba = boost::algorithm;
 
         auto isSameType =
-            [](std::shared_ptr<Option> const& opt) {
+            [](auto const& opt) {
                 assert(opt);
                 auto const& option = *opt;
                 return typeid(option) == typeid(OptionT);
@@ -59,7 +59,7 @@ public:
 
 protected:
     FilterRule(std::unique_ptr<Pattern>,
-               Options const&);
+               Options);
 
 private:
     bool matchWhiteListOptions(Uri const&, Context const&) const;

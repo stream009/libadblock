@@ -16,7 +16,7 @@ make_rule(StringRange const& pattern)
 {
     return std::make_shared<BasicFilterRule>(
         std::make_unique<BasicMatchPattern>(pattern, true),
-        std::vector<std::shared_ptr<Option>>()
+        std::vector<std::unique_ptr<Option>>()
     );
 }
 

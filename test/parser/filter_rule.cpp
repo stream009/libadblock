@@ -51,7 +51,7 @@ TEST(Parser_BasicFilterRule, OneOption)
 
     auto const& options = filter->options();
     ASSERT_EQ(1, options.size());
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption*>(options[0].get()));
+    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[0]));
 }
 
 TEST(Parser_BasicFilterRule, TwoOptions)
@@ -71,11 +71,11 @@ TEST(Parser_BasicFilterRule, TwoOptions)
     auto const& options = filter->options();
     ASSERT_EQ(2, options.size());
 
-    auto* const scriptOption = dynamic_cast<ScriptOption*>(options[0].get());
+    auto* const scriptOption = dynamic_cast<ScriptOption const*>(options[0]);
     ASSERT_TRUE(scriptOption);
     EXPECT_TRUE(scriptOption->inverse());
 
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption*>(options[1].get()));
+    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[1]));
 }
 
 TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
@@ -96,8 +96,8 @@ TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
     auto const& options = filter->options();
     EXPECT_EQ(2, options.size());
 
-    EXPECT_TRUE(dynamic_cast<DomainOption*>(options[0].get()));
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption*>(options[1].get()));
+    EXPECT_TRUE(dynamic_cast<DomainOption const*>(options[0]));
+    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[1]));
 }
 
 TEST(Parser_ExceptionFilterRule, Basic)

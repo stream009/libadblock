@@ -17,7 +17,7 @@ class RuleBuilder : public adblock_parser::event_handler
 {
     using RulePtr = std::shared_ptr<Rule>;
     using PatternPtr = std::unique_ptr<Pattern>;
-    using OptionPtr = std::shared_ptr<Option>;
+    using OptionPtr = std::unique_ptr<Option>;
 
 public:
     RuleBuilder(FilterSet const&, std::vector<RulePtr>&);

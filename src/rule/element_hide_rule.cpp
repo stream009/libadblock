@@ -8,110 +8,67 @@
 namespace adblock {
 
 ElementHideRule::
-ElementHideRule(const StringRange &selector,
-                const boost::optional<std::vector<StringRange>> &domains)
+ElementHideRule(StringRange const& selector,
+                Domains const& domains)
     : m_cssSelector { selector }
 {
     assert(!selector.empty());
 
-    if (!domains) return;
-
-    for (const auto &domain: *domains) {
+    for (auto const& domain: domains) {
         if (domain.front() != '~') {
-            addIncludeDomain(domain);
+            m_includeDomains.push_back(domain);
         }
         else {
-            addExcludeDomain(
-                StringRange {
-                    std::next(domain.begin()), domain.end() }
+            m_excludeDomains.emplace_back(
+                std::next(domain.begin()), domain.end()
             );
         }
     }
 }
 
 bool ElementHideRule::
-match(const Uri &uri) const
+match(Uri const& uri) const
 {
     namespace ba = boost::algorithm;
 
     auto const& host = uri.host();
-    const auto &domainMatch = [&host] (const StringRange &domain) {
+    auto const& domainMatch = [&host] (StringRange const& domain) {
         return ba::ends_with(host, domain);
     };
 
-    if (m_excludeDomains &&
-        ba::any_of(*m_excludeDomains, domainMatch))
-    {
+    if (ba::any_of(m_excludeDomains, domainMatch)) {
         return false;
     }
 
-    if (m_includeDomains) {
-        return ba::any_of(*m_includeDomains, domainMatch);
+    if (m_includeDomains.empty()) {
+        return true;
     }
-
-    return true;
+    else {
+        return ba::any_of(m_includeDomains, domainMatch);
+    }
 }
 
 bool ElementHideRule::
 isDomainRestricted() const
 {
-    return m_includeDomains || m_excludeDomains;
-}
-
-ElementHideRule::DomainsRange ElementHideRule::
-includeDomains() const
-{
-    if (m_includeDomains) {
-        return *m_includeDomains;
-    }
-    else {
-        return DomainsRange {};
-    }
-}
-
-ElementHideRule::DomainsRange ElementHideRule::
-excludeDomains() const
-{
-    if (m_excludeDomains) {
-        return *m_excludeDomains;
-    }
-    else {
-        return DomainsRange {};
-    }
-}
-
-void ElementHideRule::
-addIncludeDomain(const StringRange &domain)
-{
-    if (m_includeDomains == boost::none) {
-        m_includeDomains.emplace();
-    }
-    m_includeDomains->push_back(domain);
-}
-
-void ElementHideRule::
-addExcludeDomain(const StringRange &domain)
-{
-    if (m_excludeDomains == boost::none) {
-        m_excludeDomains.emplace();
-    }
-    m_excludeDomains->push_back(domain);
+    return !m_includeDomains.empty()
+        || !m_excludeDomains.empty();
 }
 
 void ElementHideRule::
 print(std::ostream &os) const
 {
     os << "CSS selector: " << m_cssSelector << "\n";
-    if (m_includeDomains) {
+    if (!m_includeDomains.empty()) {
         os << "Include domains: ";
-        for (const auto domain: *m_includeDomains) {
+        for (const auto domain: m_includeDomains) {
             os << domain << ' ';
         }
         os << "\n";
     }
-    if (m_excludeDomains) {
+    if (!m_excludeDomains.empty()) {
         os << "Exclude domains: ";
-        for (const auto domain: *m_excludeDomains) {
+        for (const auto domain: m_excludeDomains) {
             os << domain << ' ';
         }
         os << "\n";

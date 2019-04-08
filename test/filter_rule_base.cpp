@@ -11,7 +11,6 @@
 
 #include <memory>
 
-#include <boost/optional.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
 #include <gtest/gtest.h>
@@ -20,21 +19,24 @@ using namespace adblock;
 
 template<typename R, typename P>
 static std::shared_ptr<FilterRule>
-make_rule(const StringRange &pattern)
+make_rule(StringRange const& pattern)
 {
-    return std::make_shared<R>(std::make_shared<P>(pattern), boost::none);
+    return std::make_shared<R>(
+        std::make_shared<P>(pattern),
+        std::vector<std::shared_ptr<Option>>()
+    );
 }
 
 template<typename R>
 static std::shared_ptr<FilterRule>
-make_domain_rule(const StringRange &domain,
-                 const StringRange &pattern,
-                 const boost::optional<
-                    std::vector<std::shared_ptr<Option>>> &options = boost::none)
+make_domain_rule(StringRange const& domain,
+                 StringRange const& pattern,
+                 std::vector<std::shared_ptr<Option>> const& options = {})
 {
     return std::make_shared<R>(
-            std::make_shared<DomainMatchPattern>(domain, pattern, false),
-            options);
+        std::make_shared<DomainMatchPattern>(domain, pattern, false),
+        options
+    );
 }
 
 TEST(Main_FilterRuleBase, Basic)

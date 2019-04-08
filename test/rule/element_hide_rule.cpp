@@ -17,7 +17,7 @@ using namespace adblock;
 TEST(Rule_BasicElementHideRule, Basic)
 {
     const auto &cssSelector = "div"_r;
-    const BasicElementHideRule rule { cssSelector, boost::none };
+    const BasicElementHideRule rule { cssSelector, {} };
 
     EXPECT_EQ(cssSelector, rule.cssSelector());
     EXPECT_TRUE(rule.includeDomains().empty());

@@ -39,22 +39,9 @@
 #include <string>
 #include <string_view>
 
-#include <boost/optional.hpp>
 #include <boost/algorithm/string/split.hpp>
 
 namespace adblock::parser {
-
-template<typename T>
-boost::optional<std::vector<T>>
-make_optional_vector(std::vector<T>&& v)
-{
-    if (v.empty()) {
-        return boost::none;
-    }
-    else {
-        return std::move(v);
-    }
-}
 
 template<typename It>
 auto
@@ -106,8 +93,7 @@ end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_shared<BasicFilterRule>(
-            m_pattern,
-            make_optional_vector(std::move(m_options))
+            m_pattern, m_options
         )
     );
 }
@@ -123,8 +109,7 @@ end_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_shared<ExceptionFilterRule>(
-            m_pattern,
-            make_optional_vector(std::move(m_options))
+            m_pattern, m_options
         )
     );
 }
@@ -405,8 +390,7 @@ end_basic_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_shared<BasicElementHideRule>(
-            m_selector,
-            make_optional_vector(std::move(m_domains))
+            m_selector, m_domains
         )
     );
 }
@@ -422,8 +406,7 @@ end_exception_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_shared<ExceptionElementHideRule>(
-            m_selector,
-            make_optional_vector(std::move(m_domains))
+            m_selector, m_domains
         )
     );
 }
@@ -439,8 +422,7 @@ end_extended_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_shared<ExtendedElementHideRule>(
-            m_selector,
-            make_optional_vector(std::move(m_domains))
+            m_selector, m_domains
         )
     );
 }

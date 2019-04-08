@@ -12,11 +12,11 @@ class BasicElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
 public:
-    BasicElementHideRule(const StringRange &selector,
-            const boost::optional<std::vector<StringRange>> &domains);
+    BasicElementHideRule(StringRange const& selector,
+                         std::vector<StringRange> const& domains);
 };
 
-std::ostream &operator<<(std::ostream&, const BasicElementHideRule&);
+std::ostream &operator<<(std::ostream&, BasicElementHideRule const&);
 
 } // namespace adblock
 

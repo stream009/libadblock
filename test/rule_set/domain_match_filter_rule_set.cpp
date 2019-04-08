@@ -20,8 +20,9 @@ make_rule(const StringRange &domain,
           const StringRange &pattern = boost::as_literal(""))
 {
     return std::make_shared<BasicFilterRule>(
-            std::make_shared<DomainMatchPattern>(domain, pattern, false),
-            boost::none);
+        std::make_shared<DomainMatchPattern>(domain, pattern, false),
+        std::vector<std::shared_ptr<Option>>()
+    );
 }
 
 TEST(RuleSet_DomainMatchFilterRuleSet, OneHit)

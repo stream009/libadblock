@@ -4,7 +4,6 @@
 
 #include <memory>
 
-#include <boost/optional.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include <gtest/gtest.h>
@@ -15,7 +14,7 @@ using Domains = ElementHideRule::Domains;
 
 static std::shared_ptr<ElementHideRule>
 make_rule(const StringRange &cssSelector,
-          const boost::optional<Domains> &domains)
+          Domains const& domains)
 {
     return std::make_shared<BasicElementHideRule>(cssSelector, domains);
 }

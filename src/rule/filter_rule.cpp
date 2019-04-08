@@ -15,34 +15,32 @@
 namespace adblock {
 
 FilterRule::
-FilterRule(const std::shared_ptr<Pattern> &pattern,
-           const boost::optional<Options> &options)
+FilterRule(std::shared_ptr<Pattern> const& pattern,
+           Options const& options)
     : m_pattern { pattern }
 {
-    if (options) {
-        for (auto const& opt: *options) {
-            if (std::dynamic_pointer_cast<TypeOption>(opt)) {
-                m_typeOptions.push_back(opt);
+    for (auto const& opt: options) {
+        if (std::dynamic_pointer_cast<TypeOption>(opt)) {
+            m_typeOptions.push_back(opt);
+        }
+        else if (std::dynamic_pointer_cast<RestrictionOption>(opt)) {
+            auto const& option = *opt;
+            if (typeid(option) == typeid(DomainOption)) {
+                m_domainSpecific = true;
             }
-            else if (std::dynamic_pointer_cast<RestrictionOption>(opt)) {
-                auto const& option = *opt;
-                if (typeid(option) == typeid(DomainOption)) {
-                    m_domainSpecific = true;
-                }
 
-                m_restrictionOptions.push_back(opt);
+            m_restrictionOptions.push_back(opt);
+        }
+        else if (std::dynamic_pointer_cast<WhiteListOption>(opt)) {
+            m_whiteListOptions.push_back(opt);
+        }
+        else {
+            auto const& option = *opt;
+            if (typeid(option) == typeid(MatchCaseOption)) {
+                m_caseSensitive = true;
             }
-            else if (std::dynamic_pointer_cast<WhiteListOption>(opt)) {
-                m_whiteListOptions.push_back(opt);
-            }
-            else {
-                auto const& option = *opt;
-                if (typeid(option) == typeid(MatchCaseOption)) {
-                    m_caseSensitive = true;
-                }
 
-                m_otherOptions.push_back(opt);
-            }
+            m_otherOptions.push_back(opt);
         }
     }
 

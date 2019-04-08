@@ -8,8 +8,6 @@
 
 #include <memory>
 
-#include <boost/optional.hpp>
-
 #include <gtest/gtest.h>
 
 using namespace adblock;
@@ -18,8 +16,8 @@ using Domains = ElementHideRule::Domains;
 
 template<typename T>
 static std::shared_ptr<ElementHideRule>
-make_rule(const StringRange &cssSelector,
-          const boost::optional<Domains> &domains)
+make_rule(StringRange const& cssSelector,
+          Domains const& domains = {})
 {
     return std::make_shared<T>(cssSelector, domains);
 }
@@ -27,7 +25,7 @@ make_rule(const StringRange &cssSelector,
 TEST(Main_ElementHideRuleBase, Elementary)
 {
     const auto &rule =
-                make_rule<BasicElementHideRule>("div"_r, boost::none);
+                make_rule<BasicElementHideRule>("div"_r);
     assert(rule);
 
     FilterRuleBase fb;
@@ -41,7 +39,7 @@ TEST(Main_ElementHideRuleBase, Elementary)
 TEST(Main_ElementHideRuleBase, Domained)
 {
     const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r, boost::none);
+                make_rule<BasicElementHideRule>("div"_r);
     assert(rule1);
 
     const auto &rule2 = make_rule<BasicElementHideRule>(
@@ -63,7 +61,7 @@ TEST(Main_ElementHideRuleBase, Domained)
 TEST(Main_ElementHideRuleBase, ExcludedByExceptionRule)
 {
     const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r, boost::none);
+                make_rule<BasicElementHideRule>("div"_r);
     assert(rule1);
 
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
@@ -109,7 +107,7 @@ TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
 TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r, boost::none);
+                make_rule<BasicElementHideRule>("div"_r);
     assert(rule1);
 
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
@@ -129,7 +127,7 @@ TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 TEST(Main_ElementHideRuleBase, Clear)
 {
     const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r, boost::none);
+                make_rule<BasicElementHideRule>("div"_r);
     assert(rule1);
 
     const auto &rule2 = make_rule<ExceptionElementHideRule>(
@@ -154,7 +152,7 @@ TEST(Main_ElementHideRuleBase, Clear)
 TEST(Main_ElementHideRuleBase, ExtendedRule)
 {
     auto const& rule =
-                make_rule<ExtendedElementHideRule>("div"_r, boost::none);
+                make_rule<ExtendedElementHideRule>("div"_r);
     assert(rule);
 
     FilterRuleBase fb;
@@ -176,7 +174,7 @@ TEST(Main_ElementHideRuleBase, ExtendedRule)
 TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
 {
     auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r, boost::none);
+                make_rule<ExtendedElementHideRule>("div"_r);
     assert(rule1);
 
     auto const& rule2 = make_rule<ExtendedElementHideRule>(
@@ -204,7 +202,7 @@ TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
 TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 {
     auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r, boost::none);
+                make_rule<ExtendedElementHideRule>("div"_r);
     assert(rule1);
 
     auto const& rule2 = make_rule<ExceptionElementHideRule>(
@@ -229,7 +227,7 @@ TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r, boost::none);
+                make_rule<ExtendedElementHideRule>("div"_r);
     assert(rule1);
 
     auto const& rule2 = make_rule<ExceptionElementHideRule>(
@@ -255,7 +253,7 @@ TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelec
 TEST(Main_ElementHideRuleBase, ExtendedRule_Clear)
 {
     auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r, boost::none);
+                make_rule<ExtendedElementHideRule>("div"_r);
     assert(rule1);
 
     auto const& rule2 = make_rule<ExceptionElementHideRule>(

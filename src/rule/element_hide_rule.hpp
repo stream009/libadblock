@@ -6,8 +6,6 @@
 
 #include <vector>
 
-#include <boost/optional.hpp>
-
 namespace adblock {
 
 class ElementHideRule : public Rule
@@ -18,22 +16,19 @@ public:
     using DomainsRange = boost::iterator_range<Domains::const_iterator>;
 public:
     // query
-    bool match(const Uri&) const;
-    const StringRange &cssSelector() const { return m_cssSelector; }
+    bool match(Uri const&) const;
+    StringRange const& cssSelector() const { return m_cssSelector; }
 
     bool isDomainRestricted() const;
-    DomainsRange includeDomains() const;
-    DomainsRange excludeDomains() const;
+    DomainsRange includeDomains() const { return m_includeDomains; }
+    DomainsRange excludeDomains() const { return m_excludeDomains; }
 
 protected:
-    ElementHideRule(const StringRange &selector,
-                    const boost::optional<Domains> &domains);
+    ElementHideRule(StringRange const& selector,
+                    Domains const& domains);
 private:
     // @override Rule
     void print(std::ostream&) const override;
-
-    void addIncludeDomain(const StringRange&);
-    void addExcludeDomain(const StringRange&);
 
     void varidate() const
     {
@@ -42,8 +37,8 @@ private:
 
 private:
     StringRange m_cssSelector;
-    boost::optional<Domains> m_includeDomains;
-    boost::optional<Domains> m_excludeDomains;
+    Domains m_includeDomains;
+    Domains m_excludeDomains;
 };
 
 } // namespace adblock

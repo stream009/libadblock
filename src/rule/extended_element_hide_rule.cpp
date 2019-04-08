@@ -4,7 +4,7 @@ namespace adblock {
 
 ExtendedElementHideRule::
 ExtendedElementHideRule(StringRange const& selector,
-                boost::optional<std::vector<StringRange>> const& domains)
+                        std::vector<StringRange> const& domains)
     : Base { selector, domains }
 {}
 

@@ -12,7 +12,6 @@
 #include <vector>
 
 #include <boost/algorithm/cxx11/any_of.hpp>
-#include <boost/optional.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
@@ -57,8 +56,8 @@ public:
     }
 
 protected:
-    FilterRule(const std::shared_ptr<Pattern>&,
-               const boost::optional<Options>&);
+    FilterRule(std::shared_ptr<Pattern> const&,
+               Options const&);
 
 private:
     bool matchWhiteListOptions(Uri const&, Context const&) const;

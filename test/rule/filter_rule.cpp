@@ -19,7 +19,7 @@ TEST(Rule_BasicFilterRule, Basic)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
-    BasicFilterRule rule { pattern, boost::none };
+    BasicFilterRule rule { pattern, {} };
 
     EXPECT_EQ(&(*pattern), &(rule.pattern()));
     EXPECT_TRUE(rule.options().empty());
@@ -76,7 +76,7 @@ TEST(Rule_ExceptionFilterRule, Basic)
 {
     const auto &pattern =
         std::make_shared<BasicMatchPattern>("Adblock"_r);
-    const ExceptionFilterRule rule { pattern, boost::none };
+    const ExceptionFilterRule rule { pattern, {} };
 
     EXPECT_EQ(&(*pattern), &(rule.pattern()));
     EXPECT_TRUE(rule.options().empty());

@@ -15,7 +15,9 @@ static std::shared_ptr<FilterRule>
 make_rule(const StringRange &pattern)
 {
     return std::make_shared<BasicFilterRule>(
-            std::make_shared<BasicMatchPattern>(pattern, true), boost::none);
+        std::make_shared<BasicMatchPattern>(pattern, true),
+        std::vector<std::shared_ptr<Option>>()
+    );
 }
 
 TEST(RuleSet_PrefixMatchFilterRuleSet, OneHit)

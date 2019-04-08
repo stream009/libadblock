@@ -3,13 +3,13 @@
 namespace adblock {
 
 ExceptionElementHideRule::
-ExceptionElementHideRule(const StringRange &selector,
-                const boost::optional<std::vector<StringRange>> &domains)
+ExceptionElementHideRule(StringRange const& selector,
+                         std::vector<StringRange> const& domains)
     : Base { selector, domains }
 {}
 
 std::ostream &
-operator<<(std::ostream &os, const ExceptionElementHideRule &rule)
+operator<<(std::ostream &os, ExceptionElementHideRule const& rule)
 {
     os << "[BasicElementHideRule]\n";
     return operator<<(os, static_cast<const ElementHideRule&>(rule));

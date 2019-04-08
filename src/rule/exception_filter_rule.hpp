@@ -6,17 +6,14 @@
 #include <memory>
 #include <vector>
 
-#include <boost/optional.hpp>
-
 namespace adblock {
 
 class ExceptionFilterRule : public FilterRule
 {
     using Base = FilterRule;
 public:
-    ExceptionFilterRule(const std::shared_ptr<Pattern> &pattern,
-                        const boost::optional<
-                              std::vector<std::shared_ptr<Option>>> &options)
+    ExceptionFilterRule(std::shared_ptr<Pattern> const& pattern,
+                        std::vector<std::shared_ptr<Option>> const& options)
         : Base { pattern, options }
     {}
 };

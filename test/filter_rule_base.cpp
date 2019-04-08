@@ -22,7 +22,7 @@ static std::shared_ptr<FilterRule>
 make_rule(StringRange const& pattern)
 {
     return std::make_shared<R>(
-        std::make_shared<P>(pattern),
+        std::make_unique<P>(pattern),
         std::vector<std::shared_ptr<Option>>()
     );
 }
@@ -34,7 +34,7 @@ make_domain_rule(StringRange const& domain,
                  std::vector<std::shared_ptr<Option>> const& options = {})
 {
     return std::make_shared<R>(
-        std::make_shared<DomainMatchPattern>(domain, pattern, false),
+        std::make_unique<DomainMatchPattern>(domain, pattern, false),
         options
     );
 }

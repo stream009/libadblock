@@ -26,10 +26,12 @@ public:
     using OptionsRange = boost::iterator_range<Options::const_iterator>;
 
 public:
+    ~FilterRule() override;
+
     bool match(Uri const&, Context const&,
                            bool const specificOnly = false) const;
 
-    const Pattern &pattern() const;
+    Pattern const& pattern() const;
     Options options() const;
 
     template<typename OptionT>
@@ -56,7 +58,7 @@ public:
     }
 
 protected:
-    FilterRule(std::shared_ptr<Pattern> const&,
+    FilterRule(std::unique_ptr<Pattern>,
                Options const&);
 
 private:
@@ -73,7 +75,7 @@ private:
     }
 
 private:
-    std::shared_ptr<Pattern> m_pattern;
+    std::unique_ptr<Pattern> m_pattern;
     Options m_typeOptions;
     Options m_restrictionOptions;
     Options m_whiteListOptions;

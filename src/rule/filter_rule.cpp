@@ -15,9 +15,9 @@
 namespace adblock {
 
 FilterRule::
-FilterRule(std::shared_ptr<Pattern> const& pattern,
+FilterRule(std::unique_ptr<Pattern> pattern,
            Options const& options)
-    : m_pattern { pattern }
+    : m_pattern { std::move(pattern) }
 {
     for (auto const& opt: options) {
         if (std::dynamic_pointer_cast<TypeOption>(opt)) {
@@ -47,6 +47,8 @@ FilterRule(std::shared_ptr<Pattern> const& pattern,
     validate();
 }
 
+FilterRule::~FilterRule() = default;
+
 bool FilterRule::
 match(Uri const& uri, Context const& context,
                               bool const specificOnly/*= false*/) const
@@ -67,10 +69,9 @@ match(Uri const& uri, Context const& context,
     return true;
 }
 
-const Pattern &FilterRule::
+Pattern const& FilterRule::
 pattern() const
 {
-    assert(m_pattern);
     return *m_pattern;
 }
 

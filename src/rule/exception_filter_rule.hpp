@@ -2,19 +2,22 @@
 #define EXCEPTION_FILTER_RULE_HPP
 
 #include "filter_rule.hpp"
+#include "pattern/pattern.hpp"
 
 #include <memory>
 #include <vector>
 
 namespace adblock {
 
+class Option;
+
 class ExceptionFilterRule : public FilterRule
 {
     using Base = FilterRule;
 public:
-    ExceptionFilterRule(std::shared_ptr<Pattern> const& pattern,
+    ExceptionFilterRule(std::unique_ptr<Pattern> pattern,
                         std::vector<std::shared_ptr<Option>> const& options)
-        : Base { pattern, options }
+        : Base { std::move(pattern), options }
     {}
 };
 

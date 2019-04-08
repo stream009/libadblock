@@ -16,11 +16,11 @@
 using namespace adblock;
 
 static std::shared_ptr<FilterRule>
-make_rule(const StringRange &domain,
-          const StringRange &pattern = boost::as_literal(""))
+make_rule(StringRange const& domain,
+          StringRange const& pattern = ""_r)
 {
     return std::make_shared<BasicFilterRule>(
-        std::make_shared<DomainMatchPattern>(domain, pattern, false),
+        std::make_unique<DomainMatchPattern>(domain, pattern, false),
         std::vector<std::shared_ptr<Option>>()
     );
 }

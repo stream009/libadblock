@@ -93,7 +93,7 @@ end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_shared<BasicFilterRule>(
-            m_pattern, m_options
+            std::move(m_pattern), m_options
         )
     );
 }
@@ -109,7 +109,7 @@ end_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_shared<ExceptionFilterRule>(
-            m_pattern, m_options
+            std::move(m_pattern), m_options
         )
     );
 }
@@ -118,7 +118,7 @@ void RuleBuilder::
 basic_address_pattern(iterator const begin, iterator const end,
                       bool const prefix, bool const suffix)
 {
-    m_pattern = std::make_shared<BasicMatchPattern>(
+    m_pattern = std::make_unique<BasicMatchPattern>(
         StringRange { begin, end },
         prefix,
         suffix
@@ -133,7 +133,7 @@ domain_address_pattern(iterator const begin, iterator const end,
     StringRange domain { begin, it };
     StringRange path { it, end };
 
-    m_pattern = std::make_shared<DomainMatchPattern>(
+    m_pattern = std::make_unique<DomainMatchPattern>(
         domain,
         path,
         suffix
@@ -143,7 +143,7 @@ domain_address_pattern(iterator const begin, iterator const end,
 void RuleBuilder::
 regex_address_pattern(iterator const begin, iterator const end)
 {
-    m_pattern = std::make_shared<RegexPattern>(StringRange { begin, end });
+    m_pattern = std::make_unique<RegexPattern>(StringRange { begin, end });
 }
 
 void RuleBuilder::

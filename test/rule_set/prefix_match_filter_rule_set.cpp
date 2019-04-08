@@ -12,10 +12,10 @@
 using namespace adblock;
 
 static std::shared_ptr<FilterRule>
-make_rule(const StringRange &pattern)
+make_rule(StringRange const& pattern)
 {
     return std::make_shared<BasicFilterRule>(
-        std::make_shared<BasicMatchPattern>(pattern, true),
+        std::make_unique<BasicMatchPattern>(pattern, true),
         std::vector<std::shared_ptr<Option>>()
     );
 }

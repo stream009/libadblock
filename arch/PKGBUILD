@@ -1,0 +1,37 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# See http://wiki.archlinux.org/index.php/VCS_PKGBUILD_Guidelines
+# for more information on packaging from GIT sources.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=libadblock
+pkgver=1.1.0
+pkgrel=1
+pkgdesc="ADBlock engine"
+arch=('i686' 'x86_64')
+license=('GPL')
+depends=('boost')
+makedepends=('git' 'cmake')
+
+prepare() {
+  cd "$srcdir"
+  msg "fetching source tree from repository..."
+  git clone --recursive --branch v{pkgver} --depth 1 git@gitlab.com:stream9/libadblock.git
+}
+
+build() {
+  cd "${srcdir}/libadblock"
+  mkdir -p build; cd build
+  cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off ..
+  make
+}
+
+package() {
+  cd "${srcdir}/libadblock/build"
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:

@@ -1,45 +1,41 @@
-#include "type.hpp"
-#include "pattern/basic_match_pattern.hpp"
+#include "../parse_rule.hpp"
+
 #include "rule/basic_filter_rule.hpp"
 #include "rule_set/substring_match_filter_rule_set.hpp"
+#include "type.hpp"
 
 #include <boost/range/algorithm.hpp>
-
-#include <memory>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
 
-static std::shared_ptr<FilterRule>
-make_rule(StringRange const& pattern)
-{
-    return std::make_shared<BasicFilterRule>(
-        std::make_unique<BasicMatchPattern>(pattern),
-        std::vector<std::unique_ptr<Option>>()
-    );
-}
-
 TEST(RuleSet_SubstringMatchFilterRuleSet, Basic)
 {
-    const auto &rule1 = make_rule("adblock"_r);
-    const auto &rule2 = make_rule("adblockplus"_r);
+    auto const rule1 = parse_rule<BasicFilterRule>("adblock"_r);
+    ASSERT_TRUE(rule1);
+    auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
+    ASSERT_TRUE(rule2);
 
     SubstringMatchFilterRuleSet ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
-    auto &&results = ruleSet.query("http://www.adblock.org"_u);
+    auto&& results = ruleSet.query("http://www.adblock.org"_u);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(&*rule1, results.front());
 }
 
 TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
 {
-    const auto &rule1 = make_rule("adblock"_r);
-    const auto &rule2 = make_rule("adblock*g"_r);
-    const auto &rule3 = make_rule("ad*org"_r);
-    const auto &rule4 = make_rule("adblockplus"_r);
+    auto const rule1 = parse_rule<BasicFilterRule>("adblock"_r);
+    ASSERT_TRUE(rule1);
+    auto const rule2 = parse_rule<BasicFilterRule>("adblock*g"_r);
+    ASSERT_TRUE(rule2);
+    auto const rule3 = parse_rule<BasicFilterRule>("ad*org"_r);
+    ASSERT_TRUE(rule3);
+    auto const rule4 = parse_rule<BasicFilterRule>("adblockplus"_r);
+    ASSERT_TRUE(rule4);
 
     SubstringMatchFilterRuleSet ruleSet;
     ruleSet.put(*rule1);
@@ -47,7 +43,7 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
     ruleSet.put(*rule3);
     ruleSet.put(*rule4);
 
-    auto &&results = ruleSet.query("http://www.adblock.org"_u);
+    auto&& results = ruleSet.query("http://www.adblock.org"_u);
     ASSERT_EQ(3, results.size());
     namespace br = boost::range;
     EXPECT_TRUE(br::find(results, &*rule1) != results.end());
@@ -58,35 +54,41 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
 
 TEST(RuleSet_SubstringMatchFilterRuleSet, NoHit)
 {
-    const auto &rule1 = make_rule("adblocks"_r);
-    const auto &rule2 = make_rule("google.com"_r);
+    auto const rule1 = parse_rule<BasicFilterRule>("adblocks"_r);
+    ASSERT_TRUE(rule1);
+    auto const rule2 = parse_rule<BasicFilterRule>("google.com"_r);
+    ASSERT_TRUE(rule2);
 
     SubstringMatchFilterRuleSet ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
-    auto &&results = ruleSet.query("http://www.adblock.org"_u);
+    auto&& results = ruleSet.query("http://www.adblock.org"_u);
     EXPECT_TRUE(results.empty());
 }
 
 TEST(RuleSet_SubstringMatchFilterRuleSet, MultiToken)
 {
-    const auto &rule1 = make_rule("adblock*jpg"_r);
-    const auto &rule2 = make_rule("adblockplus"_r);
+    auto const rule1 = parse_rule<BasicFilterRule>("adblock*jpg"_r);
+    ASSERT_TRUE(rule1);
+    auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
+    ASSERT_TRUE(rule2);
 
     SubstringMatchFilterRuleSet ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
-    auto &&results = ruleSet.query("http://www.adblock.org/top.png"_u);
+    auto&& results = ruleSet.query("http://www.adblock.org/top.png"_u);
     ASSERT_EQ(1, results.size());
     EXPECT_EQ(&*rule1, results.front());
 }
 
 TEST(RuleSet_SubstringMatchFilterRuleSet, Clear)
 {
-    const auto &rule1 = make_rule("adblock*jpg"_r);
-    const auto &rule2 = make_rule("adblockplus"_r);
+    auto const rule1 = parse_rule<BasicFilterRule>("adblock*jpg"_r);
+    ASSERT_TRUE(rule1);
+    auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
+    ASSERT_TRUE(rule2);
 
     SubstringMatchFilterRuleSet ruleSet;
     ruleSet.put(*rule1);

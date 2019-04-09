@@ -1,11 +1,10 @@
 #include "option/generic_block_option.hpp"
+
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
 #include "filter_rule_base.hpp"
-#include "parser/parser.hpp"
 #include "rule/filter_rule.hpp"
-
-#include <iostream>
 
 #include <gtest/gtest.h>
 
@@ -26,27 +25,26 @@ TEST(Option_GenericBlock, Elementary)
 {
     FilterRuleBase rb;
 
-    const auto &rule1 =
-        std::dynamic_pointer_cast<FilterRule>(parser::parse("generic"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("generic"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
     TestContext cxt { "http://www.adblock.org"_u };
 
     { // suppose to be blocked by rule "generic"
-        const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
+        auto const& rv = rb.query("http://www.generic-url.com"_u, cxt);
         ASSERT_TRUE(rv.first);
         EXPECT_TRUE(rv.second == &(*rule1));
     }
 
-    const auto &disabler =
-        std::dynamic_pointer_cast<FilterRule>(
-                            parser::parse("@@||adblock.org$genericblock"_r));
-    assert(disabler);
+    auto const disabler = parse_rule<FilterRule>("@@||adblock.org$genericblock"_r);
+    ASSERT_TRUE(disabler);
+
     rb.put(*disabler);
 
     { // match with rule "generic" but be excluded by genricblock rule
-        const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
+        auto const& rv = rb.query("http://www.generic-url.com"_u, cxt);
         ASSERT_FALSE(rv.first) << *rv.second;
         EXPECT_TRUE(rv.second == nullptr);
     }
@@ -56,32 +54,30 @@ TEST(Option_GenericBlock, OnlyGenericShouldBeHidden)
 {
     FilterRuleBase rb;
 
-    const auto &rule1 =
-        std::dynamic_pointer_cast<FilterRule>(parser::parse("generic"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("generic"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
-    const auto &rule2 =
-        std::dynamic_pointer_cast<FilterRule>(
-                       parser::parse("generic$domain=adblock.org"_r));
-    assert(rule2);
+    auto const rule2 = parse_rule<FilterRule>("generic$domain=adblock.org"_r);
+    ASSERT_TRUE(rule2);
+
     rb.put(*rule2);
 
     TestContext cxt { "http://www.adblock.org"_u };
 
     { // suppose to be blocked
-        const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
+        auto const& rv = rb.query("http://www.generic-url.com"_u, cxt);
         ASSERT_TRUE(rv.first);
     }
 
-    const auto &disabler =
-        std::dynamic_pointer_cast<FilterRule>(
-                            parser::parse("@@||adblock.org$genericblock"_r));
-    assert(disabler);
+    auto const disabler = parse_rule<FilterRule>("@@||adblock.org$genericblock"_r);
+    ASSERT_TRUE(disabler);
+
     rb.put(*disabler);
 
     { // rule1 should be excluded by genericblock but rule2 should remain in effect.
-        const auto &rv = rb.query("http://www.generic-url.com"_u, cxt);
+        auto const& rv = rb.query("http://www.generic-url.com"_u, cxt);
         EXPECT_TRUE(rv.first);
         EXPECT_TRUE(rv.second == &(*rule2)) << *rv.second;
     }

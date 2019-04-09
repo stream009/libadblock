@@ -10,7 +10,6 @@
 
 #include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/cxx11/any_of.hpp>
-#include <boost/range/adaptor/filtered.hpp>
 
 namespace adblock {
 

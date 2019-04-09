@@ -1,11 +1,10 @@
 #include "option/web_socket_option.hpp"
+
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
 #include "filter_rule_base.hpp"
-#include "parser/parser.hpp"
 #include "rule/filter_rule.hpp"
-
-#include <iostream>
 
 #include <gtest/gtest.h>
 
@@ -22,19 +21,18 @@ TEST(Option_WebSoket, Elementary)
 {
     FilterRuleBase rb;
 
-    const auto &rule1 =
-        std::dynamic_pointer_cast<FilterRule>(
-                                 parser::parse("adblock$websocket"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("adblock$websocket"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
     { // request via normal channel
-        const auto &rv = rb.query("http://www.adblock.org"_u, NormalContext());
+        auto const& rv = rb.query("http://www.adblock.org"_u, NormalContext());
         EXPECT_FALSE(rv.first);
     }
 
     { // request via WebSocket
-        const auto &rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
+        auto const& rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
         EXPECT_TRUE(rv.first);
     }
 }
@@ -43,19 +41,18 @@ TEST(Option_WebSoket, Invert)
 {
     FilterRuleBase rb;
 
-    const auto &rule1 =
-        std::dynamic_pointer_cast<FilterRule>(
-                                 parser::parse("adblock$~websocket"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("adblock$~websocket"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
     { // request via normal channel
-        const auto &rv = rb.query("http://www.adblock.org"_u, NormalContext());
+        auto const& rv = rb.query("http://www.adblock.org"_u, NormalContext());
         EXPECT_TRUE(rv.first);
     }
 
     { // request via WebSocket
-        const auto &rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
+        auto const& rv = rb.query("http://www.adblock.org"_u, WebSocketContext());
         EXPECT_FALSE(rv.first);
     }
 }

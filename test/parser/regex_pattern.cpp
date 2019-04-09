@@ -4,8 +4,6 @@
 #include "rule/basic_filter_rule.hpp"
 #include "type.hpp"
 
-#include <memory>
-
 #include <boost/lexical_cast.hpp>
 
 #include <gtest/gtest.h>

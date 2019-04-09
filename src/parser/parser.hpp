@@ -8,11 +8,11 @@
 namespace adblock::parser {
 
 // parse filter list
-std::vector<std::shared_ptr<Rule>>
+std::vector<std::unique_ptr<Rule>>
     parse(FilterSet const&, StringRange list);
 
 // parse single line
-std::shared_ptr<Rule>
+std::unique_ptr<Rule>
     parse(StringRange line);
 
 } // namespace adblock::parser

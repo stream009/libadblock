@@ -1,8 +1,9 @@
 #include "option/ping_option.hpp"
+
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
 #include "filter_rule_base.hpp"
-#include "parser/parser.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
@@ -20,10 +21,9 @@ TEST(Option_Ping, Elementary)
 {
     FilterRuleBase rb;
 
-    auto const& rule1 =
-        std::dynamic_pointer_cast<FilterRule>(
-                                 parser::parse("adblock$ping"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("adblock$ping"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
     { // request via normal channel
@@ -41,10 +41,9 @@ TEST(Option_Ping, Invert)
 {
     FilterRuleBase rb;
 
-    auto const& rule1 =
-        std::dynamic_pointer_cast<FilterRule>(
-                                 parser::parse("adblock$~ping"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<FilterRule>("adblock$~ping"_r);
+    ASSERT_TRUE(rule1);
+
     rb.put(*rule1);
 
     { // request via normal channel

@@ -1,50 +1,36 @@
+#include "parse_rule.hpp"
+
 #include "type.hpp"
 #include "filter_rule_base.hpp"
 #include "element_hide_rule_base.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
-#include "parser/parser.hpp"
-
-#include <memory>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
 
-using Domains = ElementHideRule::Domains;
-
-template<typename T>
-static std::shared_ptr<ElementHideRule>
-make_rule(StringRange const& cssSelector,
-          Domains const& domains = {})
-{
-    return std::make_shared<T>(cssSelector, domains);
-}
-
 TEST(Main_ElementHideRuleBase, Elementary)
 {
-    const auto &rule =
-                make_rule<BasicElementHideRule>("div"_r);
-    assert(rule);
+    auto const rule = parse_rule<BasicElementHideRule>("##div"_r);
+    ASSERT_TRUE(rule);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
     ruleBase.put(*rule);
 
-    const auto &result = ruleBase.query("http://www.adblock.org"_u);
+    auto const& result = ruleBase.query("http://www.adblock.org"_u);
     EXPECT_EQ("div { display: none !important } ", result);
 }
 
 TEST(Main_ElementHideRuleBase, Domained)
 {
-    const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
+    ASSERT_TRUE(rule1);
 
-    const auto &rule2 = make_rule<BasicElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<BasicElementHideRule>("adblock.org##table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -60,13 +46,11 @@ TEST(Main_ElementHideRuleBase, Domained)
 
 TEST(Main_ElementHideRuleBase, ExcludedByExceptionRule)
 {
-    const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
+    ASSERT_TRUE(rule1);
 
-    const auto &rule2 = make_rule<ExceptionElementHideRule>(
-                                    "div"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#div"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -83,9 +67,9 @@ TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
 
-    auto const& rule1 = std::dynamic_pointer_cast<ElementHideRule>(
-                                 parser::parse("adblock.org##div"_r));
-    assert(rule1);
+    auto const rule1 = parse_rule<BasicElementHideRule>("adblock.org##div"_r);
+    ASSERT_TRUE(rule1);
+
     ruleBase.put(*rule1);
 
     {
@@ -93,9 +77,9 @@ TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
         EXPECT_EQ("div { display: none !important } ", result);
     }
 
-    auto const& rule2 = std::dynamic_pointer_cast<ElementHideRule>(
-                                 parser::parse("#@#div"_r));
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("#@#div"_r);
+    ASSERT_TRUE(rule2);
+
     ruleBase.put(*rule2);
 
     {
@@ -106,13 +90,11 @@ TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
 
 TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
-    const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
+    ASSERT_TRUE(rule1);
 
-    const auto &rule2 = make_rule<ExceptionElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -126,13 +108,11 @@ TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 
 TEST(Main_ElementHideRuleBase, Clear)
 {
-    const auto &rule1 =
-                make_rule<BasicElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
+    ASSERT_TRUE(rule1);
 
-    const auto &rule2 = make_rule<ExceptionElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -151,9 +131,8 @@ TEST(Main_ElementHideRuleBase, Clear)
 
 TEST(Main_ElementHideRuleBase, ExtendedRule)
 {
-    auto const& rule =
-                make_rule<ExtendedElementHideRule>("div"_r);
-    assert(rule);
+    auto const rule = parse_rule<ExtendedElementHideRule>("#?#div"_r);
+    ASSERT_TRUE(rule);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -173,13 +152,11 @@ TEST(Main_ElementHideRuleBase, ExtendedRule)
 
 TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
 {
-    auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
+    ASSERT_TRUE(rule1);
 
-    auto const& rule2 = make_rule<ExtendedElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExtendedElementHideRule>("adblock.org#?#table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -201,13 +178,11 @@ TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
 
 TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 {
-    auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
+    ASSERT_TRUE(rule1);
 
-    auto const& rule2 = make_rule<ExceptionElementHideRule>(
-                                    "div"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#div"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -226,13 +201,11 @@ TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 
 TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
-    auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
+    ASSERT_TRUE(rule1);
 
-    auto const& rule2 = make_rule<ExceptionElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -242,7 +215,7 @@ TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelec
 
     auto const& uri = "http://www.adblock.org"_u;
 
-    const auto &result = ruleBase.query(uri);
+    auto const& result = ruleBase.query(uri);
     EXPECT_TRUE(result.empty());
 
     auto const& rules = ruleBase.lookupExtendedRule(uri);
@@ -252,13 +225,11 @@ TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelec
 
 TEST(Main_ElementHideRuleBase, ExtendedRule_Clear)
 {
-    auto const& rule1 =
-                make_rule<ExtendedElementHideRule>("div"_r);
-    assert(rule1);
+    auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
+    ASSERT_TRUE(rule1);
 
-    auto const& rule2 = make_rule<ExceptionElementHideRule>(
-                                    "table"_r, Domains { "adblock.org"_r });
-    assert(rule2);
+    auto const rule2 = parse_rule<ExceptionElementHideRule>("adblock.org#@#table"_r);
+    ASSERT_TRUE(rule2);
 
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };

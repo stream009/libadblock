@@ -22,7 +22,7 @@ namespace adblock {
 class FilterSet
 {
 public:
-    using RulePtr = std::shared_ptr<Rule>;
+    using RulePtr = std::unique_ptr<Rule>;
     using Rules = std::vector<RulePtr>;
     using RulesRange = boost::indirected_range<Rules const>;
     using iterator = StringRange::iterator;

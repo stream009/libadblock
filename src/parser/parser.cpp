@@ -9,10 +9,10 @@
 
 namespace adblock::parser {
 
-std::vector<std::shared_ptr<Rule>>
+std::vector<std::unique_ptr<Rule>>
 parse(FilterSet const& set, StringRange const text)
 {
-    std::vector<std::shared_ptr<Rule>> rules;
+    std::vector<std::unique_ptr<Rule>> rules;
     std::string_view sv { text.begin(), text.size() };
 
     RuleBuilder builder { set, rules };
@@ -22,10 +22,10 @@ parse(FilterSet const& set, StringRange const text)
     return rules;
 }
 
-std::shared_ptr<Rule>
+std::unique_ptr<Rule>
 parse(StringRange const line)
 {
-    std::vector<std::shared_ptr<Rule>> rules;
+    std::vector<std::unique_ptr<Rule>> rules;
     RuleBuilder builder { rules };
 
     std::string_view const line_ { line.begin(), line.size() };
@@ -36,7 +36,7 @@ parse(StringRange const line)
         return nullptr;
     }
     else {
-        return rules.front();
+        return std::move(rules.front());
     }
 }
 

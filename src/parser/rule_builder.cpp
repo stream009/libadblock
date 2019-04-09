@@ -92,7 +92,7 @@ void RuleBuilder::
 end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
-        std::make_shared<BasicFilterRule>(
+        std::make_unique<BasicFilterRule>(
             std::move(m_pattern), std::move(m_options)
         )
     );
@@ -108,7 +108,7 @@ void RuleBuilder::
 end_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
-        std::make_shared<ExceptionFilterRule>(
+        std::make_unique<ExceptionFilterRule>(
             std::move(m_pattern), std::move(m_options)
         )
     );
@@ -389,7 +389,7 @@ void RuleBuilder::
 end_basic_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
-        std::make_shared<BasicElementHideRule>(
+        std::make_unique<BasicElementHideRule>(
             m_selector, m_domains
         )
     );
@@ -405,7 +405,7 @@ void RuleBuilder::
 end_exception_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
-        std::make_shared<ExceptionElementHideRule>(
+        std::make_unique<ExceptionElementHideRule>(
             m_selector, m_domains
         )
     );
@@ -421,7 +421,7 @@ void RuleBuilder::
 end_extended_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
-        std::make_shared<ExtendedElementHideRule>(
+        std::make_unique<ExtendedElementHideRule>(
             m_selector, m_domains
         )
     );
@@ -469,7 +469,7 @@ void RuleBuilder::
 comment(iterator const bol, iterator const eol)
 {
     add_rule(
-        std::make_shared<CommentRule>(StringRange { bol, eol })
+        std::make_unique<CommentRule>(StringRange { bol, eol })
     );
 }
 
@@ -486,7 +486,7 @@ error(iterator const begin, iterator const end, std::string_view const msg)
 }
 
 void RuleBuilder::
-add_rule(RulePtr const rule)
+add_rule(RulePtr rule)
 {
     if (m_filterSet) {
         rule->setFilterSet(*m_filterSet);
@@ -494,7 +494,7 @@ add_rule(RulePtr const rule)
 
     rule->setLine(m_line);
 
-    m_rules.push_back(rule);
+    m_rules.push_back(std::move(rule));
 }
 
 } // namespace adblock::parser

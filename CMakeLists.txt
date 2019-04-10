@@ -8,4 +8,5 @@ add_subdirectory(third_party/radix_tree)
 
 if(BUILD_TESTING)
     add_subdirectory(test)
+    add_subdirectory(benchmark)
 endif()

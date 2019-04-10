@@ -101,10 +101,10 @@ matchWhiteListOptions(Uri const& uri, Context const& context) const
     namespace ba = boost::algorithm;
 
     auto const rv =  ba::any_of(m_whiteListOptions,
-            [&](auto const& option) {
-                return option->match(uri, context);
-            }
-        );
+        [&](auto const& option) {
+            return option->match(uri, context);
+        }
+    );
     return rv;
 }
 
@@ -119,9 +119,9 @@ matchTypeOptions(Uri const& uri, Context const& context) const
     }
 
     auto const rv = ba::any_of(m_typeOptions,
-            [&](auto const& option) {
-                return option->match(uri, context);
-            }
+        [&](auto const& option) {
+            return option->match(uri, context);
+        }
     );
 
     return rv;

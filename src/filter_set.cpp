@@ -49,9 +49,9 @@ struct Statistics
 
 private:
     void countFilterRule(adblock::FilterRule const& rule,
-                         FilterRule &stats);
+                         FilterRule& stats);
     void countElementHideRule(adblock::ElementHideRule const& rule,
-                              ElementHideRule &stats);
+                              ElementHideRule& stats);
 };
 
 Statistics::
@@ -59,20 +59,20 @@ Statistics(FilterSet::Rules const& rules)
 {
     for (auto const& ptr: rules) {
         assert(ptr);
-        if (auto const* const rule = dynamic_cast<BasicFilterRule*>(&*ptr)) {
+        if (auto* const rule = dynamic_cast<BasicFilterRule*>(&*ptr)) {
             countFilterRule(*rule, basicFilterRule);
         }
-        else if (auto const* const rule =
+        else if (auto* const rule =
                            dynamic_cast<ExceptionFilterRule*>(&*ptr))
         {
             countFilterRule(*rule, exceptionFilterRule);
         }
-        else if (auto const* const rule =
+        else if (auto* const rule =
                             dynamic_cast<BasicElementHideRule*>(&*ptr))
         {
             countElementHideRule(*rule, basicElementHideRule);
         }
-        else if (auto const* const rule =
+        else if (auto* const rule =
                            dynamic_cast<ExceptionElementHideRule*>(&*ptr))
         {
             countElementHideRule(*rule, exceptionElementHideRule);
@@ -87,10 +87,11 @@ Statistics(FilterSet::Rules const& rules)
 }
 
 void Statistics::
-countFilterRule(adblock::FilterRule const& rule, FilterRule &stats)
+countFilterRule(adblock::FilterRule const& rule, FilterRule& stats)
 {
     ++stats.total;
     auto const& pattern = rule.pattern();
+
     if (typeid(pattern) == typeid(BasicMatchPattern)) {
         ++stats.basicMatchPattern;
     }
@@ -107,7 +108,7 @@ countFilterRule(adblock::FilterRule const& rule, FilterRule &stats)
 
 void Statistics::
 countElementHideRule(adblock::ElementHideRule const& rule,
-                    ElementHideRule &stats)
+                     ElementHideRule& stats)
 {
     ++stats.total;
     if (rule.isDomainRestricted()) {

@@ -88,4 +88,44 @@ TEST(Option_Document, Inversed)
     }
 }
 
+TEST(Option_Document, WithRestriction)
+{
+    FilterRuleBase rb;
+
+    auto const rule1 = parse_rule<FilterRule>("foo"_r);
+    ASSERT_TRUE(rule1);
+
+    rb.put(*rule1);
+
+    auto const disabler =
+        parse_rule<FilterRule>("@@||adblock.org$document,domain=sub1.adblock.org|sub2.adblock.org"_r);
+    ASSERT_TRUE(disabler);
+
+    rb.put(*disabler);
+
+    { // match with rule1 but be excluded by disabler
+        TestContext cxt { "http://www.sub1.adblock.org"_u };
+
+        auto const& rv = rb.query("http://foo.com"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == &(*disabler));
+    }
+
+    { // match with rule1 but be excluded by disabler
+        TestContext cxt { "http://www.sub2.adblock.org"_u };
+
+        auto const& rv = rb.query("http://foo.com"_u, cxt);
+        ASSERT_FALSE(rv.first);
+        EXPECT_TRUE(rv.second == &(*disabler));
+    }
+
+    { // disabler doesn't applied because domain option doesn't match
+        TestContext cxt { "http://www.adblock.org"_u };
+
+        auto const& rv = rb.query("http://foo.com"_u, cxt);
+        ASSERT_TRUE(rv.first);
+        EXPECT_TRUE(rv.second == &(*rule1));
+    }
+}
+
 } // namespace adblock

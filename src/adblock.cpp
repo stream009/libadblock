@@ -71,11 +71,10 @@ contentSecurityPolicy(Uri const& uri) const
     auto const& [found, rule] = m_filterRuleBase.query(uri, cxt);
     if (!found) return {};
 
-    assert(rule);
-    auto* const option = rule->option<CspOption>();
-    assert(option);
+    auto* const policy = rule->cspValue();
+    assert(policy);
 
-    return option->policy();
+    return *policy;
 }
 
 FilterSetRng AdBlock::

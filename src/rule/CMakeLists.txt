@@ -6,6 +6,7 @@ add_library(rule
     exception_element_hide_rule.cpp
     extended_element_hide_rule.cpp
     comment_rule.cpp
+    filter_option.cpp
 )
 target_link_libraries(rule
     pattern

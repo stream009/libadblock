@@ -17,7 +17,9 @@ FilterRule::
 FilterRule(std::unique_ptr<Pattern> pattern,
            Options options)
     : m_pattern { std::move(pattern) }
+    , m_option { std::move(options) }
 {
+#if 0
     for (auto& opt: options) {
         if (dynamic_cast<TypeOption*>(opt.get())) {
             m_typeOptions.push_back(std::move(opt));
@@ -44,6 +46,7 @@ FilterRule(std::unique_ptr<Pattern> pattern,
     }
 
     validate();
+#endif
 }
 
 FilterRule::~FilterRule() = default;
@@ -52,6 +55,12 @@ bool FilterRule::
 match(Uri const& uri, Context const& context,
                               bool const specificOnly/*= false*/) const
 {
+    if (specificOnly && !domains()) return false;
+
+    if (!m_pattern->match(uri, m_option.matchCase())) return false;
+
+    return m_option.match(uri, context);
+#if 0
     if (specificOnly && !m_domainSpecific) return false;
 
     if (!m_pattern->match(uri, m_caseSensitive)) return false;
@@ -66,6 +75,7 @@ match(Uri const& uri, Context const& context,
     }
 
     return true;
+#endif
 }
 
 Pattern const& FilterRule::
@@ -74,6 +84,7 @@ pattern() const
     return *m_pattern;
 }
 
+#if 0
 FilterRule::OptionRefs FilterRule::
 options() const
 {
@@ -138,10 +149,13 @@ matchRestrictionOptions(Uri const& uri, Context const& context) const
         }
     );
 }
+#endif
 
 void FilterRule::
 print(std::ostream &os) const
 {
+    (void)os;
+#if 0
     os << "Pattern: " << *m_pattern << "\n";
     auto const& options = this->options();
     if (!options.empty()) {
@@ -150,6 +164,7 @@ print(std::ostream &os) const
             os << option << " ";
         }
     }
+#endif
 }
 
 } // namespace adblock

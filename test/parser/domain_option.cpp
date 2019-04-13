@@ -1,15 +1,18 @@
 #include "parser/parser.hpp"
 
-#include "option.hpp"
-#include "option/domain_option.hpp"
 #include "rule/filter_rule.hpp"
+#include "rule/filter_option.hpp"
 #include "type.hpp"
 
 #include <memory>
 
+#include <boost/algorithm/string.hpp>
+
 #include <gtest/gtest.h>
 
 using namespace adblock;
+
+namespace ba = boost::algorithm;
 
 TEST(Parser_FilterOption, Domain_Basic)
 {
@@ -21,14 +24,13 @@ TEST(Parser_FilterOption, Domain_Basic)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
+    ASSERT_TRUE(filter->hasOption(FilterOption::Domain));
 
-    auto* const option = dynamic_cast<DomainOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(1, domains->size());
+    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
 }
 
 TEST(Parser_FilterOption, Domain_ExcludeDomain)
@@ -41,14 +43,13 @@ TEST(Parser_FilterOption, Domain_ExcludeDomain)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
+    ASSERT_TRUE(filter->hasOption(FilterOption::Domain));
 
-    auto* const option = dynamic_cast<DomainOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_EQ(0, option->includeDomains().size());
-    EXPECT_EQ(1, option->excludeDomains().size());
-    EXPECT_EQ("adblock.org"_r, option->excludeDomains()[0]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(1, domains->size());
+    EXPECT_TRUE(ba::equals("~adblock.org", (*domains)[0]));
 }
 
 TEST(Parser_FilterOption, Domain_MultipleDomain1)
@@ -61,15 +62,14 @@ TEST(Parser_FilterOption, Domain_MultipleDomain1)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
+    ASSERT_TRUE(filter->hasOption(FilterOption::Domain));
 
-    auto* const option = dynamic_cast<DomainOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_EQ(2, option->includeDomains().size());
-    EXPECT_EQ(0, option->excludeDomains().size());
-    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
-    EXPECT_EQ("google.com"_r, option->includeDomains()[1]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(2, domains->size());
+    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
+    EXPECT_TRUE(ba::equals("google.com", (*domains)[1]));
 }
 
 TEST(Parser_FilterOption, Domain_MultipleDomain2)
@@ -82,13 +82,12 @@ TEST(Parser_FilterOption, Domain_MultipleDomain2)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
+    ASSERT_TRUE(filter->hasOption(FilterOption::Domain));
 
-    auto* const option = dynamic_cast<DomainOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_EQ(1, option->includeDomains().size());
-    EXPECT_EQ(1, option->excludeDomains().size());
-    EXPECT_EQ("adblock.org"_r, option->includeDomains()[0]);
-    EXPECT_EQ("google.com"_r, option->excludeDomains()[0]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(2, domains->size());
+    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
+    EXPECT_TRUE(ba::equals("~google.com", (*domains)[1]));
 }

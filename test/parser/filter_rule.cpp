@@ -1,22 +1,22 @@
 #include "parser/parser.hpp"
 
-#include "option.hpp"
-#include "option/domain_option.hpp"
-#include "option/match_case_option.hpp"
-#include "option/script_option.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
+#include "rule/filter_option.hpp"
 #include "type.hpp"
 
 #include <memory>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
+
+namespace ba = boost::algorithm;
 
 TEST(Parser_BasicFilterRule, Basic)
 {
@@ -32,7 +32,7 @@ TEST(Parser_BasicFilterRule, Basic)
         dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
     ASSERT_TRUE(pattern);
 
-    EXPECT_TRUE(filter->options().empty());
+    ASSERT_EQ(0, filter->numOptions());
 }
 
 TEST(Parser_BasicFilterRule, OneOption)
@@ -49,9 +49,8 @@ TEST(Parser_BasicFilterRule, OneOption)
         dynamic_cast<DomainMatchPattern const*>(&filter->pattern());
     ASSERT_TRUE(pattern);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(1, options.size());
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[0]));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
 }
 
 TEST(Parser_BasicFilterRule, TwoOptions)
@@ -68,14 +67,10 @@ TEST(Parser_BasicFilterRule, TwoOptions)
         dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
     ASSERT_TRUE(pattern);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(2, options.size());
-
-    auto* const scriptOption = dynamic_cast<ScriptOption const*>(options[0]);
-    ASSERT_TRUE(scriptOption);
-    EXPECT_TRUE(scriptOption->inverse());
-
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[1]));
+    ASSERT_EQ(3, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
+    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
 }
 
 TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
@@ -93,11 +88,14 @@ TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
     ASSERT_TRUE(pattern);
     EXPECT_EQ(""_r, pattern->pattern());
 
-    auto const& options = filter->options();
-    EXPECT_EQ(2, options.size());
+    ASSERT_EQ(2, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::Domain));
+    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
 
-    EXPECT_TRUE(dynamic_cast<DomainOption const*>(options[0]));
-    EXPECT_TRUE(dynamic_cast<MatchCaseOption const*>(options[1]));
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(1, domains->size());
+    EXPECT_TRUE(ba::equals("foo"_r, (*domains)[0]));
 }
 
 TEST(Parser_ExceptionFilterRule, Basic)
@@ -115,5 +113,5 @@ TEST(Parser_ExceptionFilterRule, Basic)
     ASSERT_TRUE(pattern);
     EXPECT_EQ("adblock.org", boost::lexical_cast<std::string>(*pattern));
 
-    EXPECT_TRUE(filter->options().empty());
+    ASSERT_EQ(0, filter->numOptions());
 }

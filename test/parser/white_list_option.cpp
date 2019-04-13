@@ -1,10 +1,6 @@
 #include "parser/parser.hpp"
 
-#include "option.hpp"
-#include "option/document_option.hpp"
-#include "option/elem_hide_option.hpp"
-#include "option/generic_block_option.hpp"
-#include "option/generic_hide_option.hpp"
+#include "rule/filter_option.hpp"
 #include "rule/filter_rule.hpp"
 #include "type.hpp"
 
@@ -24,12 +20,8 @@ TEST(Parser_WhiteListOption, Document_Normal)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
-
-    auto* const option = dynamic_cast<DocumentOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_FALSE(option->inverse());
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::Document));
 }
 
 TEST(Parser_WhiteListOption, Document_Inverse)
@@ -42,12 +34,8 @@ TEST(Parser_WhiteListOption, Document_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
-
-    auto* const option = dynamic_cast<DocumentOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_TRUE(option->inverse());
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::DocumentInv));
 }
 
 TEST(Parser_WhiteListOption, ElemHide_Normal)
@@ -60,12 +48,8 @@ TEST(Parser_WhiteListOption, ElemHide_Normal)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
-
-    auto* const option = dynamic_cast<ElemHideOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_FALSE(option->inverse());
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ElemHide));
 }
 
 TEST(Parser_WhiteListOption, ElemHide_Inverse)
@@ -78,12 +62,8 @@ TEST(Parser_WhiteListOption, ElemHide_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
-
-    auto* const option = dynamic_cast<ElemHideOption const*>(options.front());
-    ASSERT_TRUE(option);
-    EXPECT_TRUE(option->inverse());
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ElemHideInv));
 }
 
 TEST(Parser_WhiteListOption, GenericBlock)
@@ -96,11 +76,9 @@ TEST(Parser_WhiteListOption, GenericBlock)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
 
-    auto* const option = dynamic_cast<GenericBlockOption const*>(options.front());
-    ASSERT_TRUE(option);
+    EXPECT_TRUE(filter->hasOption(FilterOption::GenericBlock));
 }
 
 TEST(Parser_WhiteListOption, GenericHide)
@@ -113,9 +91,7 @@ TEST(Parser_WhiteListOption, GenericHide)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
+    ASSERT_EQ(1, filter->numOptions());
 
-    auto* const option = dynamic_cast<GenericHideOption const*>(options.front());
-    ASSERT_TRUE(option);
+    EXPECT_TRUE(filter->hasOption(FilterOption::GenericHide));
 }

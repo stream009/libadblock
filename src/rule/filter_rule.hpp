@@ -6,6 +6,8 @@
 #include "type.hpp"
 #include "option.hpp"
 
+#include "filter_option.hpp"
+
 #include <cassert>
 #include <iosfwd>
 #include <memory>
@@ -32,6 +34,7 @@ public:
                            bool const specificOnly = false) const;
 
     Pattern const& pattern() const;
+#if 0
     OptionRefs options() const;
 
     template<typename OptionT>
@@ -56,15 +59,25 @@ public:
 
         return rv;
     }
+#endif
+
+    FilterOption::Domains* domains() const { return m_option.domains(); }
+    FilterOption::SiteKeys* siteKeys() const { return m_option.siteKeys(); }
+    StringRange* cspValue() const { return m_option.cspValue(); }
+
+    bool hasOption(uint32_t mask) const { return m_option.hasOption(mask); }
+    size_t numOptions() const { return m_option.numOptions(); }
 
 protected:
     FilterRule(std::unique_ptr<Pattern>,
                Options);
 
 private:
+#if 0
     bool matchWhiteListOptions(Uri const&, Context const&) const;
     bool matchTypeOptions(Uri const&, Context const&) const;
     bool matchRestrictionOptions(Uri const&, Context const&) const;
+#endif
 
     // @override Rule
     void print(std::ostream&) const override;
@@ -76,14 +89,18 @@ private:
 
 private:
     std::unique_ptr<Pattern> m_pattern;
+#if 0
     Options m_typeOptions;
     Options m_restrictionOptions;
     Options m_whiteListOptions;
     Options m_otherOptions;
     bool m_caseSensitive = false;
     bool m_domainSpecific = false;
+#endif
+    FilterOption m_option;
 };
 
+#if 0
 template<typename OptionT>
 OptionT const* FilterRule::
 option() const
@@ -118,6 +135,7 @@ option() const
 
     return nullptr;
 }
+#endif
 
 } // namespace adblock
 

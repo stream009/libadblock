@@ -36,6 +36,42 @@
 
 namespace adblock {
 
+static std::bitset<64>
+typeOptions()
+{
+    std::bitset<64> result;
+
+    // request type
+    result.set(FilterOption::Object);
+    result.set(FilterOption::Script);
+    result.set(FilterOption::StyleSheet);
+    result.set(FilterOption::Image);
+    result.set(FilterOption::Media);
+    result.set(FilterOption::Font);
+    result.set(FilterOption::Object);
+    result.set(FilterOption::SubDocument);
+    result.set(FilterOption::WebSocket);
+    result.set(FilterOption::WebRtc);
+    result.set(FilterOption::Ping);
+    result.set(FilterOption::XmlHttpRequest);
+    result.set(FilterOption::ObjectSubRequest);
+    // query type
+    result.set(FilterOption::Popup);
+    result.set(FilterOption::Document);
+    result.set(FilterOption::DocumentInv);
+    result.set(FilterOption::ElemHide);
+    result.set(FilterOption::ElemHideInv);
+    result.set(FilterOption::GenericBlock);
+    result.set(FilterOption::GenericHide);
+    result.set(FilterOption::Csp);
+    result.set(FilterOption::Rewrite);
+
+    return result;
+}
+
+//
+// FilterOption
+//
 FilterOption::
 FilterOption(OptionPtrs&& options)
 {
@@ -43,105 +79,107 @@ FilterOption(OptionPtrs&& options)
         // RequestType
         if (auto* const o = dynamic_cast<OtherOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Other;
+            m_options.set(FilterOption::Other);
         }
         else if (auto* const o = dynamic_cast<ScriptOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Script;
+            m_options.set(FilterOption::Script);
         }
         else if (auto* const o = dynamic_cast<StyleSheetOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= StyleSheet;
+            m_options.set(FilterOption::StyleSheet);
         }
         else if (auto* const o = dynamic_cast<ImageOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Image;
+            m_options.set(FilterOption::Image);
         }
         else if (auto* const o = dynamic_cast<MediaOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Media;
+            m_options.set(FilterOption::Media);
         }
         else if (auto* const o = dynamic_cast<FontOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Font;
+            m_options.set(FilterOption::Font);
         }
         else if (auto* const o = dynamic_cast<ObjectOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Object;
+            m_options.set(FilterOption::Object);
         }
         else if (auto* const o = dynamic_cast<SubDocumentOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= SubDocument;
+            m_options.set(FilterOption::SubDocument);
         }
         else if (auto* const o = dynamic_cast<WebSocketOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= WebSocket;
+            m_options.set(FilterOption::WebSocket);
         }
         else if (auto* const o = dynamic_cast<WebRtcOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= WebRtc;
+            m_options.set(FilterOption::WebRtc);
         }
         else if (auto* const o = dynamic_cast<PingOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= Ping;
+            m_options.set(FilterOption::Ping);
         }
         else if (auto* const o = dynamic_cast<XmlHttpRequestOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= XmlHttpRequest;
+            m_options.set(FilterOption::XmlHttpRequest);
         }
         else if (auto* const o = dynamic_cast<ObjectSubRequestOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= Inverse;
+                m_options.set(FilterOption::Inverse);
             }
-            m_flags |= ObjectSubRequest;
+            m_options.set(FilterOption::ObjectSubRequest);
         }
         // QueryType
         else if (auto* const o = dynamic_cast<PopUpOption*>(opt.get())) {
-            m_flags |= Popup;
+            m_options.set(FilterOption::Popup);
         }
         else if (auto* const o = dynamic_cast<DocumentOption*>(opt.get())) {
-            m_flags |= (o->inverse() ? DocumentInv : Document);
+            m_options.set(o->inverse() ?
+                FilterOption::DocumentInv : FilterOption::Document);
         }
         else if (auto* const o = dynamic_cast<ElemHideOption*>(opt.get())) {
-            m_flags |= (o->inverse() ? ElemHideInv : ElemHide);
+            m_options.set(o->inverse() ?
+                FilterOption::ElemHideInv : FilterOption::ElemHide);
         }
         else if (auto* const o = dynamic_cast<GenericBlockOption*>(opt.get())) {
-            m_flags |= GenericBlock;
+            m_options.set(FilterOption::GenericBlock);
         }
         else if (auto* const o = dynamic_cast<GenericHideOption*>(opt.get())) {
-            m_flags |= GenericHide;
+            m_options.set(FilterOption::GenericHide);
         }
         else if (auto* const o = dynamic_cast<CspOption*>(opt.get())) {
-            m_flags |= Csp;
+            m_options.set(FilterOption::Csp);
             m_cspValue = std::make_unique<StringRange>(o->policy());
         }
         // Restriction
         else if (auto* const o = dynamic_cast<DomainOption*>(opt.get())) {
-            m_flags |= Domain;
+            m_options.set(FilterOption::Domain);
 
             m_domains = std::make_unique<Domains>();
 
@@ -158,7 +196,7 @@ FilterOption(OptionPtrs&& options)
             }
         }
         else if (auto* const o = dynamic_cast<SiteKeyOption*>(opt.get())) {
-            m_flags |= SiteKey;
+            m_options.set(FilterOption::SiteKey);
 
             m_siteKeys = std::make_unique<SiteKeys>();
 
@@ -168,22 +206,22 @@ FilterOption(OptionPtrs&& options)
         }
         else if (auto* const o = dynamic_cast<ThirdPartyOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= SameOrigin;
+                m_options.set(FilterOption::SameOrigin);
             }
             else {
-                m_flags |= ThirdParty;
+                m_options.set(FilterOption::ThirdParty);
             }
         }
         // misc.
         else if (auto* const o = dynamic_cast<MatchCaseOption*>(opt.get())) {
-            m_flags |= MatchCase;
+            m_options.set(FilterOption::MatchCase);
         }
         else if (auto* const o = dynamic_cast<CollapseOption*>(opt.get())) {
             if (o->inverse()) {
-                m_flags |= NeverCollapse;
+                m_options.set(FilterOption::NeverCollapse);
             }
             else {
-                m_flags |= AlwaysCollapse;
+                m_options.set(FilterOption::AlwaysCollapse);
             }
         }
         else {
@@ -209,28 +247,22 @@ match(Uri const& uri, Context const& cxt) const
 bool FilterOption::
 hasOption(uint32_t const mask) const
 {
-    return m_flags & mask;
+    return m_options.test(mask);
 }
 
 size_t FilterOption::
 numOptions() const
 {
-    size_t result = 0;
-
-    for (size_t i = 0; i < 32; ++i) {
-        if (m_flags & (1u << i)) ++result;
-    }
-
-    return result;
+    return m_options.count();
 }
 
 bool FilterOption::
 matchWhiteListOptions(WhiteListQueryContext const& cxt) const
 {
-    return (cxt.blockDisablerMode() && (m_flags & Document))
-        || (cxt.hideDisablerMode() && (m_flags & ElemHide))
-        || (cxt.genericBlockDisablerMode() && (m_flags & GenericBlock))
-        || (cxt.genericHideDisablerMode() && (m_flags & GenericHide));
+    return (cxt.blockDisablerMode() && m_options.test(FilterOption::Document))
+        || (cxt.hideDisablerMode() && m_options.test(FilterOption::ElemHide))
+        || (cxt.genericBlockDisablerMode() && m_options.test(FilterOption::GenericBlock))
+        || (cxt.genericHideDisablerMode() && m_options.test(FilterOption::GenericHide));
 }
 
 bool FilterOption::
@@ -238,53 +270,49 @@ matchTypeOptions(Context const& cxt) const
 {
     if (!typeSpecified()) return true;
 
-    auto test = [&](auto flag) {
-        return static_cast<bool>(m_flags & flag);
-    };
-
-    bool const inverse = test(Inverse);
+    bool const inverse = m_options.test(FilterOption::Inverse);
 
     if (cxt.fromScriptTag()) {
-        return test(Script) ^ inverse;
+        return m_options.test(FilterOption::Script) ^ inverse;
     }
     else if (cxt.isExternalStyleSheet()) {
-        return test(StyleSheet) ^ inverse;
+        return m_options.test(FilterOption::StyleSheet) ^ inverse;
     }
     else if (cxt.fromImageTag()) {
-        return test(Image) ^ inverse;
+        return m_options.test(FilterOption::Image) ^ inverse;
     }
     else if (cxt.fromAudioVideoTag()) {
-        return test(Media) ^ inverse;
+        return m_options.test(FilterOption::Media) ^ inverse;
     }
     else if (cxt.isFont()) {
-        return test(Font) ^ inverse;
+        return m_options.test(FilterOption::Font) ^ inverse;
     }
     else if (cxt.fromObjectTag()) {
-        return test(Object) ^ inverse;
+        return m_options.test(FilterOption::Object) ^ inverse;
     }
     else if (cxt.isSubDocument()) {
-        return test(SubDocument) ^ inverse;
+        return m_options.test(FilterOption::SubDocument) ^ inverse;
     }
     else if (cxt.isWebSocket()) {
-        return test(WebSocket) ^ inverse;
+        return m_options.test(FilterOption::WebSocket) ^ inverse;
     }
     else if (cxt.isWebRtc()) {
-        return test(WebRtc) ^ inverse;
+        return m_options.test(FilterOption::WebRtc) ^ inverse;
     }
     else if (cxt.isPing()) {
-        return test(Ping) ^ inverse;
+        return m_options.test(FilterOption::Ping) ^ inverse;
     }
     else if (cxt.fromXmlHttpRequest()) {
-        return test(XmlHttpRequest) ^ inverse;
+        return m_options.test(FilterOption::XmlHttpRequest) ^ inverse;
     }
     else if (cxt.fromPlugins()) {
-        return test(ObjectSubRequest) ^ inverse;
+        return m_options.test(FilterOption::ObjectSubRequest) ^ inverse;
     }
     else if (cxt.isCsp()) {
-        return test(Csp); //TODO separate
+        return m_options.test(FilterOption::Csp); //TODO separate
     }
     else {
-        return test(Other) ^ inverse;
+        return m_options.test(FilterOption::Other) ^ inverse;
     }
 }
 
@@ -359,7 +387,7 @@ matchOrigin(Uri const& uri, Context const& cxt) const
 {
     namespace ba = boost::algorithm;
 
-    if (m_flags & SameOrigin) {
+    if (m_options.test(FilterOption::SameOrigin)) {
         DomainDataBase ddb;
 
         const auto &uriDomain = ddb.query(uri);
@@ -367,7 +395,7 @@ matchOrigin(Uri const& uri, Context const& cxt) const
 
         return boost::equals(uriDomain, originDomain);
     }
-    else if (m_flags & ThirdParty) {
+    else if (m_options.test(FilterOption::ThirdParty)) {
         DomainDataBase ddb;
 
         const auto &uriDomain = ddb.query(uri);
@@ -383,32 +411,9 @@ matchOrigin(Uri const& uri, Context const& cxt) const
 bool FilterOption::
 typeSpecified() const
 {
-    constexpr auto typeOptions =
-          Object
-        | Script
-        | StyleSheet
-        | Image
-        | Media
-        | Font
-        | Object
-        | SubDocument
-        | WebSocket
-        | WebRtc
-        | Ping
-        | XmlHttpRequest
-        | ObjectSubRequest;
+    static auto const mask = typeOptions();
 
-    constexpr auto queryOptions =
-          Popup
-        | Document
-        | DocumentInv
-        | ElemHide
-        | ElemHideInv
-        | GenericBlock
-        | Csp
-        | Rewrite;
-
-    return m_flags & (typeOptions | queryOptions);
+    return (m_options & mask).any();
 }
 
 } // namespace adblock

@@ -57,7 +57,9 @@ match(Uri const& uri, Context const& context,
 {
     if (specificOnly && !domains()) return false;
 
-    if (!m_pattern->match(uri, m_option.matchCase())) return false;
+    auto const matchCase = m_option.hasOption(FilterOption::MatchCase);
+
+    if (!m_pattern->match(uri, matchCase)) return false;
 
     return m_option.match(uri, context);
 #if 0

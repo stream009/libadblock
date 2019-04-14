@@ -4,6 +4,7 @@
 #include "option.hpp"
 #include "type.hpp"
 
+#include <bitset>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,39 +24,39 @@ public:
 
     enum : uint32_t {
         // request type
-        Other = 1 << 0,
-        Script = 1 << 1,
-        StyleSheet = 1 << 2,
-        Image = 1 << 3,
-        Media = 1 << 4,
-        Font = 1 << 5,
-        Object = 1 << 6,
-        SubDocument = 1 << 7,
-        WebSocket = 1 << 8,
-        WebRtc = 1 << 9,
-        Ping = 1 << 10,
-        XmlHttpRequest = 1 << 11,
-        ObjectSubRequest = 1 << 12,
+        Other,
+        Script,
+        StyleSheet,
+        Image,
+        Media,
+        Font,
+        Object,
+        SubDocument,
+        WebSocket,
+        WebRtc,
+        Ping,
+        XmlHttpRequest,
+        ObjectSubRequest,
         // query type
-        Popup = 1 << 13,
-        Document = 1 << 14,
-        DocumentInv = 1 << 15,
-        ElemHide = 1 << 16,
-        ElemHideInv = 1 << 17,
-        GenericBlock = 1 << 18,
-        GenericHide = 1 << 19,
-        Csp = 1 << 20,
-        Rewrite = 1 << 21,
+        Popup,
+        Document,
+        DocumentInv,
+        ElemHide,
+        ElemHideInv,
+        GenericBlock,
+        GenericHide,
+        Csp,
+        Rewrite,
         // restriction
-        Domain = 1 << 22,
-        SameOrigin = 1 << 23,
-        ThirdParty = 1 << 24,
-        SiteKey = 1 << 25,
+        Domain,
+        SameOrigin,
+        ThirdParty,
+        SiteKey,
         //  misc.
-        Inverse = 1 << 26,
-        MatchCase = 1 << 27,
-        AlwaysCollapse = 1 << 28,
-        NeverCollapse = 1 << 29,
+        Inverse,
+        MatchCase,
+        AlwaysCollapse,
+        NeverCollapse,
     };
 
 public:
@@ -69,7 +70,6 @@ public:
     // query
     bool match(Uri const&, Context const&) const;
 
-    bool matchCase() const { return m_flags & MatchCase; }
     bool hasOption(uint32_t mask) const;
     size_t numOptions() const;
 
@@ -83,8 +83,7 @@ private:
     bool typeSpecified() const;
 
 private:
-    uint32_t m_flags = 0;
-
+    std::bitset<64> m_options;
     std::unique_ptr<Domains> m_domains;
     std::unique_ptr<SiteKeys> m_siteKeys;
     std::unique_ptr<StringRange> m_cspValue;

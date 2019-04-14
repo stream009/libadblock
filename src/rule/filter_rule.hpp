@@ -34,32 +34,6 @@ public:
                            bool const specificOnly = false) const;
 
     Pattern const& pattern() const;
-#if 0
-    OptionRefs options() const;
-
-    template<typename OptionT>
-    OptionT const* option() const;
-
-    template<typename OptionT>
-    bool hasOption() const
-    {
-        namespace ba = boost::algorithm;
-
-        auto isSameType =
-            [](auto const& opt) {
-                assert(opt);
-                auto const& option = *opt;
-                return typeid(option) == typeid(OptionT);
-            };
-
-        auto const rv = ba::any_of(m_typeOptions, isSameType)
-            || ba::any_of(m_restrictionOptions, isSameType)
-            || ba::any_of(m_whiteListOptions, isSameType)
-            || ba::any_of(m_otherOptions, isSameType);
-
-        return rv;
-    }
-#endif
 
     FilterOption::Domains* domains() const { return m_option.domains(); }
     FilterOption::SiteKeys* siteKeys() const { return m_option.siteKeys(); }
@@ -73,11 +47,6 @@ protected:
                Options);
 
 private:
-#if 0
-    bool matchWhiteListOptions(Uri const&, Context const&) const;
-    bool matchTypeOptions(Uri const&, Context const&) const;
-    bool matchRestrictionOptions(Uri const&, Context const&) const;
-#endif
 
     // @override Rule
     void print(std::ostream&) const override;
@@ -89,14 +58,6 @@ private:
 
 private:
     std::unique_ptr<Pattern> m_pattern;
-#if 0
-    Options m_typeOptions;
-    Options m_restrictionOptions;
-    Options m_whiteListOptions;
-    Options m_otherOptions;
-    bool m_caseSensitive = false;
-    bool m_domainSpecific = false;
-#endif
     FilterOption m_option;
 };
 

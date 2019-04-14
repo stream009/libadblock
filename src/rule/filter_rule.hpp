@@ -1,7 +1,6 @@
 #ifndef FILTER_RULE_HPP
 #define FILTER_RULE_HPP
 
-#include "context.hpp"
 #include "rule.hpp"
 #include "type.hpp"
 #include "option.hpp"
@@ -13,40 +12,48 @@
 #include <memory>
 #include <vector>
 
-#include <boost/algorithm/cxx11/any_of.hpp>
-#include <boost/range/algorithm.hpp>
-
 namespace adblock {
 
 class Pattern;
+class Context;
+class WhiteListQueryContext;
 
 class FilterRule : public Rule
 {
     using Base = Rule;
 public:
-    using Options = std::vector<std::unique_ptr<Option>>;
-    using OptionRefs = std::vector<Option const*>;
+    using Domains = std::vector<std::string>;
+    using OptionPtr = std::unique_ptr<Option>;
+    using OptionPtrs = std::vector<OptionPtr>;
+    using SiteKeys = std::vector<StringRange>;
 
 public:
     ~FilterRule() override;
 
+    // accessor
+    Pattern const& pattern() const;
+    Domains* domains() const { return m_domains.get(); }
+    SiteKeys* siteKeys() const { return m_siteKeys.get(); }
+    StringRange* cspValue() const { return m_cspValue.get(); }
+
+    // query
     bool match(Uri const&, Context const&,
                            bool const specificOnly = false) const;
 
-    Pattern const& pattern() const;
-
-    FilterOption::Domains* domains() const { return m_option.domains(); }
-    FilterOption::SiteKeys* siteKeys() const { return m_option.siteKeys(); }
-    StringRange* cspValue() const { return m_option.cspValue(); }
-
-    bool hasOption(uint32_t mask) const { return m_option.hasOption(mask); }
-    size_t numOptions() const { return m_option.numOptions(); }
+    bool hasOption(FilterOption mask) const;
+    size_t numOptions() const;
 
 protected:
     FilterRule(std::unique_ptr<Pattern>,
-               Options);
-
+               OptionPtrs);
 private:
+    bool matchTypeOptions(Context const&) const;
+    bool matchWhiteListOptions(WhiteListQueryContext const&) const;
+    bool matchRestrictionOptions(Uri const&, Context const&) const;
+    bool matchDomain(Context const&) const;
+    bool matchSiteKey(Context const&) const;
+    bool matchOrigin(Uri const&, Context const&) const;
+    bool typeSpecified() const;
 
     // @override Rule
     void print(std::ostream&) const override;
@@ -58,45 +65,11 @@ private:
 
 private:
     std::unique_ptr<Pattern> m_pattern;
-    FilterOption m_option;
+    FilterOptionSet m_options;
+    std::unique_ptr<Domains> m_domains;
+    std::unique_ptr<SiteKeys> m_siteKeys;
+    std::unique_ptr<StringRange> m_cspValue;
 };
-
-#if 0
-template<typename OptionT>
-OptionT const* FilterRule::
-option() const
-{
-    namespace br = boost::range;
-
-    auto isSameType =
-        [](auto const& opt) {
-            assert(opt);
-            return typeid(*opt) == typeid(OptionT);
-        };
-
-    auto it = br::find_if(m_typeOptions, isSameType);
-    if (it != m_typeOptions.end()) {
-        return static_cast<OptionT*>(it->get());
-    }
-
-    it = br::find_if(m_restrictionOptions, isSameType);
-    if (it != m_restrictionOptions.end()) {
-        return static_cast<OptionT*>(it->get());
-    }
-
-    it = br::find_if(m_whiteListOptions, isSameType);
-    if (it != m_whiteListOptions.end()) {
-        return static_cast<OptionT*>(it->get());
-    }
-
-    it = br::find_if(m_otherOptions, isSameType);
-    if (it != m_otherOptions.end()) {
-        return static_cast<OptionT*>(it->get());
-    }
-
-    return nullptr;
-}
-#endif
 
 } // namespace adblock
 

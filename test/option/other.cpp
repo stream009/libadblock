@@ -1,5 +1,7 @@
-#include "option/other_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -23,45 +25,48 @@ struct OtherContext : MockContext
     bool m_flag;
 };
 
-const static OtherOption option { false };
-const static OtherOption optionInv { true };
-
-TEST(Option_OtherOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
-
 TEST(Option_OtherOption, OtherContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const OtherContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$other"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/some.dat" };
+    OtherContext const context { true };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_OtherOption, NotOtherContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const OtherContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$other"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/some.dat" };
+    OtherContext const context { false };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_OtherOption, OtherContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const OtherContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$~other"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/some.dat" };
+    OtherContext const context { true };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_OtherOption, NotOtherContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const OtherContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$~other"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/some.dat" };
+    OtherContext const context { false };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

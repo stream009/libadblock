@@ -1,5 +1,7 @@
-#include "option/subdocument_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -16,45 +18,48 @@ struct SubDocumentContext : MockContext
     bool m_flag;
 };
 
-const static SubDocumentOption option { false };
-const static SubDocumentOption optionInv { true };
-
-TEST(Option_SubDocumentOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
-
 TEST(Option_SubDocumentOption, SubDocumentContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const SubDocumentContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$subdocument"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/doc.html" };
+    SubDocumentContext const context { true };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_SubDocumentOption, NotSubDocumentContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const SubDocumentContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$subdocument"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/doc.html" };
+    SubDocumentContext const context { false };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_SubDocumentOption, SubDocumentContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const SubDocumentContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$~subdocument"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/doc.html" };
+    SubDocumentContext const context { true };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_SubDocumentOption, NotSubDocumentContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const SubDocumentContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$~subdocument"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/doc.html" };
+    SubDocumentContext const context { false };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

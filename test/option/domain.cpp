@@ -1,7 +1,7 @@
-#include "option/domain_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
-#include <boost/range/iterator_range.hpp>
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -18,105 +18,52 @@ struct DomainContext : MockContext
     Uri m_uri;
 };
 
-TEST(Option_DomainOption, Init1)
-{
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-    };
-    const DomainOption option { domains };
-
-    EXPECT_EQ(1, option.includeDomains().size());
-    EXPECT_TRUE(option.excludeDomains().empty());
-}
-
-TEST(Option_DomainOption, Init2)
-{
-    const DomainOption::Domains domains {
-        "~adblock.org"_r,
-    };
-    const DomainOption option { domains };
-
-    EXPECT_TRUE(option.includeDomains().empty());
-    EXPECT_EQ(1, option.excludeDomains().size());
-}
-
-TEST(Option_DomainOption, Init3)
-{
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-        "~google.com"_r,
-    };
-    const DomainOption option { domains };
-
-    EXPECT_EQ(1, option.includeDomains().size());
-    EXPECT_EQ(1, option.excludeDomains().size());
-}
-
-TEST(Option_DomainOption, Init4)
-{
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-        "~facebook.com"_r,
-        "google.com"_r,
-        "~twitter.com"_r,
-    };
-    const DomainOption option { domains };
-
-    EXPECT_EQ(2, option.includeDomains().size());
-    EXPECT_EQ(2, option.excludeDomains().size());
-}
-
 TEST(Option_DomainOption, Match)
 {
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-    };
-    const DomainOption option { domains };
+    auto const rule = parse_rule<FilterRule>("image.jpg$domain=adblock.org"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://www.google.com/image.jpg"_u;
-    DomainContext context { "http://www.adblock.org/"_u };
+    auto const& uri = "http://www.google.com/image.jpg"_u;
+    DomainContext const context { "http://www.adblock.org/"_u };
 
-    EXPECT_TRUE(option.match(uri, context));
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_DomainOption, NoMatch)
 {
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-    };
-    const DomainOption option { domains };
+    auto const rule = parse_rule<FilterRule>("image.jpg$domain=adblock.org"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://www.google.com/image.jpg"_u;
-    DomainContext context { "http://www.google.com/"_u };
+    auto const& uri = "http://www.google.com/image.jpg"_u;
+    DomainContext const context { "http://www.google.com/"_u };
 
-    EXPECT_FALSE(option.match(uri, context));
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_DomainOption, MatchToNegative)
 {
-    const DomainOption::Domains domains {
-        "adblock.org"_r,
-        "~sub.adblock.org"_r,
-    };
-    const DomainOption option { domains };
+    auto const rule = parse_rule<FilterRule>(
+                        "image.jpg$domain=adblock.org|~sub.adblock.org"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://www.google.com/image.jpg"_u;
-    DomainContext context { "http://www.sub.adblock.org/"_u };
+    auto const& uri = "http://www.google.com/image.jpg"_u;
 
-    EXPECT_FALSE(option.match(uri, context));
+    DomainContext const context1 { "http://www.sub.adblock.org/"_u };
+    EXPECT_FALSE(rule->match(uri, context1));
+
+    DomainContext const context2 { "http://www.adblock.org/"_u };
+    EXPECT_TRUE(rule->match(uri, context2));
 }
 
 TEST(Option_DomainOption, ExcludeDomainOnlyOption)
 {
-    const DomainOption::Domains domains {
-        "~adblock.org"_r,
-    };
-    const DomainOption option { domains };
+    auto const rule = parse_rule<FilterRule>("image.jpg$domain=~adblock.org"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://www.google.com/image.jpg"_u;
-    DomainContext context { "http://www.google.com"_u };
+    auto const& uri = "http://www.google.com/image.jpg"_u;
+    DomainContext const context { "http://www.google.com/"_u };
 
-    EXPECT_TRUE(option.match(uri, context));
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

@@ -7,9 +7,10 @@ add_library(rule
     extended_element_hide_rule.cpp
     comment_rule.cpp
     filter_option.cpp
+    domain_data_base.cpp
 )
 target_link_libraries(rule
     pattern
-    option
     uri
+    reg_dom
 )

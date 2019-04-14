@@ -45,9 +45,9 @@ add_library(main
     adblock.cpp
 )
 target_link_libraries(main
+    rule
     rule_set
     parser
-    option
     uri
     ${Boost_LIBRARIES}
 )
@@ -56,6 +56,5 @@ add_subdirectory(rule)
 add_subdirectory(rule_set)
 add_subdirectory(pattern)
 add_subdirectory(parser)
-add_subdirectory(option)
 add_subdirectory(lib/reg_dom)
 add_subdirectory(lib/uri)

@@ -1,5 +1,3 @@
-#include "option/web_socket_option.hpp"
-
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 

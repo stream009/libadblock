@@ -1,5 +1,3 @@
-#include "option/elem_hide_option.hpp"
-
 #include "../parse_rule.hpp"
 
 #include "element_hide_rule_base.hpp"

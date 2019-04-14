@@ -1,9 +1,10 @@
-#include "option/site_key_option.hpp"
-#include "type.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
-#include <boost/range/algorithm.hpp>
-#include <boost/range/iterator_range.hpp>
+#include "type.hpp"
+#include "rule/filter_rule.hpp"
+
+#include <string>
 
 #include <gtest/gtest.h>
 
@@ -11,7 +12,7 @@ namespace adblock {
 
 struct SiteKeyContext : MockContext
 {
-    SiteKeyContext(const StringRange &siteKey)
+    SiteKeyContext(StringRange const& siteKey)
         : m_siteKey { siteKey.begin(), siteKey.end() }
     {}
 
@@ -23,40 +24,28 @@ struct SiteKeyContext : MockContext
     std::string m_siteKey;
 };
 
-TEST(Option_SiteKeyOption, Init)
-{
-    const SiteKeyOption option {
-        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
-    };
-
-    const auto &siteKeys = option.siteKeys();
-    ASSERT_EQ(2, siteKeys.size());
-    EXPECT_EQ(1, boost::count(siteKeys, "abcdsitekeydcba"_r));
-    EXPECT_EQ(1, boost::count(siteKeys, "bcdesitekeyedcb"_r));
-}
-
 TEST(Option_SiteKeyOption, Match)
 {
-    const SiteKeyOption option {
-        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
-    };
+    auto const rule = parse_rule<FilterRule>(
+        "whatever$sitekey=abcdsitekeydcba|bcdesitekeyedcb"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://whatever.idontcare.com"_u;
-    const SiteKeyContext context { "bcdesitekeyedcb"_r };
+    auto const& uri = "http://whatever.idontcare.com"_u;
+    SiteKeyContext const context { "bcdesitekeyedcb"_r };
 
-    EXPECT_TRUE(option.match(uri, context));
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_SiteKeyOption, NoMatch)
 {
-    const SiteKeyOption option {
-        { "abcdsitekeydcba"_r, "bcdesitekeyedcb"_r, }
-    };
+    auto const rule = parse_rule<FilterRule>(
+        "whatever$sitekey=abcdsitekeydcba|bcdesitekeyedcb"_r);
+    ASSERT_TRUE(rule);
 
-    const auto &uri = "http://whatever.idontcare.com"_u;
-    const SiteKeyContext context { "foobarxyzzy"_r };
+    auto const& uri = "http://whatever.idontcare.com"_u;
+    SiteKeyContext const context { "foobarxyzzy"_r };
 
-    EXPECT_FALSE(option.match(uri, context));
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 } // namespace adblock

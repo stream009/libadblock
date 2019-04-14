@@ -1,11 +1,8 @@
-#include "option/document_option.hpp"
-
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 
 #include "filter_rule_base.hpp"
 #include "rule/filter_rule.hpp"
-#include "pattern/pattern.hpp"
 
 #include <gtest/gtest.h>
 

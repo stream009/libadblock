@@ -1,7 +1,7 @@
 #include "filter_rule.hpp"
 
 #include "context.hpp"
-#include "option/domain_data_base.hpp"
+#include "domain_data_base.hpp"
 #include "pattern/pattern.hpp"
 #include "white_list_query_context.hpp"
 
@@ -119,6 +119,9 @@ matchTypeOptions(Context const& cxt) const
     }
     else if (cxt.isCsp()) {
         return m_options.test(FilterOption::Csp); //TODO separate
+    }
+    else if (cxt.isPopUp()) {
+        return m_options.test(FilterOption::Popup); //TODO separate
     }
     else {
         return m_options.test(FilterOption::Other) ^ inverse;

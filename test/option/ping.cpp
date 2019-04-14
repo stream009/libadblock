@@ -1,5 +1,3 @@
-#include "option/ping_option.hpp"
-
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 

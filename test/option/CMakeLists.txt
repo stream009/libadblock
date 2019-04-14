@@ -7,6 +7,7 @@ add_library(option_test STATIC
     object_sub_request.cpp
     sub_document.cpp
     media.cpp
+    font.cpp
     other.cpp
     third_party.cpp
     domain.cpp
@@ -22,7 +23,6 @@ add_library(option_test STATIC
     csp.cpp
 )
 target_link_libraries(option_test
-    reg_dom
     main
 )
 

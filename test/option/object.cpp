@@ -1,5 +1,7 @@
-#include "option/object_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -7,7 +9,7 @@ namespace adblock {
 
 struct ObjectContext : MockContext
 {
-    ObjectContext(const bool flag)
+    ObjectContext(bool const flag)
         : m_flag { flag }
     {}
 
@@ -16,45 +18,48 @@ struct ObjectContext : MockContext
     bool m_flag;
 };
 
-const static ObjectOption option { false };
-const static ObjectOption optionInv { true };
-
-TEST(Option_ObjectOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
-
 TEST(Option_ObjectOption, ObjectContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const ObjectContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$object"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/object.swf" };
+    ObjectContext const context { true };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_ObjectOption, NotObjectContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const ObjectContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$object"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/object.swf" };
+    ObjectContext const context { false };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ObjectOption, ObjectContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const ObjectContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$~object"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/object.swf" };
+    ObjectContext const context { true };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ObjectOption, NotObjectContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const ObjectContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$~object"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/object.swf" };
+    ObjectContext const context { false };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

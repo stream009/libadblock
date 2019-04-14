@@ -1,5 +1,7 @@
-#include "option/image_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -7,7 +9,7 @@ namespace adblock {
 
 struct ImageContext : MockContext
 {
-    ImageContext(const bool flag)
+    ImageContext(bool const flag)
         : m_flag { flag }
     {}
 
@@ -16,45 +18,48 @@ struct ImageContext : MockContext
     bool m_flag;
 };
 
-const static ImageOption option { false };
-const static ImageOption optionInv { true };
-
-TEST(Option_ImageOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
-
 TEST(Option_ImageOption, ImageContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const ImageContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$image"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    ImageContext const context { true };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_ImageOption, NotImageContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const ImageContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$image"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    ImageContext const context { false };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ImageOption, ImageContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const ImageContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$~image"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    ImageContext const context { true };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ImageOption, NotImageContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const ImageContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$~image"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    ImageContext const context { false };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

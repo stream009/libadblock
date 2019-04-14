@@ -1,6 +1,7 @@
-#include "option/popup_option.hpp"
-#include "type.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -13,20 +14,24 @@ struct PopUpContext : MockContext
 
 TEST(Option_PopUpOption, PopUpContext)
 {
-    const PopUpOption option {};
-    const PopUpContext context {};
-    const auto &uri = "http://idontcare.whatever.com/image.jpg"_u;
+    auto const rule = parse_rule<FilterRule>("whatever$popup"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    auto const& uri = "http://idontcare.whatever.com/image.jpg"_u;
+    PopUpContext const context;
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_PopUpOption, NotPopUpContext)
 {
-    const PopUpOption option {};
-    const MockContext context {};
-    const auto &uri = "http://idontcare.whatever.com/image.jpg"_u;
+    auto const rule = parse_rule<FilterRule>("whatever$popup"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    auto const& uri = "http://idontcare.whatever.com/image.jpg"_u;
+    MockContext const context;
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 } // namespace adblock

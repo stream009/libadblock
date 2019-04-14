@@ -1,5 +1,7 @@
-#include "option/third_party_option.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -7,71 +9,65 @@ namespace adblock {
 
 struct ThirdPartyContext : MockContext
 {
-    ThirdPartyContext(const Uri &uri)
+    ThirdPartyContext(Uri const& uri)
         : m_uri { uri }
     {}
 
-    const Uri &origin() const override { return m_uri; }
+    Uri const& origin() const override { return m_uri; }
 
-    const Uri &m_uri;
+    Uri const& m_uri;
 };
-
-const static ThirdPartyOption option { false };
-const static ThirdPartyOption optionInv { true };
-
-TEST(Option_ThirdPartyOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
 
 TEST(Option_ThirdPartyOption, ThirdPartyContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const Uri origin { "http://adblock.org" };
-    const ThirdPartyContext context { origin };
+    auto const rule = parse_rule<FilterRule>("image$third-party"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context)) << uri.host() << "\n"
-                                            << context.origin().host();
+    Uri const uri { "http://adblock.org/image.jpg" };
+    Uri const origin { "http://www.google.com" };
+
+    ThirdPartyContext const context { origin };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_ThirdPartyOption, NotThirdPartyContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const Uri origin { "http://www.google.com" };
-    const ThirdPartyContext context { origin };
+    auto const rule = parse_rule<FilterRule>("image$third-party"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    Uri const origin { "http://adblock.org" };
+
+    ThirdPartyContext const context { origin };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ThirdPartyOption, NotThirdPartyContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const Uri origin { "http://adblock.org" };
-    const ThirdPartyContext context { origin };
+    auto const rule = parse_rule<FilterRule>("image$~third-party"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/image.jpg" };
+    Uri const origin { "http://www.google.com" };
+
+    ThirdPartyContext const context { origin };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_ThirdPartyOption, ThirdPartyContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const Uri origin { "http://www.google.com" };
-    const ThirdPartyContext context { origin };
+    auto const rule = parse_rule<FilterRule>("image$~third-party"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
-}
+    Uri const uri { "http://adblock.org/image.jpg" };
+    Uri const origin { "http://adblock.org" };
 
-TEST(Option_ThirdPartyOption, PolymorphicInverseOption)
-{
-    const Uri uri { "http://adblock.org/script.js" };
-    const Uri origin { "http://www.google.com" };
-    const ThirdPartyContext context { origin };
+    ThirdPartyContext const context { origin };
 
-    const auto *ptr = dynamic_cast<const Option*>(&optionInv);
-    assert(ptr);
-
-    EXPECT_FALSE(ptr->match(uri, context));
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

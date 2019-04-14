@@ -1,6 +1,7 @@
-#include "option/media_option.hpp"
-#include "type.hpp"
 #include "../mock_context.hpp"
+#include "../parse_rule.hpp"
+
+#include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>
 
@@ -17,45 +18,48 @@ struct MediaContext : MockContext
     bool m_flag;
 };
 
-const static MediaOption option { false };
-const static MediaOption optionInv { true };
-
-TEST(Option_MediaOption, Constructor)
-{
-    EXPECT_FALSE(option.inverse());
-    EXPECT_TRUE(optionInv.inverse());
-}
-
 TEST(Option_MediaOption, MediaContext)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const MediaContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$media"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/video.mp4" };
+    MediaContext const context { true };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 TEST(Option_MediaOption, NotMediaContext)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const MediaContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$media"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(option.match(uri, context));
+    Uri const uri { "http://adblock.org/video.mp4" };
+    MediaContext const context { false };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_MediaOption, MediaContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/image.jpg" };
-    const MediaContext context { true };
+    auto const rule = parse_rule<FilterRule>("adblock$~media"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_FALSE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/video.mp4" };
+    MediaContext const context { true };
+
+    EXPECT_FALSE(rule->match(uri, context));
 }
 
 TEST(Option_MediaOption, NotMediaContextWithInverseOption)
 {
-    const Uri uri { "http://adblock.org/script.js" };
-    const MediaContext context { false };
+    auto const rule = parse_rule<FilterRule>("adblock$~media"_r);
+    ASSERT_TRUE(rule);
 
-    EXPECT_TRUE(optionInv.match(uri, context));
+    Uri const uri { "http://adblock.org/video.mp4" };
+    MediaContext const context { false };
+
+    EXPECT_TRUE(rule->match(uri, context));
 }
 
 } // namespace adblock

@@ -53,7 +53,6 @@ private:
     bool matchDomain(Context const&) const;
     bool matchSiteKey(Context const&) const;
     bool matchOrigin(Uri const&, Context const&) const;
-    bool typeSpecified() const;
 
     // @override Rule
     void print(std::ostream&) const override;

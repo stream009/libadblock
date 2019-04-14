@@ -2,10 +2,11 @@
 #define ADBLOCK_RULE_FILTER_OPTION_HPP
 
 #include <bitset>
+#include <iosfwd>
 
 namespace adblock {
 
-enum FilterOption {
+enum class FilterOption : uint64_t {
     // request type
     Other = 0,
     Script,
@@ -42,7 +43,24 @@ enum FilterOption {
     NeverCollapse,
 };
 
-using FilterOptionSet = std::bitset<64>;
+class FilterOptionSet
+{
+    using BitSet = std::bitset<64>;
+public:
+    // query
+    bool test(FilterOption) const;
+    size_t count() const;
+    bool any() const;
+    bool typeSpecified() const;
+
+    // modifier
+    void set(FilterOption);
+
+private:
+    BitSet m_options;
+};
+
+std::ostream& operator<<(std::ostream&, FilterOptionSet const&);
 
 } // namespace adblock
 

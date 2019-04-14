@@ -33,48 +33,11 @@
 
 #include <cassert>
 #include <ostream>
-#include <iostream> //TODO
 
 #include <boost/algorithm/string.hpp>
 
 namespace adblock {
 
-static FilterOptionSet
-typeOptions()
-{
-    FilterOptionSet result;
-
-    // request type
-    result.set(FilterOption::Object);
-    result.set(FilterOption::Script);
-    result.set(FilterOption::StyleSheet);
-    result.set(FilterOption::Image);
-    result.set(FilterOption::Media);
-    result.set(FilterOption::Font);
-    result.set(FilterOption::Object);
-    result.set(FilterOption::SubDocument);
-    result.set(FilterOption::WebSocket);
-    result.set(FilterOption::WebRtc);
-    result.set(FilterOption::Ping);
-    result.set(FilterOption::XmlHttpRequest);
-    result.set(FilterOption::ObjectSubRequest);
-    // query type
-    result.set(FilterOption::Popup);
-    result.set(FilterOption::Document);
-    result.set(FilterOption::DocumentInv);
-    result.set(FilterOption::ElemHide);
-    result.set(FilterOption::ElemHideInv);
-    result.set(FilterOption::GenericBlock);
-    result.set(FilterOption::GenericHide);
-    result.set(FilterOption::Csp);
-    result.set(FilterOption::Rewrite);
-
-    return result;
-}
-
-//
-// FilterRule
-//
 FilterRule::
 FilterRule(std::unique_ptr<Pattern> pattern,
            OptionPtrs options)
@@ -230,7 +193,6 @@ FilterRule(std::unique_ptr<Pattern> pattern,
             }
         }
         else {
-            std::cout << typeid(*opt).name() << '\n'; //TODO
             assert(false);
         }
     }
@@ -288,7 +250,7 @@ matchWhiteListOptions(WhiteListQueryContext const& cxt) const
 bool FilterRule::
 matchTypeOptions(Context const& cxt) const
 {
-    if (!typeSpecified()) return true;
+    if (!m_options.typeSpecified()) return true;
 
     bool const inverse = m_options.test(FilterOption::Inverse);
 
@@ -339,8 +301,6 @@ matchTypeOptions(Context const& cxt) const
 bool FilterRule::
 matchRestrictionOptions(Uri const& uri, Context const& cxt) const
 {
-    namespace ba = boost::algorithm;
-
     return matchDomain(cxt)
         && matchSiteKey(cxt)
         && matchOrigin(uri, cxt);
@@ -421,35 +381,17 @@ matchOrigin(Uri const& uri, Context const& cxt) const
         const auto &uriDomain = ddb.query(uri);
         const auto &originDomain = ddb.query(cxt.origin());
 
-        return !boost::equals(uriDomain, originDomain);
+        return !ba::equals(uriDomain, originDomain);
     }
     else {
         return true;
     }
 }
 
-bool FilterRule::
-typeSpecified() const
-{
-    static auto const mask = typeOptions();
-
-    return (m_options & mask).any();
-}
-
 void FilterRule::
 print(std::ostream &os) const
 {
-    (void)os;
-#if 0
-    os << "Pattern: " << *m_pattern << "\n";
-    auto const& options = this->options();
-    if (!options.empty()) {
-        os << "Option: ";
-        for (auto const& option: options) {
-            os << option << " ";
-        }
-    }
-#endif
+    os << "Pattern: " << *m_pattern << ", Option: " << m_options;
 }
 
 } // namespace adblock

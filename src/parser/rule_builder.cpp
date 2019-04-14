@@ -1,30 +1,5 @@
 #include "rule_builder.hpp"
 
-#include "option/collapse_option.hpp"
-#include "option/csp_option.hpp"
-#include "option/do_not_track_option.hpp"
-#include "option/domain_option.hpp"
-#include "option/font_option.hpp"
-#include "option/image_option.hpp"
-#include "option/match_case_option.hpp"
-#include "option/media_option.hpp"
-#include "option/object_option.hpp"
-#include "option/object_subrequest_option.hpp"
-#include "option/other_option.hpp"
-#include "option/ping_option.hpp"
-#include "option/popup_option.hpp"
-#include "option/script_option.hpp"
-#include "option/site_key_option.hpp"
-#include "option/style_sheet_option.hpp"
-#include "option/subdocument_option.hpp"
-#include "option/third_party_option.hpp"
-#include "option/web_rtc_option.hpp"
-#include "option/web_socket_option.hpp"
-#include "option/xml_http_request_option.hpp"
-#include "option/document_option.hpp"
-#include "option/elem_hide_option.hpp"
-#include "option/generic_hide_option.hpp"
-#include "option/generic_block_option.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
@@ -34,6 +9,7 @@
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
+#include "rule/filter_option.hpp"
 
 #include <iostream>
 #include <string>
@@ -85,7 +61,7 @@ RuleBuilder::~RuleBuilder() = default;
 void RuleBuilder::
 begin_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
-    m_options = std::vector<OptionPtr>();
+    m_options = {};
 }
 
 void RuleBuilder::
@@ -93,7 +69,11 @@ end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_unique<BasicFilterRule>(
-            std::move(m_pattern), std::move(m_options)
+            std::move(m_pattern),
+            std::move(m_options),
+            std::move(m_domains),
+            std::move(m_siteKeys),
+            std::move(m_cspValue)
         )
     );
 }
@@ -101,7 +81,7 @@ end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 void RuleBuilder::
 begin_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
-    m_options = std::vector<OptionPtr>();
+    m_options = {};
 }
 
 void RuleBuilder::
@@ -109,7 +89,11 @@ end_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
     add_rule(
         std::make_unique<ExceptionFilterRule>(
-            std::move(m_pattern), std::move(m_options)
+            std::move(m_pattern),
+            std::move(m_options),
+            std::move(m_domains),
+            std::move(m_siteKeys),
+            std::move(m_cspValue)
         )
     );
 }
@@ -149,182 +133,185 @@ regex_address_pattern(iterator const begin, iterator const end)
 void RuleBuilder::
 script_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<ScriptOption>(inverse)
-    );
+    m_options.set(FilterOption::Script);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 image_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<ImageOption>(inverse)
-    );
+    m_options.set(FilterOption::Image);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 stylesheet_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<StyleSheetOption>(inverse)
-    );
+    m_options.set(FilterOption::StyleSheet);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 object_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<ObjectOption>(inverse)
-    );
+    m_options.set(FilterOption::Object);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 xmlhttprequest_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<XmlHttpRequestOption>(inverse)
-    );
+    m_options.set(FilterOption::XmlHttpRequest);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 object_subrequest_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<ObjectSubRequestOption>(inverse)
-    );
+    m_options.set(FilterOption::ObjectSubRequest);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 subdocument_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<SubDocumentOption>(inverse)
-    );
+    m_options.set(FilterOption::SubDocument);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 ping_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<PingOption>(inverse)
-    );
+    m_options.set(FilterOption::Ping);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 websocket_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<WebSocketOption>(inverse)
-    );
+    m_options.set(FilterOption::WebSocket);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 webrtc_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<WebRtcOption>(inverse)
-    );
+    m_options.set(FilterOption::WebRtc);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 popup_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_options.push_back(
-        std::make_unique<PopUpOption>()
-    );
+    m_options.set(FilterOption::Popup);
 }
 
 void RuleBuilder::
 media_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<MediaOption>(inverse)
-    );
+    m_options.set(FilterOption::Media);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 font_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<FontOption>(inverse)
-    );
+    m_options.set(FilterOption::Font);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 other_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<OtherOption>(inverse)
-    );
+    m_options.set(FilterOption::Other);
+    if (inverse) {
+        m_options.set(FilterOption::Inverse);
+    }
 }
 
 void RuleBuilder::
 third_party_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<ThirdPartyOption>(inverse)
-    );
+    if (inverse) {
+        m_options.set(FilterOption::SameOrigin);
+    }
+    else {
+        m_options.set(FilterOption::ThirdParty);
+    }
 }
 
 void RuleBuilder::
 match_case_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_options.push_back(
-        std::make_unique<MatchCaseOption>()
-    );
+    m_options.set(FilterOption::MatchCase);
 }
 
 void RuleBuilder::
 collapse_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.push_back(
-        std::make_unique<CollapseOption>(inverse)
-    );
-}
-
-void RuleBuilder::
-do_not_track_option(iterator /*begin*/, iterator /*end*/)
-{
-    m_options.push_back(
-        std::make_unique<DoNotTrackOption>()
-    );
+    if (inverse) {
+        m_options.set(FilterOption::NeverCollapse);
+    }
+    else {
+        m_options.set(FilterOption::AlwaysCollapse);
+    }
 }
 
 void RuleBuilder::
 begin_domain_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_domains = {};
+    m_domains = std::make_unique<std::vector<StringRange>>();
 }
 
 void RuleBuilder::
 filter_domain(iterator const begin, iterator const end)
 {
-    m_domains.push_back({ begin, end });
+    m_domains->push_back({ begin, end });
 }
 
 void RuleBuilder::
 end_domain_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_options.push_back(
-        std::make_unique<DomainOption>(m_domains)
-    );
+    m_options.set(FilterOption::Domain);
 }
 
 void RuleBuilder::
 site_key_option(iterator /*begin*/, iterator /*end*/,
                 iterator const value_begin, iterator const value_end)
 {
-    std::vector<StringRange> keys;
-    StringRange const value { value_begin, value_end };
+    m_options.set(FilterOption::SiteKey);
+
+    m_siteKeys = std::make_unique<std::vector<StringRange>>();
+    StringRange value { value_begin, value_end };
 
     boost::algorithm::split(
-        keys,
+        *m_siteKeys,
         value,
         [](auto c) { return c == '|'; }
-    );
-
-    m_options.push_back(
-        std::make_unique<SiteKeyOption>(keys)
     );
 }
 
@@ -332,9 +319,8 @@ void RuleBuilder::
 csp_option(iterator /*begin*/, iterator /*end*/,
            iterator const value_begin, iterator const value_end)
 {
-    m_options.push_back(
-        std::make_unique<CspOption>(StringRange { value_begin, value_end })
-    );
+    m_options.set(FilterOption::Csp);
+    m_cspValue = std::make_unique<StringRange>(value_begin, value_end);
 }
 
 void RuleBuilder::
@@ -347,58 +333,48 @@ rewrite_option(iterator /*begin*/, iterator /*end*/,
 void RuleBuilder::
 document_option(iterator /*begin*/, iterator /*end*/, bool inverse)
 {
-    m_options.push_back(
-        std::make_unique<DocumentOption>(inverse)
-    );
+    if (inverse) {
+        m_options.set(FilterOption::DocumentInv);
+    }
+    else {
+        m_options.set(FilterOption::Document);
+    }
 }
 
 void RuleBuilder::
 elem_hide_option(iterator /*begin*/, iterator /*end*/, bool inverse)
 {
-    m_options.push_back(
-        std::make_unique<ElemHideOption>(inverse)
-    );
+    if (inverse) {
+        m_options.set(FilterOption::ElemHideInv);
+    }
+    else {
+        m_options.set(FilterOption::ElemHide);
+    }
 }
 
 void RuleBuilder::
 generic_hide_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_options.push_back(
-        std::make_unique<GenericHideOption>()
-    );
+    m_options.set(FilterOption::GenericHide);
 }
 
 void RuleBuilder::
 generic_block_option(iterator /*begin*/, iterator /*end*/)
 {
-    m_options.push_back(
-        std::make_unique<GenericBlockOption>()
-    );
+    m_options.set(FilterOption::GenericBlock);
 }
 
 //
 // element hide rule
 //
 void RuleBuilder::
-begin_basic_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
-{
-    m_domains = {};
-}
-
-void RuleBuilder::
 end_basic_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_unique<BasicElementHideRule>(
-            m_selector, m_domains
+            m_selector, std::move(m_domains)
         )
     );
-}
-
-void RuleBuilder::
-begin_exception_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
-{
-    m_domains = {};
 }
 
 void RuleBuilder::
@@ -406,15 +382,9 @@ end_exception_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_unique<ExceptionElementHideRule>(
-            m_selector, m_domains
+            m_selector, std::move(m_domains)
         )
     );
-}
-
-void RuleBuilder::
-begin_extended_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
-{
-    m_domains = {};
 }
 
 void RuleBuilder::
@@ -422,9 +392,15 @@ end_extended_element_hiding_rule(iterator /*begin*/, iterator /*end*/)
 {
     add_rule(
         std::make_unique<ExtendedElementHideRule>(
-            m_selector, m_domains
+            m_selector, std::move(m_domains)
         )
     );
+}
+
+void RuleBuilder::
+begin_filter_domains(iterator /*begin*/, iterator /*end*/)
+{
+    m_domains = std::make_unique<std::vector<StringRange>>();
 }
 
 void RuleBuilder::

@@ -2,10 +2,12 @@
 #define BASIC_FILTER_RULE_HPP
 
 #include "filter_rule.hpp"
+#include "filter_option.hpp"
+
+#include "type.hpp"
 #include "pattern/pattern.hpp"
 
 #include <memory>
-#include <vector>
 
 namespace adblock {
 
@@ -16,8 +18,17 @@ class BasicFilterRule : public FilterRule
     using Base = FilterRule;
 public:
     BasicFilterRule(std::unique_ptr<Pattern> pattern,
-                    std::vector<std::unique_ptr<Option>> options)
-        : Base { std::move(pattern), std::move(options) }
+                    FilterOptionSet options,
+                    std::unique_ptr<Domains> domains,
+                    std::unique_ptr<SiteKeys> siteKeys,
+                    std::unique_ptr<StringRange> cspValue)
+        : Base {
+            std::move(pattern),
+            std::move(options),
+            std::move(domains),
+            std::move(siteKeys),
+            std::move(cspValue)
+        }
     {}
 };
 

@@ -5,6 +5,7 @@
 #include "type.hpp"
 
 #include <iosfwd>
+#include <memory>
 #include <vector>
 
 namespace adblock {
@@ -12,9 +13,12 @@ namespace adblock {
 class ExtendedElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
+    using Domains = Base::Domains;
 public:
     ExtendedElementHideRule(StringRange const& selector,
-                            std::vector<StringRange> const& domains);
+                            std::unique_ptr<Domains> domains)
+        : Base { selector, std::move(domains) }
+    {}
 };
 
 std::ostream& operator<<(std::ostream&, ExtendedElementHideRule const&);

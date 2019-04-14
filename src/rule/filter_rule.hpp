@@ -1,11 +1,9 @@
 #ifndef FILTER_RULE_HPP
 #define FILTER_RULE_HPP
 
+#include "filter_option.hpp"
 #include "rule.hpp"
 #include "type.hpp"
-#include "option.hpp"
-
-#include "filter_option.hpp"
 
 #include <cassert>
 #include <iosfwd>
@@ -22,9 +20,7 @@ class FilterRule : public Rule
 {
     using Base = Rule;
 public:
-    using Domains = std::vector<std::string>;
-    using OptionPtr = std::unique_ptr<Option>;
-    using OptionPtrs = std::vector<OptionPtr>;
+    using Domains = std::vector<StringRange>;
     using SiteKeys = std::vector<StringRange>;
 
 public:
@@ -45,7 +41,10 @@ public:
 
 protected:
     FilterRule(std::unique_ptr<Pattern>,
-               OptionPtrs);
+               FilterOptionSet,
+               std::unique_ptr<Domains>,
+               std::unique_ptr<SiteKeys>,
+               std::unique_ptr<StringRange> cspValue);
 private:
     bool matchTypeOptions(Context const&) const;
     bool matchWhiteListOptions(WhiteListQueryContext const&) const;

@@ -2,12 +2,6 @@
 
 namespace adblock {
 
-BasicElementHideRule::
-BasicElementHideRule(StringRange const& selector,
-                     std::vector<StringRange> const& domains)
-    : Base { selector, domains }
-{}
-
 std::ostream &
 operator<<(std::ostream &os, BasicElementHideRule const& rule)
 {

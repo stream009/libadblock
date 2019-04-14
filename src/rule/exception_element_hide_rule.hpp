@@ -4,6 +4,8 @@
 #include "element_hide_rule.hpp"
 #include "type.hpp"
 
+#include <iosfwd>
+#include <memory>
 #include <vector>
 
 namespace adblock {
@@ -11,9 +13,12 @@ namespace adblock {
 class ExceptionElementHideRule : public ElementHideRule
 {
     using Base = ElementHideRule;
+    using Domains = Base::Domains;
 public:
     ExceptionElementHideRule(StringRange const& selector,
-                             std::vector<StringRange> const& domains);
+                             std::unique_ptr<Domains> domains)
+        : Base { selector, std::move(domains) }
+    {}
 };
 
 std::ostream &operator<<(std::ostream&, ExceptionElementHideRule const&);

@@ -9,19 +9,21 @@ namespace adblock {
 
 ElementHideRule::
 ElementHideRule(StringRange const& selector,
-                Domains const& domains)
+                std::unique_ptr<Domains> domains)
     : m_cssSelector { selector }
 {
     assert(!selector.empty());
 
-    for (auto const& domain: domains) {
-        if (domain.front() != '~') {
-            m_includeDomains.push_back(domain);
-        }
-        else {
-            m_excludeDomains.emplace_back(
-                std::next(domain.begin()), domain.end()
-            );
+    if (domains) {
+        for (auto const& domain: *domains) {
+            if (domain.front() != '~') {
+                m_includeDomains.push_back(domain);
+            }
+            else {
+                m_excludeDomains.emplace_back(
+                    std::next(domain.begin()), domain.end()
+                );
+            }
         }
     }
 }

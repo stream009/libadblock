@@ -1,33 +1,7 @@
 #include "filter_rule.hpp"
 
 #include "context.hpp"
-#include "option/collapse_option.hpp"
-#include "option/csp_option.hpp"
-#include "option/document_option.hpp"
 #include "option/domain_data_base.hpp"
-#include "option/domain_option.hpp"
-#include "option/elem_hide_option.hpp"
-#include "option/font_option.hpp"
-#include "option/generic_block_option.hpp"
-#include "option/generic_hide_option.hpp"
-#include "option/image_option.hpp"
-#include "option/match_case_option.hpp"
-#include "option/media_option.hpp"
-#include "option/object_option.hpp"
-#include "option/object_subrequest_option.hpp"
-#include "option/other_option.hpp"
-#include "option/ping_option.hpp"
-#include "option/popup_option.hpp"
-#include "option/restriction_option.hpp"
-#include "option/script_option.hpp"
-#include "option/site_key_option.hpp"
-#include "option/style_sheet_option.hpp"
-#include "option/subdocument_option.hpp"
-#include "option/third_party_option.hpp"
-#include "option/web_rtc_option.hpp"
-#include "option/web_socket_option.hpp"
-#include "option/white_list_option.hpp"
-#include "option/xml_http_request_option.hpp"
 #include "pattern/pattern.hpp"
 #include "white_list_query_context.hpp"
 
@@ -40,163 +14,16 @@ namespace adblock {
 
 FilterRule::
 FilterRule(std::unique_ptr<Pattern> pattern,
-           OptionPtrs options)
+           FilterOptionSet options,
+           std::unique_ptr<Domains> domains,
+           std::unique_ptr<SiteKeys> siteKeys,
+           std::unique_ptr<StringRange> cspValue)
     : m_pattern { std::move(pattern) }
-{
-    for (auto& opt: options) {
-        // RequestType
-        if (auto* const o = dynamic_cast<OtherOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Other);
-        }
-        else if (auto* const o = dynamic_cast<ScriptOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Script);
-        }
-        else if (auto* const o = dynamic_cast<StyleSheetOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::StyleSheet);
-        }
-        else if (auto* const o = dynamic_cast<ImageOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Image);
-        }
-        else if (auto* const o = dynamic_cast<MediaOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Media);
-        }
-        else if (auto* const o = dynamic_cast<FontOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Font);
-        }
-        else if (auto* const o = dynamic_cast<ObjectOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Object);
-        }
-        else if (auto* const o = dynamic_cast<SubDocumentOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::SubDocument);
-        }
-        else if (auto* const o = dynamic_cast<WebSocketOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::WebSocket);
-        }
-        else if (auto* const o = dynamic_cast<WebRtcOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::WebRtc);
-        }
-        else if (auto* const o = dynamic_cast<PingOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::Ping);
-        }
-        else if (auto* const o = dynamic_cast<XmlHttpRequestOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::XmlHttpRequest);
-        }
-        else if (auto* const o = dynamic_cast<ObjectSubRequestOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::Inverse);
-            }
-            m_options.set(FilterOption::ObjectSubRequest);
-        }
-        // QueryType
-        else if (auto* const o = dynamic_cast<PopUpOption*>(opt.get())) {
-            m_options.set(FilterOption::Popup);
-        }
-        else if (auto* const o = dynamic_cast<DocumentOption*>(opt.get())) {
-            m_options.set(o->inverse() ?
-                FilterOption::DocumentInv : FilterOption::Document);
-        }
-        else if (auto* const o = dynamic_cast<ElemHideOption*>(opt.get())) {
-            m_options.set(o->inverse() ?
-                FilterOption::ElemHideInv : FilterOption::ElemHide);
-        }
-        else if (auto* const o = dynamic_cast<GenericBlockOption*>(opt.get())) {
-            m_options.set(FilterOption::GenericBlock);
-        }
-        else if (auto* const o = dynamic_cast<GenericHideOption*>(opt.get())) {
-            m_options.set(FilterOption::GenericHide);
-        }
-        else if (auto* const o = dynamic_cast<CspOption*>(opt.get())) {
-            m_options.set(FilterOption::Csp);
-            m_cspValue = std::make_unique<StringRange>(o->policy());
-        }
-        // Restriction
-        else if (auto* const o = dynamic_cast<DomainOption*>(opt.get())) {
-            m_options.set(FilterOption::Domain);
-
-            m_domains = std::make_unique<Domains>();
-
-            for (auto& dom: o->includeDomains()) {
-                m_domains->emplace_back(dom.begin(), dom.end());
-            }
-
-            for (auto& dom: o->excludeDomains()) {
-                std::string d;
-                d.push_back('~');
-                d.append(dom.begin(), dom.end());
-
-                m_domains->push_back(std::move(d));
-            }
-        }
-        else if (auto* const o = dynamic_cast<SiteKeyOption*>(opt.get())) {
-            m_options.set(FilterOption::SiteKey);
-
-            m_siteKeys = std::make_unique<SiteKeys>();
-
-            for (auto& key: o->siteKeys()) {
-                m_siteKeys->push_back(key);
-            }
-        }
-        else if (auto* const o = dynamic_cast<ThirdPartyOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::SameOrigin);
-            }
-            else {
-                m_options.set(FilterOption::ThirdParty);
-            }
-        }
-        // misc.
-        else if (auto* const o = dynamic_cast<MatchCaseOption*>(opt.get())) {
-            m_options.set(FilterOption::MatchCase);
-        }
-        else if (auto* const o = dynamic_cast<CollapseOption*>(opt.get())) {
-            if (o->inverse()) {
-                m_options.set(FilterOption::NeverCollapse);
-            }
-            else {
-                m_options.set(FilterOption::AlwaysCollapse);
-            }
-        }
-        else {
-            assert(false);
-        }
-    }
-}
+    , m_options { std::move(options) }
+    , m_domains { std::move(domains) }
+    , m_siteKeys { std::move(siteKeys) }
+    , m_cspValue { std::move(cspValue) }
+{}
 
 FilterRule::~FilterRule() = default;
 
@@ -323,7 +150,7 @@ matchDomain(Context const& cxt) const
 
         if (dom[0] == '~') {
             hasExcludeDomain = true;
-            StringRange const d { &dom[1], &dom[dom.size()] };
+            StringRange const d { dom.begin() + 1, dom.end() };
             if (ba::ends_with(host, d)) {
                 return false;
             }

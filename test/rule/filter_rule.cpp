@@ -7,8 +7,6 @@
 
 #include <memory>
 
-#include <boost/range/iterator_range.hpp>
-
 #include <gtest/gtest.h>
 
 using namespace adblock;

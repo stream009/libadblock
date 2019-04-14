@@ -1,6 +1,5 @@
 #include "rule/rule.hpp"
-
-#include "option.hpp"
+#include "rule/filter_option.hpp"
 #include "pattern/pattern.hpp"
 
 #include <memory>
@@ -17,7 +16,6 @@ class RuleBuilder : public adblock_parser::event_handler
 {
     using RulePtr = std::unique_ptr<Rule>;
     using PatternPtr = std::unique_ptr<Pattern>;
-    using OptionPtr = std::unique_ptr<Option>;
 
 public:
     RuleBuilder(FilterSet const&, std::vector<RulePtr>&);
@@ -64,7 +62,7 @@ public:
     void third_party_option(iterator begin, iterator end, bool inverse) override;
     void match_case_option(iterator begin, iterator end) override;
     void collapse_option(iterator begin, iterator end, bool inverse) override;
-    void do_not_track_option(iterator begin, iterator end) override;
+    //void do_not_track_option(iterator begin, iterator end) override;
 
     void begin_domain_option(iterator begin, iterator end) override;
     void filter_domain(iterator begin, iterator end) override;
@@ -87,25 +85,25 @@ public:
     //
 
     // basic element hiding rule
-    void begin_basic_element_hiding_rule(
-                                    iterator begin, iterator end) override;
+    //void begin_basic_element_hiding_rule(
+    //                                iterator begin, iterator end) override;
     void end_basic_element_hiding_rule(
                                     iterator begin, iterator end) override;
 
     // exception element hiding rule
-    void begin_exception_element_hiding_rule(
-                                    iterator begin, iterator end) override;
+    //void begin_exception_element_hiding_rule(
+    //                                iterator begin, iterator end) override;
     void end_exception_element_hiding_rule(
                                     iterator begin, iterator end) override;
 
     // extended element hiding rule
-    void begin_extended_element_hiding_rule(
-                                    iterator begin, iterator end) override;
+    //void begin_extended_element_hiding_rule(
+    //                                iterator begin, iterator end) override;
     void end_extended_element_hiding_rule(
                                     iterator begin, iterator end) override;
 
     // element hiding domain(s)
-    //void begin_filter_domains(iterator begin, iterator end) override;
+    void begin_filter_domains(iterator begin, iterator end) override;
     //void end_filter_domains(iterator begin, iterator end) override;
 
     void css_selector(iterator begin, iterator end) override;
@@ -135,8 +133,10 @@ private:
     std::vector<RulePtr>& m_rules;
 
     PatternPtr m_pattern;
-    std::vector<OptionPtr> m_options;
-    std::vector<StringRange> m_domains;
+    FilterOptionSet m_options;
+    std::unique_ptr<std::vector<StringRange>> m_domains;
+    std::unique_ptr<std::vector<StringRange>> m_siteKeys;
+    std::unique_ptr<StringRange> m_cspValue;
     StringRange m_selector;
 
     int64_t m_line_no = 0;

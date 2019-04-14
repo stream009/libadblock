@@ -4,6 +4,7 @@
 #include "rule.hpp"
 #include "type.hpp"
 
+#include <memory>
 #include <vector>
 
 namespace adblock {
@@ -25,7 +26,7 @@ public:
 
 protected:
     ElementHideRule(StringRange const& selector,
-                    Domains const& domains);
+                    std::unique_ptr<Domains> domains);
 private:
     // @override Rule
     void print(std::ostream&) const override;

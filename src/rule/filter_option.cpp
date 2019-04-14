@@ -27,13 +27,14 @@ count() const
 static uint64_t
 operator|(uint64_t const lhs, FilterOption const rhs)
 {
-    return lhs | static_cast<uint64_t>(rhs);
+    return lhs | (1ull << static_cast<size_t>(rhs));
 }
 
 static uint64_t
 operator|(FilterOption const lhs, FilterOption const rhs)
 {
-    return static_cast<uint64_t>(lhs) | rhs;
+    return (1ull << static_cast<size_t>(lhs))
+         | (1ull << static_cast<size_t>(rhs));
 }
 
 bool FilterOptionSet::
@@ -41,7 +42,7 @@ typeSpecified() const
 {
     static BitSet const mask {
         // request type
-          FilterOption::Object
+          FilterOption::Other
         | FilterOption::Script
         | FilterOption::StyleSheet
         | FilterOption::Image

@@ -5,9 +5,9 @@
 namespace adblock {
 
 BasicMatchPattern::
-BasicMatchPattern(const StringRange &pattern,
-                  const bool beginMatch,
-                  const bool endMatch)
+BasicMatchPattern(StringRange const& pattern,
+                  bool const beginMatch/*= false*/,
+                  bool const endMatch/*= false*/)
     : Base { pattern, beginMatch, endMatch }
 {
     namespace ba = boost::algorithm;
@@ -20,7 +20,7 @@ BasicMatchPattern(const StringRange &pattern,
 }
 
 bool BasicMatchPattern::
-doMatchUrl(const Uri &uri) const
+doMatchUrl(Uri const& uri) const
 {
     StringRange const range { &*uri.begin(), &*uri.end() };
     return this->doMatch(range, m_tokens);

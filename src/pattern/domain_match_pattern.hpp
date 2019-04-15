@@ -5,8 +5,6 @@
 #include "basic_match_pattern.hpp"
 #include "type.hpp"
 
-#include <boost/optional.hpp>
-
 namespace adblock {
 
 class DomainMatchPattern : public BaseMatchPattern
@@ -14,13 +12,13 @@ class DomainMatchPattern : public BaseMatchPattern
     using Base = BaseMatchPattern;
     using Base::Tokens;
 public:
-    DomainMatchPattern(const StringRange &domain,
-                       const StringRange &pattern,
-                       const bool endMatch = false);
+    DomainMatchPattern(StringRange const& domain,
+                       StringRange const& pattern,
+                       bool endMatch = false);
 
 private:
     // @override BaseMatchPattern
-    bool doMatchUrl(const Uri&) const override;
+    bool doMatchUrl(Uri const&) const override;
     TokensRange doTokens() const override { return m_domainTokens; }
 
 private:

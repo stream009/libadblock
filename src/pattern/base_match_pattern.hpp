@@ -23,34 +23,34 @@ private:
     class Compare
     {
     public:
-        bool operator()(const char left, const char right) const;
-        void setCaseSensitive(const bool caseSensitive);
+        bool operator()(char left, char right) const;
+        void setCaseSensitive(bool caseSensitive);
     private:
         bool m_case = false;
     };
 
 public:
-    bool match(const Uri &url, const bool caseSensitive = false) const override
+    bool match(Uri const& url, bool const caseSensitive = false) const override
     {
         m_compare.setCaseSensitive(caseSensitive);
         return doMatchUrl(url);
     }
 
-    const StringRange &pattern() const { return m_str; }
+    StringRange const& pattern() const { return m_str; }
     bool isBeginMatch() const { return m_beginMatch; }
     bool isEndMatch() const { return m_endMatch; }
 
     TokensRange tokens() const { return doTokens(); }
 
 protected:
-    virtual bool doMatchUrl(const Uri&) const = 0;
+    virtual bool doMatchUrl(Uri const&) const = 0;
     virtual TokensRange doTokens() const = 0;
 
-    BaseMatchPattern(const StringRange &range,
-                     const bool beginMatch,
-                     const bool endMatch);
+    BaseMatchPattern(StringRange const& range,
+                     bool beginMatch,
+                     bool endMatch);
 
-    bool doMatch(const StringRange&, const TokensRange&) const;
+    bool doMatch(StringRange const&, TokensRange const&) const;
 
 private:
     // @override Pattern

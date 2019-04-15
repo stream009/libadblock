@@ -5,18 +5,18 @@
 #include "type.hpp"
 
 #include <iosfwd>
+#include <optional>
 
 #include <boost/regex.hpp>
-#include <boost/optional.hpp>
 
 namespace adblock {
 
 class RegexPattern : public Pattern
 {
 public:
-    RegexPattern(const StringRange&);
+    RegexPattern(StringRange const&);
 
-    bool match(const Uri &target, const bool caseSensitive = false) const override;
+    bool match(Uri const& target, bool caseSensitive = false) const override;
 
 private:
     // @override Pattern
@@ -24,7 +24,7 @@ private:
 
 private:
     StringRange m_pattern;
-    mutable boost::optional<boost::regex> m_regEx;
+    mutable std::optional<boost::regex> m_regEx;
     mutable bool m_regExCaseSensitivity = false;
     mutable bool m_disabled = false;
 };

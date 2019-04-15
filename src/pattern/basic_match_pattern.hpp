@@ -11,9 +11,9 @@ class BasicMatchPattern : public BaseMatchPattern
     using Base = BaseMatchPattern;
     using Base::Tokens;
 public:
-    BasicMatchPattern(const StringRange &pattern,
-                      const bool beginMatch = false,
-                      const bool endMatch = false);
+    BasicMatchPattern(StringRange const& pattern,
+                      bool beginMatch = false,
+                      bool endMatch = false);
 
     using BaseMatchPattern::match;
 
@@ -24,7 +24,7 @@ public:
 
 private:
     // @override BaseMatchPattern
-    bool doMatchUrl(const Uri&) const override;
+    bool doMatchUrl(Uri const&) const override;
     TokensRange doTokens() const override { return m_tokens; }
 
 private:

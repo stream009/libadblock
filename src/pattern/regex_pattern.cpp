@@ -5,12 +5,12 @@
 namespace adblock {
 
 RegexPattern::
-RegexPattern(const StringRange &pattern)
+RegexPattern(StringRange const& pattern)
     : m_pattern { pattern }
 {}
 
 bool RegexPattern::
-match(const Uri &target, const bool caseSensitive/*= false*/) const
+match(Uri const& target, bool const caseSensitive/*= false*/) const
 {
     if (m_disabled) return false;
 
@@ -24,7 +24,7 @@ match(const Uri &target, const bool caseSensitive/*= false*/) const
         }
         return boost::regex_match(target.begin(), target.end(), *m_regEx);
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << "Problem has occur while processing an regex pattern.\n"
                   << "Pattern: " << m_pattern << "\n"
                   << "  Error: " << e.what() << "\n"
@@ -35,7 +35,7 @@ match(const Uri &target, const bool caseSensitive/*= false*/) const
 }
 
 void RegexPattern::
-print(std::ostream &os) const
+print(std::ostream& os) const
 {
     os << m_pattern;
 }

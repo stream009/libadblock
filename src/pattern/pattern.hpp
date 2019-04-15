@@ -12,12 +12,12 @@ class Pattern
 public:
     virtual ~Pattern() = default;
 
-    virtual bool match(const Uri &target,
-                       const bool caseSensitive = false) const = 0;
+    virtual bool match(Uri const& target,
+                       bool caseSensitive = false) const = 0;
 private:
     virtual void print(std::ostream&) const = 0;
 
-    friend std::ostream &operator<<(std::ostream &os, const Pattern &pattern)
+    friend std::ostream &operator<<(std::ostream &os, Pattern const& pattern)
     {
         pattern.print(os);
         return os;

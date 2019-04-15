@@ -1,21 +1,21 @@
 #include "basic_match_pattern.hpp"
 
+#include <optional>
 #include <ostream>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/optional.hpp>
 #include <boost/range/iterator_range.hpp>
 
 namespace adblock {
 
 bool BaseMatchPattern::Compare::
-operator()(const char left, const char right) const
+operator()(char const left, char const right) const
 {
     namespace ba = boost::algorithm;
 
-    static const auto &is_equal = ba::is_equal();
-    static const auto &is_iequal = ba::is_iequal();
-    static const auto &is_separator =
+    static auto const& is_equal = ba::is_equal();
+    static auto const& is_iequal = ba::is_iequal();
+    static auto const& is_separator =
                        !(ba::is_alnum() || ba::is_any_of("_~.%"));
     if (right != '^') {
         return m_case ? is_equal(left, right)
@@ -27,22 +27,22 @@ operator()(const char left, const char right) const
 }
 
 void  BaseMatchPattern::Compare::
-setCaseSensitive(const bool caseSensitive)
+setCaseSensitive(bool const caseSensitive)
 {
     m_case = caseSensitive;
 }
 
 BaseMatchPattern::
-BaseMatchPattern(const StringRange &range,
-                 const bool beginMatch,
-                 const bool endMatch)
-    : m_str { range },
-      m_beginMatch { beginMatch },
-      m_endMatch { endMatch }
+BaseMatchPattern(StringRange const& range,
+                 bool const beginMatch,
+                 bool const endMatch)
+    : m_str { range }
+    , m_beginMatch { beginMatch }
+    , m_endMatch { endMatch }
 {}
 
 bool BaseMatchPattern::
-doMatch(const StringRange &target, const TokensRange &tokens) const
+doMatch(StringRange const& target, TokensRange const& tokens) const
 {
     namespace ba = boost::algorithm;
 
@@ -50,7 +50,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
 
     auto tokensCopy = tokens;
     auto range = target;
-    boost::optional<std::string> uriCopy;
+    std::optional<std::string> uriCopy;
 
     // A separator has to match with end of the input.
     // So, if a pattern ends with '^' and a URI doesn't have
@@ -66,7 +66,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
     }
 
     if (m_beginMatch) {
-        const auto &firstToken = tokensCopy.front();
+        auto const& firstToken = tokensCopy.front();
         if (!ba::starts_with(range, firstToken, m_compare)) {
             return false;
         }
@@ -78,7 +78,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
     }
 
     if (m_endMatch) {
-        const auto &lastToken = tokensCopy.back();
+        auto const& lastToken = tokensCopy.back();
         if (!ba::ends_with(range, lastToken, m_compare)) {
             return false;
         }
@@ -87,11 +87,11 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
         range.drop_back(static_cast<ptrdiff_t>(lastToken.size()));
     }
 
-    for (const auto &token: tokensCopy) {
+    for (auto const& token: tokensCopy) {
         // empty token matches to everything
         if (token.empty()) return true;
 
-        const auto &rv = ba::find(range, ba::first_finder(token, m_compare));
+        auto const& rv = ba::find(range, ba::first_finder(token, m_compare));
         if (rv.empty()) return false;
 
         range = boost::make_iterator_range(rv.end(), range.end());
@@ -101,7 +101,7 @@ doMatch(const StringRange &target, const TokensRange &tokens) const
 }
 
 void BaseMatchPattern::
-print(std::ostream &os) const
+print(std::ostream& os) const
 {
     os << m_str;
 }

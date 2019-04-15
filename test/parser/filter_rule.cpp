@@ -67,9 +67,8 @@ TEST(Parser_BasicFilterRule, TwoOptions)
         dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
     ASSERT_TRUE(pattern);
 
-    ASSERT_EQ(3, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(2, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
     EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
 }
 

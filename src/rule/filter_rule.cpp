@@ -38,11 +38,11 @@ match(Uri const& uri, Context const& cxt,
     if (!m_pattern->match(uri, matchCase)) return false;
 
     if (auto* const c = dynamic_cast<WhiteListQueryContext const*>(&cxt)) {
-        return matchWhiteListOptions(*c)
+        return m_options.matchWhiteListOptions(*c)
             && matchRestrictionOptions(uri, cxt);
     }
     else {
-        return matchTypeOptions(cxt)
+        return m_options.matchTypeOptions(cxt)
             && matchRestrictionOptions(uri, cxt);
     }
 }
@@ -63,69 +63,6 @@ size_t FilterRule::
 numOptions() const
 {
     return m_options.count();
-}
-
-bool FilterRule::
-matchWhiteListOptions(WhiteListQueryContext const& cxt) const
-{
-    return (cxt.blockDisablerMode() && m_options.test(FilterOption::Document))
-        || (cxt.hideDisablerMode() && m_options.test(FilterOption::ElemHide))
-        || (cxt.genericBlockDisablerMode() && m_options.test(FilterOption::GenericBlock))
-        || (cxt.genericHideDisablerMode() && m_options.test(FilterOption::GenericHide));
-}
-
-bool FilterRule::
-matchTypeOptions(Context const& cxt) const
-{
-    if (!m_options.typeSpecified()) return true;
-
-    bool const inverse = m_options.test(FilterOption::Inverse);
-
-    if (cxt.fromScriptTag()) {
-        return m_options.test(FilterOption::Script) ^ inverse;
-    }
-    else if (cxt.isExternalStyleSheet()) {
-        return m_options.test(FilterOption::StyleSheet) ^ inverse;
-    }
-    else if (cxt.fromImageTag()) {
-        return m_options.test(FilterOption::Image) ^ inverse;
-    }
-    else if (cxt.fromAudioVideoTag()) {
-        return m_options.test(FilterOption::Media) ^ inverse;
-    }
-    else if (cxt.isFont()) {
-        return m_options.test(FilterOption::Font) ^ inverse;
-    }
-    else if (cxt.fromObjectTag()) {
-        return m_options.test(FilterOption::Object) ^ inverse;
-    }
-    else if (cxt.isSubDocument()) {
-        return m_options.test(FilterOption::SubDocument) ^ inverse;
-    }
-    else if (cxt.isWebSocket()) {
-        return m_options.test(FilterOption::WebSocket) ^ inverse;
-    }
-    else if (cxt.isWebRtc()) {
-        return m_options.test(FilterOption::WebRtc) ^ inverse;
-    }
-    else if (cxt.isPing()) {
-        return m_options.test(FilterOption::Ping) ^ inverse;
-    }
-    else if (cxt.fromXmlHttpRequest()) {
-        return m_options.test(FilterOption::XmlHttpRequest) ^ inverse;
-    }
-    else if (cxt.fromPlugins()) {
-        return m_options.test(FilterOption::ObjectSubRequest) ^ inverse;
-    }
-    else if (cxt.isCsp()) {
-        return m_options.test(FilterOption::Csp); //TODO separate
-    }
-    else if (cxt.isPopUp()) {
-        return m_options.test(FilterOption::Popup); //TODO separate
-    }
-    else {
-        return m_options.test(FilterOption::Other) ^ inverse;
-    }
 }
 
 bool FilterRule::

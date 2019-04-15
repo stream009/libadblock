@@ -21,7 +21,6 @@ TEST(Parser_FilterOption, Script_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Script));
 }
 
@@ -35,10 +34,8 @@ TEST(Parser_FilterOption, Script_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
 }
 
 TEST(Parser_FilterOption, Image_Normal)
@@ -52,7 +49,6 @@ TEST(Parser_FilterOption, Image_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Image));
 }
 
@@ -66,10 +62,8 @@ TEST(Parser_FilterOption, Image_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Image));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ImageInv));
 }
 
 TEST(Parser_FilterOption, StyleSheet_Normal)
@@ -83,7 +77,6 @@ TEST(Parser_FilterOption, StyleSheet_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::StyleSheet));
 }
 
@@ -97,10 +90,8 @@ TEST(Parser_FilterOption, StyleSheet_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::StyleSheet));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::StyleSheetInv));
 }
 
 TEST(Parser_FilterOption, Object_Normal)
@@ -114,7 +105,6 @@ TEST(Parser_FilterOption, Object_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Object));
 }
 
@@ -128,10 +118,8 @@ TEST(Parser_FilterOption, Object_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Object));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectInv));
 }
 
 TEST(Parser_FilterOption, XmlHttpRequest_Normal)
@@ -145,7 +133,6 @@ TEST(Parser_FilterOption, XmlHttpRequest_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequest));
 }
 
@@ -159,10 +146,8 @@ TEST(Parser_FilterOption, XmlHttpRequest_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequest));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequestInv));
 }
 
 TEST(Parser_FilterOption, ObjectSubRequest_Normal)
@@ -176,7 +161,6 @@ TEST(Parser_FilterOption, ObjectSubRequest_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubRequest));
 }
 
@@ -190,10 +174,8 @@ TEST(Parser_FilterOption, ObjectSubRequest_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubRequest));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubRequestInv));
 }
 
 TEST(Parser_FilterOption, SubDocument_Normal)
@@ -207,7 +189,6 @@ TEST(Parser_FilterOption, SubDocument_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::SubDocument));
 }
 
@@ -221,10 +202,8 @@ TEST(Parser_FilterOption, SubDocument_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::SubDocument));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::SubDocumentInv));
 }
 
 TEST(Parser_FilterOption, Other_Normal)
@@ -238,7 +217,6 @@ TEST(Parser_FilterOption, Other_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Other));
 }
 
@@ -252,10 +230,8 @@ TEST(Parser_FilterOption, Other_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Other));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::OtherInv));
 }
 
 TEST(Parser_FilterOption, ThirdParty_Normal)
@@ -269,7 +245,6 @@ TEST(Parser_FilterOption, ThirdParty_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::ThirdParty));
 }
 
@@ -284,7 +259,6 @@ TEST(Parser_FilterOption, ThirdParty_Inverse)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::SameOrigin));
 }
 
@@ -299,7 +273,6 @@ TEST(Parser_FilterOption, MatchCase)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
 }
 
@@ -314,7 +287,6 @@ TEST(Parser_FilterOption, Collapse_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::AlwaysCollapse));
 }
 
@@ -329,7 +301,6 @@ TEST(Parser_FilterOption, Collapse_Inverse)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::NeverCollapse));
 }
 #if 0
@@ -361,7 +332,6 @@ TEST(Parser_FilterOption, PopUp)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Popup));
 }
 
@@ -376,7 +346,6 @@ TEST(Parser_FilterOption, Media_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Media));
 }
 
@@ -390,10 +359,8 @@ TEST(Parser_FilterOption, Media_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Media));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::MediaInv));
 }
 
 TEST(Parser_FilterOption, Font_Normal)
@@ -407,7 +374,6 @@ TEST(Parser_FilterOption, Font_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Font));
 }
 
@@ -421,10 +387,8 @@ TEST(Parser_FilterOption, Font_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(2, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Font));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(1, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::FontInv));
 }
 
 TEST(Parser_FilterOption, Multiple)
@@ -438,7 +402,6 @@ TEST(Parser_FilterOption, Multiple)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(2, filter->numOptions());
-
     EXPECT_TRUE(filter->hasOption(FilterOption::Script));
     EXPECT_TRUE(filter->hasOption(FilterOption::Image));
 }
@@ -453,11 +416,9 @@ TEST(Parser_FilterOption, Multiple_Inverse)
     auto const filter = dynamic_cast<FilterRule*>(rule.get());
     ASSERT_TRUE(filter);
 
-    ASSERT_EQ(3, filter->numOptions());
-
-    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Image));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Inverse));
+    ASSERT_EQ(2, filter->numOptions());
+    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
+    EXPECT_TRUE(filter->hasOption(FilterOption::ImageInv));
 }
 
 //TODO $script,~image

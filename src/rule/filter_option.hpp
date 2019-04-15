@@ -6,21 +6,37 @@
 
 namespace adblock {
 
+class Context;
+class WhiteListQueryContext;
+
 enum class FilterOption : uint64_t {
     // request type
     Other = 0,
+    OtherInv,
     Script,
+    ScriptInv,
     StyleSheet,
+    StyleSheetInv,
     Image,
+    ImageInv,
     Media,
+    MediaInv,
     Font,
+    FontInv,
     Object,
+    ObjectInv,
     SubDocument,
+    SubDocumentInv,
     WebSocket,
+    WebSocketInv,
     WebRtc,
+    WebRtcInv,
     Ping,
+    PingInv,
     XmlHttpRequest,
+    XmlHttpRequestInv,
     ObjectSubRequest,
+    ObjectSubRequestInv,
     // query type
     Popup,
     Document,
@@ -37,7 +53,6 @@ enum class FilterOption : uint64_t {
     ThirdParty,
     SiteKey,
     //  misc.
-    Inverse,
     MatchCase,
     AlwaysCollapse,
     NeverCollapse,
@@ -50,8 +65,11 @@ public:
     // query
     bool test(FilterOption) const;
     size_t count() const;
-    bool any() const;
+
     bool typeSpecified() const;
+
+    bool matchTypeOptions(Context const&) const;
+    bool matchWhiteListOptions(WhiteListQueryContext const&) const;
 
     // modifier
     void set(FilterOption);

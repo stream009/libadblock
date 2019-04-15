@@ -133,90 +133,110 @@ regex_address_pattern(iterator const begin, iterator const end)
 void RuleBuilder::
 script_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Script);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::ScriptInv);
+    }
+    else {
+        m_options.set(FilterOption::Script);
     }
 }
 
 void RuleBuilder::
 image_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Image);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::ImageInv);
+    }
+    else {
+        m_options.set(FilterOption::Image);
     }
 }
 
 void RuleBuilder::
 stylesheet_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::StyleSheet);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::StyleSheetInv);
+    }
+    else {
+        m_options.set(FilterOption::StyleSheet);
     }
 }
 
 void RuleBuilder::
 object_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Object);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::ObjectInv);
+    }
+    else {
+        m_options.set(FilterOption::Object);
     }
 }
 
 void RuleBuilder::
 xmlhttprequest_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::XmlHttpRequest);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::XmlHttpRequestInv);
+    }
+    else {
+        m_options.set(FilterOption::XmlHttpRequest);
     }
 }
 
 void RuleBuilder::
 object_subrequest_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::ObjectSubRequest);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::ObjectSubRequestInv);
+    }
+    else {
+        m_options.set(FilterOption::ObjectSubRequest);
     }
 }
 
 void RuleBuilder::
 subdocument_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::SubDocument);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::SubDocumentInv);
+    }
+    else {
+        m_options.set(FilterOption::SubDocument);
     }
 }
 
 void RuleBuilder::
 ping_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Ping);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::PingInv);
+    }
+    else {
+        m_options.set(FilterOption::Ping);
     }
 }
 
 void RuleBuilder::
 websocket_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::WebSocket);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::WebSocketInv);
+    }
+    else {
+        m_options.set(FilterOption::WebSocket);
     }
 }
 
 void RuleBuilder::
 webrtc_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::WebRtc);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::WebRtcInv);
+    }
+    else {
+        m_options.set(FilterOption::WebRtc);
     }
 }
 
@@ -229,27 +249,33 @@ popup_option(iterator /*begin*/, iterator /*end*/)
 void RuleBuilder::
 media_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Media);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::MediaInv);
+    }
+    else {
+        m_options.set(FilterOption::Media);
     }
 }
 
 void RuleBuilder::
 font_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Font);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::FontInv);
+    }
+    else {
+        m_options.set(FilterOption::Font);
     }
 }
 
 void RuleBuilder::
 other_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
-    m_options.set(FilterOption::Other);
     if (inverse) {
-        m_options.set(FilterOption::Inverse);
+        m_options.set(FilterOption::OtherInv);
+    }
+    else {
+        m_options.set(FilterOption::Other);
     }
 }
 

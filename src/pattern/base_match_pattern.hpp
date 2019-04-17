@@ -18,21 +18,10 @@ protected:
     using Token = StringRange;
     using Tokens = boost::container::small_vector<Token, 3>;
 
-private:
-    class Compare
-    {
-    public:
-        bool operator()(char left, char right) const;
-        void setCaseSensitive(bool caseSensitive);
-    private:
-        bool m_case = false;
-    };
-
 public:
     bool match(Uri const& url, bool const caseSensitive = false) const override
     {
-        m_compare.setCaseSensitive(caseSensitive);
-        return doMatchUrl(url);
+        return doMatchUrl(url, caseSensitive);
     }
 
     StringRange const& pattern() const { return m_str; }
@@ -40,13 +29,13 @@ public:
     Tokens tokens() const { return doTokens(); }
 
 protected:
-    virtual bool doMatchUrl(Uri const&) const = 0;
+    virtual bool doMatchUrl(Uri const&, bool caseSensitive) const = 0;
     virtual Tokens doTokens() const = 0;
 
     BaseMatchPattern(StringRange const& range);
 
     bool doMatch(StringRange const&, Tokens const&,
-                 bool beginAnchor, bool endAnchor) const;
+                 bool beginAnchor, bool endAnchor, bool caseSensitive) const;
 
 private:
     // @override Pattern
@@ -54,7 +43,6 @@ private:
 
 private:
     StringRange m_str;
-    mutable Compare m_compare;
 };
 
 } // namespace adblock

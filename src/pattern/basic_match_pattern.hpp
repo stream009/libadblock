@@ -22,7 +22,7 @@ public:
 
 private:
     // @override BaseMatchPattern
-    bool doMatchUrl(Uri const&) const override;
+    bool doMatchUrl(Uri const&, bool caseSensitive) const override;
     Base::Tokens doTokens() const override;
 
 private:

@@ -57,7 +57,7 @@ DomainMatchPattern(StringRange const& pattern,
 }
 
 bool DomainMatchPattern::
-doMatchUrl(Uri const& url) const
+doMatchUrl(Uri const& url, bool const caseSensitive) const
 {
     namespace ba = boost::algorithm;
 
@@ -72,13 +72,15 @@ doMatchUrl(Uri const& url) const
     p_host = ba::trim_copy_if(p_host, is_wildcard);
     ba::split(tokens, p_host, is_wildcard, ba::token_compress_on);
 
-    if (!this->doMatch(t_host, tokens, false, false)) return false;
+    if (!this->doMatch(t_host, tokens, false, false, caseSensitive)) {
+        return false;
+    }
 
     tokens.clear();
     p_path = ba::trim_copy_if(p_path, is_wildcard);
     ba::split(tokens, p_path, is_wildcard, ba::token_compress_on);
 
-    return this->doMatch(t_path, tokens, true, m_endAnchor);
+    return this->doMatch(t_path, tokens, true, m_endAnchor, caseSensitive);
 }
 
 BaseMatchPattern::Tokens DomainMatchPattern::

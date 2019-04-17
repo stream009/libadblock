@@ -21,11 +21,15 @@ BasicMatchPattern(StringRange const& pattern,
 }
 
 bool BasicMatchPattern::
-doMatchUrl(Uri const& uri) const
+doMatchUrl(Uri const& uri, bool const caseSensitive) const
 {
     StringRange const target { &*uri.begin(), &*uri.end() };
 
-    return this->doMatch(target, doTokens(), m_anchor & Begin, m_anchor & End);
+    return this->doMatch(
+        target, doTokens(),
+        m_anchor & Begin, m_anchor & End,
+        caseSensitive
+    );
 }
 
 BaseMatchPattern::Tokens BasicMatchPattern::

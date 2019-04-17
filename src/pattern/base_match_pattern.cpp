@@ -8,30 +8,37 @@
 
 namespace adblock {
 
-bool BaseMatchPattern::Compare::
-operator()(char const left, char const right) const
+class Equals
 {
-    namespace ba = boost::algorithm;
+public:
+    Equals(bool const caseSensitive)
+        : m_caseSensitive { caseSensitive }
+    {}
 
-    static auto const& is_equal = ba::is_equal();
-    static auto const& is_iequal = ba::is_iequal();
-    static auto const& is_separator =
-                       !(ba::is_alnum() || ba::is_any_of("_~.%"));
-    if (right != '^') {
-        return m_case ? is_equal(left, right)
-                      : is_iequal(left, right);
+    bool operator()(char const lhs, char const rhs) const
+    {
+        namespace ba = boost::algorithm;
+
+        static auto const& is_equal = ba::is_equal();
+        static auto const& is_iequal = ba::is_iequal();
+        static auto const& is_separator =
+                           !(ba::is_alnum() || ba::is_any_of("_~.%"));
+        if (rhs != '^') {
+            return m_caseSensitive ? is_equal(lhs, rhs)
+                                   : is_iequal(lhs, rhs);
+        }
+        else {
+            return is_separator(lhs);
+        }
     }
-    else {
-        return is_separator(left);
-    }
-}
 
-void  BaseMatchPattern::Compare::
-setCaseSensitive(bool const caseSensitive)
-{
-    m_case = caseSensitive;
-}
+private:
+    bool m_caseSensitive;
+};
 
+//
+// BaseMatchPattern
+//
 BaseMatchPattern::
 BaseMatchPattern(StringRange const& range)
     : m_str { range }
@@ -39,7 +46,7 @@ BaseMatchPattern(StringRange const& range)
 
 bool BaseMatchPattern::
 doMatch(StringRange const& target, Tokens const& tokens,
-        bool const beginAnchor, bool const endAnchor) const
+        bool const beginAnchor, bool const endAnchor, bool const caseSensitive) const
 {
     namespace ba = boost::algorithm;
 
@@ -48,6 +55,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
     auto tokensCopy = tokens;
     auto range = target;
     std::optional<std::string> uriCopy;
+    Equals const compare { caseSensitive };
 
     // A separator has to match with end of the input.
     // So, if a pattern ends with '^' and a URI doesn't have
@@ -55,7 +63,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
     // a dummy separator to it.
     auto const& lastToken = tokens.back();
     if ((!lastToken.empty() && lastToken.back() == '^') &&
-        (!range.empty() && !m_compare(range.back(), '^')))
+        (!range.empty() && !compare(range.back(), '^')))
     {
         uriCopy.emplace(range.begin(), range.end());
         uriCopy->push_back('/');
@@ -64,7 +72,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
 
     if (beginAnchor) {
         auto const& firstToken = tokensCopy.front();
-        if (!ba::starts_with(range, firstToken, m_compare)) {
+        if (!ba::starts_with(range, firstToken, compare)) {
             return false;
         }
 
@@ -76,7 +84,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
 
     if (endAnchor) {
         auto const& lastToken = tokensCopy.back();
-        if (!ba::ends_with(range, lastToken, m_compare)) {
+        if (!ba::ends_with(range, lastToken, compare)) {
             return false;
         }
 
@@ -88,7 +96,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
         // empty token matches to everything
         if (token.empty()) return true;
 
-        auto const& rv = ba::find(range, ba::first_finder(token, m_compare));
+        auto const& rv = ba::find(range, ba::first_finder(token, compare));
         if (rv.empty()) return false;
 
         range = boost::make_iterator_range(rv.end(), range.end());

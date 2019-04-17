@@ -3,6 +3,7 @@
 #include "context.hpp"
 #include "domain_data_base.hpp"
 #include "pattern/pattern.hpp"
+#include "utility.hpp"
 #include "white_list_query_context.hpp"
 
 #include <cassert>
@@ -76,39 +77,9 @@ matchRestrictionOptions(Uri const& uri, Context const& cxt) const
 bool FilterRule::
 matchDomain(Context const& cxt) const
 {
-    namespace ba = boost::algorithm;
+    auto const host = cxt.origin().host();
 
-    if (!m_domains) return true;
-
-    bool result = false;
-    bool hasIncludeDomain = false;
-    bool hasExcludeDomain = false;
-    auto const& host = cxt.origin().host();
-
-    for (auto& dom: *m_domains) {
-        // [[asserts: !d.empty()]]
-
-        if (dom[0] == '~') {
-            hasExcludeDomain = true;
-            StringRange const d { dom.begin() + 1, dom.end() };
-            if (ba::ends_with(host, d)) {
-                return false;
-            }
-        }
-        else {
-            hasIncludeDomain = true;
-            if (ba::ends_with(host, dom)) {
-                result = true;
-            }
-        }
-    }
-
-    if (!hasIncludeDomain && hasExcludeDomain) {
-        return true;
-    }
-    else {
-        return result;
-    }
+    return adblock::matchDomain(host, m_domains.get());
 }
 
 bool FilterRule::

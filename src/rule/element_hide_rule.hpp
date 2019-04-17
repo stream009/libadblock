@@ -14,15 +14,15 @@ class ElementHideRule : public Rule
     using Base = Rule;
 public:
     using Domains = std::vector<StringRange>;
-    using DomainsRange = boost::iterator_range<Domains::const_iterator>;
 public:
+    // accessor
+    StringRange const& cssSelector() const { return m_cssSelector; }
+    Domains const* domains() const { return m_domains.get(); }
+
     // query
     bool match(Uri const&) const;
-    StringRange const& cssSelector() const { return m_cssSelector; }
 
-    bool isDomainRestricted() const;
-    DomainsRange includeDomains() const { return m_includeDomains; }
-    DomainsRange excludeDomains() const { return m_excludeDomains; }
+    bool isDomainRestricted() const { return !!m_domains; }
 
 protected:
     ElementHideRule(StringRange const& selector,
@@ -38,8 +38,7 @@ private:
 
 private:
     StringRange m_cssSelector;
-    Domains m_includeDomains;
-    Domains m_excludeDomains;
+    std::unique_ptr<Domains> m_domains;
 };
 
 } // namespace adblock

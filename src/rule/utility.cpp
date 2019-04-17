@@ -1,0 +1,45 @@
+#include "utility.hpp"
+
+#include <boost/algorithm/string.hpp>
+
+namespace adblock {
+
+bool
+matchDomain(StringRange const host,
+            std::vector<StringRange> const* const domains)
+{
+    namespace ba = boost::algorithm;
+
+    if (!domains) return true;
+
+    bool result = false;
+    bool hasIncludeDomain = false;
+    bool hasExcludeDomain = false;
+
+    for (auto& dom: *domains) {
+        // [[asserts: !d.empty()]]
+
+        if (dom[0] == '~') {
+            hasExcludeDomain = true;
+            StringRange const d { dom.begin() + 1, dom.end() };
+            if (ba::ends_with(host, d)) {
+                return false;
+            }
+        }
+        else {
+            hasIncludeDomain = true;
+            if (ba::ends_with(host, dom)) {
+                result = true;
+            }
+        }
+    }
+
+    if (!hasIncludeDomain && hasExcludeDomain) {
+        return true;
+    }
+    else {
+        return result;
+    }
+}
+
+} // namespace adblock

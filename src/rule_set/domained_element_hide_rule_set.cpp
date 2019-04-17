@@ -1,42 +1,42 @@
 #include "domained_element_hide_rule_set.hpp"
 
-#include <iterator>
 #include <ostream>
 #include <string>
-#include <utility>
 
-#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/algorithm/cxx11/copy_if.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/format.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
 void DomainedElementHideRuleSet::
-put(const ElementHideRule &rule)
+put(ElementHideRule const& rule)
 {
     assert(rule.isDomainRestricted());
 
-    const auto &includes = rule.includeDomains();
-    if (!includes.empty()) {
-        for (const auto &domain: includes) {
-            const ReverseStringRange reversedDomain {
-                                     domain.end(), domain.begin() };
-            m_normal.insert(reversedDomain, &rule);
+    auto* const domains = rule.domains();
+    assert(domains);
+
+    bool hasInclude = false, hasExclude = false;
+
+    for (auto& dom: *domains) {
+        // [[assert(!dom.empty())]]
+
+        if (dom[0] != '~') {
+            hasInclude = true;
+            ReverseStringRange const revDom { dom.end(), dom.begin() };
+
+            m_normal.insert(revDom, &rule);
             //TODO duplication check
         }
+        else {
+            hasExclude = true;
+        }
     }
-    else {
-        // Rules which only have excluded domains mean
-        // any domain except excluded domains.
-        // So, register excluded domain for later query.
-        const auto &excludes = rule.excludeDomains();
-        assert(!excludes.empty());
-        for (const auto &domain: excludes) {
-            const ReverseStringRange reversedDomain {
-                                     domain.end(), domain.begin() };
+
+    if (hasExclude && !hasInclude) {
+        for (auto& dom: *domains) {
+            ReverseStringRange const revDom { dom.end(), dom.begin() };
+
             m_exception.insert(&rule);
             //TODO duplication check
         }
@@ -44,37 +44,27 @@ put(const ElementHideRule &rule)
 }
 
 DomainedElementHideRuleSet::ElementHideRules DomainedElementHideRuleSet::
-query(const Uri &uri) const
+query(Uri const& uri) const
 {
-    const auto &host = uri.host();
+    auto const& host = uri.host();
     if (host.empty()) return {};
 
     ElementHideRules results;
     auto &&inserter = std::back_inserter(results);
 
-    const char *begin = host.data();
-    const char* const end = begin + host.size();
+    char const* begin = host.data();
+    char const* const end = begin + host.size();
 
     namespace ba = boost::algorithm;
-    const StringRange hostR { begin, end, };
-    const ReverseStringRange reverseHostR { end, begin, };
+    StringRange const hostR { begin, end, };
+    ReverseStringRange const reverseHostR { end, begin, };
 
-    const auto &excludedDomain =
-        [hostR](const ElementHideRule *rule) {
-            return ba::any_of(rule->excludeDomains(),
-                [&hostR](const StringRange &domain) {
-                    return ba::ends_with(hostR, domain);
-                }
-            );
-        };
-
-    using Node = Rules::NodeType;
     m_normal.traverse(reverseHostR,
-        [&inserter, &excludedDomain] (const Node &node, const Node::Key&) {
+        [&](auto& node, auto&) {
             if (node.hasValue()) {
                 ba::copy_if(node.values(), inserter,
-                    [&excludedDomain] (const ElementHideRule *rule) {
-                        return !excludedDomain(rule);
+                    [&] (auto* rule) {
+                        return rule->match(uri);
                     }
                 );
             }
@@ -82,10 +72,10 @@ query(const Uri &uri) const
         }
     );
 
+    //TODO more efficient
     ba::copy_if(m_exception, inserter,
-        [&excludedDomain](const ElementHideRule *rule) {
-            assert(rule->includeDomains().empty());
-            return !excludedDomain(rule);
+        [&](auto* rule) {
+            return rule->match(uri);
         }
     );
 

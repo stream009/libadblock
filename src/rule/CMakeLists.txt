@@ -8,6 +8,7 @@ add_library(rule
     comment_rule.cpp
     filter_option.cpp
     domain_data_base.cpp
+    utility.cpp
 )
 target_link_libraries(rule
     pattern

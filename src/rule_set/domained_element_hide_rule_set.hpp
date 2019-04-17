@@ -16,19 +16,19 @@ namespace adblock {
 class DomainedElementHideRuleSet
 {
 public:
-    using ElementHideRules = std::vector<const ElementHideRule*>;
+    using ElementHideRules = std::vector<ElementHideRule const*>;
     using ReverseStringRange =
-        boost::iterator_range<std::reverse_iterator<const char*>>;
-    using Rules = rule_set::Rules<ReverseStringRange, const ElementHideRule*>;
-    using ExceptionOnlyRules = boost::container::flat_set<const ElementHideRule*>;
+        boost::iterator_range<std::reverse_iterator<char const*>>;
+    using Rules = rule_set::Rules<ReverseStringRange, ElementHideRule const*>;
+    using ExceptionOnlyRules = boost::container::flat_set<ElementHideRule const*>;
 
 public:
     // query
-    ElementHideRules query(const Uri&) const;
+    ElementHideRules query(Uri const&) const;
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void put(const ElementHideRule&);
+    void put(ElementHideRule const&);
     void clear();
 
 private:

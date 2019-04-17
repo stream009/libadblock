@@ -21,8 +21,7 @@ TEST(Parser_BasicElementHideRule, Basic)
     ASSERT_TRUE(filter);
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
-    EXPECT_TRUE(filter->includeDomains().empty());
-    EXPECT_TRUE(filter->excludeDomains().empty());
+    EXPECT_FALSE(filter->domains());
 }
 
 TEST(Parser_BasicElementHideRule, SingleDomain1)
@@ -37,11 +36,10 @@ TEST(Parser_BasicElementHideRule, SingleDomain1)
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    auto const& domains = filter->includeDomains();
-    ASSERT_EQ(1, domains.size());
-    EXPECT_EQ("adblock.org"_r, domains[0]);
-
-    EXPECT_TRUE(filter->excludeDomains().empty());
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(1, domains->size());
+    EXPECT_EQ("adblock.org"_r, (*domains)[0]);
 }
 
 TEST(Parser_BasicElementHideRule, SingleDomain2)
@@ -56,11 +54,10 @@ TEST(Parser_BasicElementHideRule, SingleDomain2)
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    EXPECT_TRUE(filter->includeDomains().empty());
-
-    auto const& domains = filter->excludeDomains();
-    ASSERT_EQ(1, domains.size());
-    EXPECT_EQ("adblock.org"_r, domains[0]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(1, domains->size());
+    EXPECT_EQ("~adblock.org"_r, (*domains)[0]);
 }
 
 TEST(Parser_BasicElementHideRule, MultipleDomain)
@@ -75,14 +72,12 @@ TEST(Parser_BasicElementHideRule, MultipleDomain)
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    auto const& domains1 = filter->includeDomains();
-    ASSERT_EQ(2, domains1.size());
-    EXPECT_EQ("adblock.org"_r, domains1[0]);
-    EXPECT_EQ("facebook.com"_r, domains1[1]);
-
-    auto const& domains2 = filter->excludeDomains();
-    ASSERT_EQ(1, domains2.size());
-    EXPECT_EQ("google.com"_r, domains2[0]);
+    auto* const domains = filter->domains();
+    ASSERT_TRUE(domains);
+    ASSERT_EQ(3, domains->size());
+    EXPECT_EQ("adblock.org"_r, (*domains)[0]);
+    EXPECT_EQ("~google.com"_r, (*domains)[1]);
+    EXPECT_EQ("facebook.com"_r, (*domains)[2]);
 }
 
 TEST(Parser_ExceptionElementHideRule, Basic)
@@ -97,8 +92,7 @@ TEST(Parser_ExceptionElementHideRule, Basic)
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    EXPECT_TRUE(filter->includeDomains().empty());
-    EXPECT_TRUE(filter->excludeDomains().empty());
+    EXPECT_FALSE(filter->domains());
 }
 
 TEST(Parser_ExtendedElementHideRule, Basic)
@@ -113,6 +107,5 @@ TEST(Parser_ExtendedElementHideRule, Basic)
 
     EXPECT_EQ("#ad"_r, filter->cssSelector());
 
-    EXPECT_TRUE(filter->includeDomains().empty());
-    EXPECT_TRUE(filter->excludeDomains().empty());
+    EXPECT_FALSE(filter->domains());
 }

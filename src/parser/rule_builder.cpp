@@ -19,17 +19,6 @@
 
 namespace adblock::parser {
 
-template<typename It>
-auto
-find_separator(It const begin, It const end)
-{
-    return std::find_if(begin, end,
-        [](auto c) {
-            return c == '/'
-                || c == '^';
-        });
-}
-
 static void
 print_error_line(std::ostream& os, StringRange const line,
                  int64_t const column, int64_t const length)
@@ -113,13 +102,8 @@ void RuleBuilder::
 domain_address_pattern(iterator const begin, iterator const end,
                        bool const suffix)
 {
-    auto const it = find_separator(begin, end);
-    StringRange domain { begin, it };
-    StringRange path { it, end };
-
     m_pattern = std::make_unique<DomainMatchPattern>(
-        domain,
-        path,
+        StringRange { begin, end },
         suffix
     );
 }

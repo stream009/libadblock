@@ -12,7 +12,7 @@
 
 using namespace adblock;
 
-TEST(Parser_BasicMatchPatternParser, Basic)
+TEST(Parser_BasicMatchPattern, Basic)
 {
     auto const& line = "adblock"_r;
 
@@ -30,7 +30,7 @@ TEST(Parser_BasicMatchPatternParser, Basic)
     EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(Parser_BasicMatchPatternParser, BeginMatch)
+TEST(Parser_BasicMatchPattern, BeginMatch)
 {
     auto const& line = "|adblock"_r;
 
@@ -48,7 +48,7 @@ TEST(Parser_BasicMatchPatternParser, BeginMatch)
     EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(Parser_BasicMatchPatternParser, EndMatch)
+TEST(Parser_BasicMatchPattern, EndMatch)
 {
     auto const& line = "adblock|"_r;
 
@@ -66,7 +66,7 @@ TEST(Parser_BasicMatchPatternParser, EndMatch)
     EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(Parser_BasicMatchPatternParser, ExactMatch)
+TEST(Parser_BasicMatchPattern, ExactMatch)
 {
     auto const& line = "|adblock|"_r;
 
@@ -84,7 +84,7 @@ TEST(Parser_BasicMatchPatternParser, ExactMatch)
     EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
-TEST(Parser_BasicMatchPatternParser, BarInMiddleOfPattern)
+TEST(Parser_BasicMatchPattern, BarInMiddleOfPattern)
 {
     auto const& line = "ad|block"_r;
 
@@ -102,7 +102,7 @@ TEST(Parser_BasicMatchPatternParser, BarInMiddleOfPattern)
     EXPECT_EQ("ad|block"_r, pattern.tokens().front());
 }
 
-TEST(Parser_BasicMatchPatternParser, MultiTokenPattern)
+TEST(Parser_BasicMatchPattern, MultiTokenPattern)
 {
     auto const& line = "ad*block"_r;
 

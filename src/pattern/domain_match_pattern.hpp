@@ -2,7 +2,6 @@
 #define DOMAIN_MATCH_PATTERN_HPP
 
 #include "base_match_pattern.hpp"
-#include "basic_match_pattern.hpp"
 #include "type.hpp"
 
 namespace adblock {
@@ -12,18 +11,18 @@ class DomainMatchPattern : public BaseMatchPattern
     using Base = BaseMatchPattern;
     using Base::Tokens;
 public:
-    DomainMatchPattern(StringRange const& domain,
-                       StringRange const& pattern,
+    DomainMatchPattern(StringRange const& pattern,
                        bool endMatch = false);
+
+    bool isEndMatch() const { return m_endAnchor; }
 
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(Uri const&) const override;
-    TokensRange doTokens() const override { return m_domainTokens; }
+    Tokens doTokens() const override;
 
 private:
-    Tokens m_domainTokens;
-    BasicMatchPattern m_pathPattern;
+    bool m_endAnchor = false;
 };
 
 } // namespace adblock

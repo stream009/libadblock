@@ -25,7 +25,6 @@ TEST(Parser_DomainMatchPatternParser, Basic)
     auto const& pattern = dynamic_cast<DomainMatchPattern const&>(filter->pattern());
 
     EXPECT_EQ("adblock.org", boost::lexical_cast<std::string>(pattern));
-    EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
     EXPECT_EQ("adblock.org"_r, pattern.tokens().front());
 }
@@ -43,7 +42,6 @@ TEST(Parser_DomainMatchPatternParser, WithEndMatch)
     auto const& pattern = dynamic_cast<DomainMatchPattern const&>(filter->pattern());
 
     EXPECT_EQ("adblock.org", boost::lexical_cast<std::string>(pattern));
-    EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_TRUE(pattern.isEndMatch());
     EXPECT_EQ("adblock.org"_r, pattern.tokens().front());
 }
@@ -61,7 +59,6 @@ TEST(Parser_DomainMatchPatternParser, BarInMiddleOfPattern)
     auto const& pattern = dynamic_cast<DomainMatchPattern const&>(filter->pattern());
 
     EXPECT_EQ("adblock.org/foo|bar", boost::lexical_cast<std::string>(pattern));
-    EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
     EXPECT_EQ("adblock.org"_r, pattern.tokens().front());
 }
@@ -79,7 +76,6 @@ TEST(Parser_DomainMatchPatternParser, MultiTokenDomain)
     auto const& pattern = dynamic_cast<DomainMatchPattern const&>(filter->pattern());
 
     EXPECT_EQ("ad*block.org/foo", boost::lexical_cast<std::string>(pattern));
-    EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
     EXPECT_EQ("ad"_r, pattern.tokens().front());
 }

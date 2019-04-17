@@ -1,7 +1,5 @@
 #include "pattern/domain_match_pattern.hpp"
-
-#include <boost/range/as_literal.hpp>
-#include <boost/range/iterator_range.hpp>
+#include "type.hpp"
 
 #include <gtest/gtest.h>
 
@@ -11,9 +9,7 @@ TEST(Pattern_DomainMatchPatternTest, standard)
 {
     {   // match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            false
+            "google.com/foo"_r, false
         };
 
         Uri url { "http://www.google.com/foo" };
@@ -22,9 +18,7 @@ TEST(Pattern_DomainMatchPatternTest, standard)
     }
     {   // domain part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            false
+            "google.com/foo"_r, false
         };
 
         Uri url { "http://www.google.net/foo" };
@@ -33,9 +27,7 @@ TEST(Pattern_DomainMatchPatternTest, standard)
     }
     {   // after domain part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            false
+            "google.com/foo"_r, false
         };
 
         Uri url { "http://www.google.com/bar" };
@@ -44,9 +36,7 @@ TEST(Pattern_DomainMatchPatternTest, standard)
     }
     {   // both part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            false
+            "google.com/foo"_r, false
         };
 
         Uri url { "http://www.google.net/bar" };
@@ -59,9 +49,7 @@ TEST(Pattern_DomainMatchPatternTest, withEndMatch)
 {
     {   // match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            true
+            "google.com/foo"_r, true
         };
 
         Uri url { "http://www.google.com/foo" };
@@ -70,9 +58,7 @@ TEST(Pattern_DomainMatchPatternTest, withEndMatch)
     }
     {   // domain part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            true
+            "google.com/foo"_r, true
         };
 
         Uri url { "http://www.google.net/foo" };
@@ -81,9 +67,7 @@ TEST(Pattern_DomainMatchPatternTest, withEndMatch)
     }
     {   // after domain part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            true
+            "google.com/foo"_r, true
         };
 
         Uri url { "http://www.google.com/bar" };
@@ -92,9 +76,7 @@ TEST(Pattern_DomainMatchPatternTest, withEndMatch)
     }
     {   // after domain part match partially but end doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            true
+            "google.com/foo"_r, true
         };
 
         Uri url { "http://www.google.com/fooz" };
@@ -103,9 +85,7 @@ TEST(Pattern_DomainMatchPatternTest, withEndMatch)
     }
     {   // both part doesn't match
         DomainMatchPattern pattern {
-            boost::as_literal("google.com"),
-            boost::as_literal("/foo"),
-            true
+            "google.com/foo"_r, true
         };
 
         Uri url { "http://www.google.net/foo" };
@@ -118,9 +98,7 @@ TEST(Pattern_DomainMatchPatternTest, wildCard)
 {
     {   // asterisk in the domain part
         DomainMatchPattern pattern {
-            boost::as_literal("www.goo*.com"),
-            boost::as_literal("/foo"),
-            false
+            "www.goo*.com/foo"_r, false
         };
 
         Uri url { "http://www.google.com/foo" };
@@ -129,9 +107,7 @@ TEST(Pattern_DomainMatchPatternTest, wildCard)
     }
     {   // asterisk in after the domain part
         DomainMatchPattern pattern {
-            boost::as_literal("www.google.com"),
-            boost::as_literal("/*o"),
-            false
+            "www.google.com/*o"_r, false
         };
 
         Uri url { "http://www.google.com/foo" };
@@ -140,9 +116,7 @@ TEST(Pattern_DomainMatchPatternTest, wildCard)
     }
     {   // asterisk in the both part
         DomainMatchPattern pattern {
-            boost::as_literal("www.go*le.com"),
-            boost::as_literal("/*o"),
-            false
+            "www.go*le.com/*o"_r, false
         };
 
         Uri url { "http://www.google.com/foo" };
@@ -155,9 +129,7 @@ TEST(Pattern_DomainMatchPatternTest, separator)
 {
     {   // separator at right after the domain part
         DomainMatchPattern pattern {
-            boost::as_literal("www.google.com"),
-            boost::as_literal("^mail"),
-            false
+            "www.google.com^mail"_r, false
         };
 
         Uri url { "http://www.google.com/mail" };
@@ -166,9 +138,7 @@ TEST(Pattern_DomainMatchPatternTest, separator)
     }
     {   // separator at middle of after the domain part
         DomainMatchPattern pattern {
-            boost::as_literal("www.google.com"),
-            boost::as_literal("/mail^foo"),
-            false
+            "www.google.com/mail^foo"_r, false
         };
 
         Uri url { "http://www.google.com/mail?foo" };
@@ -177,9 +147,7 @@ TEST(Pattern_DomainMatchPatternTest, separator)
     }
     {   // separator at end of after the domain part
         DomainMatchPattern pattern {
-            boost::as_literal("www.google.com"),
-            boost::as_literal("/mail^"),
-            false
+            "www.google.com/mail^"_r, false
         };
 
         Uri url { "http://www.google.com/mail/" };
@@ -189,9 +157,7 @@ TEST(Pattern_DomainMatchPatternTest, separator)
     {   // separator at end of after the domain part
         // and it has to match with end of the URL
         DomainMatchPattern pattern {
-            boost::as_literal("www.google.com"),
-            boost::as_literal("/mail^"),
-            false
+            "www.google.com/mail^"_r, false
         };
 
         Uri url { "http://www.google.com/mail" };
@@ -203,9 +169,7 @@ TEST(Pattern_DomainMatchPatternTest, separator)
 TEST(Pattern_DomainMatchPatternTest, DomainOnly)
 {
     DomainMatchPattern pattern {
-        boost::as_literal("www.google.com"),
-        boost::as_literal(""),
-        false
+        "www.google.com"_r, false
     };
 
     Uri url { "http://www.google.com/mail" };
@@ -216,9 +180,7 @@ TEST(Pattern_DomainMatchPatternTest, DomainOnly)
 TEST(Pattern_DomainMatchPatternTest, PathComponentMustMatchFromBeginning)
 {
     DomainMatchPattern pattern {
-        boost::as_literal("openload.co"),
-        boost::as_literal("/r"),
-        false
+        "openload.co/r"_r, false
     };
 
     Uri url { "https://openload.co/f/R" };

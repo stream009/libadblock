@@ -1,6 +1,6 @@
 #include "suffix_match_filter_rule_set.hpp"
 
-#include "pattern/base_match_pattern.hpp"
+#include "pattern/basic_match_pattern.hpp"
 
 #include <cassert>
 #include <iterator>
@@ -14,7 +14,7 @@ void SuffixMatchFilterRuleSet::
 doPut(const FilterRule &rule)
 {
     const auto *pattern =
-                dynamic_cast<const BaseMatchPattern*>(&rule.pattern());
+                dynamic_cast<const BasicMatchPattern*>(&rule.pattern());
     assert(pattern);
     assert(pattern->isEndMatch());
     const auto &tokens = pattern->tokens();

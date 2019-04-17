@@ -33,16 +33,13 @@ setCaseSensitive(bool const caseSensitive)
 }
 
 BaseMatchPattern::
-BaseMatchPattern(StringRange const& range,
-                 bool const beginMatch,
-                 bool const endMatch)
+BaseMatchPattern(StringRange const& range)
     : m_str { range }
-    , m_beginMatch { beginMatch }
-    , m_endMatch { endMatch }
 {}
 
 bool BaseMatchPattern::
-doMatch(StringRange const& target, TokensRange const& tokens) const
+doMatch(StringRange const& target, Tokens const& tokens,
+        bool const beginAnchor, bool const endAnchor) const
 {
     namespace ba = boost::algorithm;
 
@@ -65,25 +62,25 @@ doMatch(StringRange const& target, TokensRange const& tokens) const
         range = StringRange { &*uriCopy->begin(), &*uriCopy->end() };
     }
 
-    if (m_beginMatch) {
+    if (beginAnchor) {
         auto const& firstToken = tokensCopy.front();
         if (!ba::starts_with(range, firstToken, m_compare)) {
             return false;
         }
 
-        if (!m_endMatch || tokensCopy.size() > 1) {
-            tokensCopy.drop_front();
+        if (!endAnchor || tokensCopy.size() > 1) {
+            tokensCopy.erase(tokensCopy.begin());
             range.drop_front(static_cast<ptrdiff_t>(firstToken.size()));
         }
     }
 
-    if (m_endMatch) {
+    if (endAnchor) {
         auto const& lastToken = tokensCopy.back();
         if (!ba::ends_with(range, lastToken, m_compare)) {
             return false;
         }
 
-        tokensCopy.drop_back();
+        tokensCopy.pop_back();
         range.drop_back(static_cast<ptrdiff_t>(lastToken.size()));
     }
 

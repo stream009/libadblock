@@ -8,22 +8,39 @@ BasicMatchPattern::
 BasicMatchPattern(StringRange const& pattern,
                   bool const beginMatch/*= false*/,
                   bool const endMatch/*= false*/)
-    : Base { pattern, beginMatch, endMatch }
+    : Base { pattern }
 {
     namespace ba = boost::algorithm;
 
-    // trim leading and trailing "*"
-    auto range = pattern;
-    range = ba::trim_copy_if(range, ba::is_any_of("*"));
-
-    ba::split(m_tokens, range, ba::is_any_of("*"), ba::token_compress_on);
+    if (beginMatch && !ba::starts_with(pattern, "*")) { //TODO test
+        m_anchor = static_cast<Anchor>(m_anchor | Begin);
+    }
+    if (endMatch && !ba::ends_with(pattern, "*")) { //TODO test
+        m_anchor = static_cast<Anchor>(m_anchor | End);
+    }
 }
 
 bool BasicMatchPattern::
 doMatchUrl(Uri const& uri) const
 {
-    StringRange const range { &*uri.begin(), &*uri.end() };
-    return this->doMatch(range, m_tokens);
+    StringRange const target { &*uri.begin(), &*uri.end() };
+
+    return this->doMatch(target, doTokens(), m_anchor & Begin, m_anchor & End);
+}
+
+BaseMatchPattern::Tokens BasicMatchPattern::
+doTokens() const
+{
+    namespace ba = boost::algorithm;
+
+    auto pattern = this->pattern();
+    auto pred = [](auto c) { return c == '*'; };
+    Base::Tokens tokens;
+
+    pattern = ba::trim_copy_if(pattern, pred);
+    ba::split(tokens, pattern, pred, ba::token_compress_on);
+
+    return tokens;
 }
 
 } // namespace adblock

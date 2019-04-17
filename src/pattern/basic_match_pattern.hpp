@@ -9,26 +9,24 @@ namespace adblock {
 class BasicMatchPattern : public BaseMatchPattern
 {
     using Base = BaseMatchPattern;
-    using Base::Tokens;
+public:
+    enum Anchor { None = 0, Begin = 1, End = 2 };
+
 public:
     BasicMatchPattern(StringRange const& pattern,
                       bool beginMatch = false,
                       bool endMatch = false);
 
-    using BaseMatchPattern::match;
-
-    bool match(StringRange const& str) const
-    {
-        return this->doMatch(str, m_tokens);
-    }
+    bool isBeginMatch() const { return m_anchor & Begin; }
+    bool isEndMatch() const { return m_anchor & End; }
 
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(Uri const&) const override;
-    TokensRange doTokens() const override { return m_tokens; }
+    Base::Tokens doTokens() const override;
 
 private:
-    Tokens m_tokens;
+    Anchor m_anchor = None;
 };
 
 } // namespace adblock

@@ -12,4 +12,6 @@ add_library(parser_test STATIC
 )
 target_link_libraries(parser_test
     parser
+    rule
+    pattern
 )

@@ -8,7 +8,7 @@
 #include <iosfwd>
 #include <vector>
 
-#include <boost/range/iterator_range.hpp>
+#include <boost/container/small_vector.hpp>
 
 namespace adblock {
 
@@ -16,8 +16,7 @@ class BaseMatchPattern : public Pattern
 {
 protected:
     using Token = StringRange;
-    using Tokens = std::vector<Token>;
-    using TokensRange = boost::iterator_range<Tokens::const_iterator>;
+    using Tokens = boost::container::small_vector<Token, 3>;
 
 private:
     class Compare
@@ -37,20 +36,17 @@ public:
     }
 
     StringRange const& pattern() const { return m_str; }
-    bool isBeginMatch() const { return m_beginMatch; }
-    bool isEndMatch() const { return m_endMatch; }
 
-    TokensRange tokens() const { return doTokens(); }
+    Tokens tokens() const { return doTokens(); }
 
 protected:
     virtual bool doMatchUrl(Uri const&) const = 0;
-    virtual TokensRange doTokens() const = 0;
+    virtual Tokens doTokens() const = 0;
 
-    BaseMatchPattern(StringRange const& range,
-                     bool beginMatch,
-                     bool endMatch);
+    BaseMatchPattern(StringRange const& range);
 
-    bool doMatch(StringRange const&, TokensRange const&) const;
+    bool doMatch(StringRange const&, Tokens const&,
+                 bool beginAnchor, bool endAnchor) const;
 
 private:
     // @override Pattern
@@ -58,8 +54,6 @@ private:
 
 private:
     StringRange m_str;
-    bool m_beginMatch = false;
-    bool m_endMatch = false;
     mutable Compare m_compare;
 };
 

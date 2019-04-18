@@ -14,17 +14,17 @@ namespace adblock {
 using ElementHideRules = ElementHideRuleBase::ElementHideRules;
 
 static std::string
-joinSelectors(const ElementHideRules &rules, const StringRange &separator)
+joinSelectors(ElementHideRules const& rules, StringRange const& separator)
 {
     if (rules.empty()) return "";
 
     std::string result;
-    const auto &back_inserter = std::back_inserter(result);
+    auto back_inserter = std::back_inserter(result);
 
-    static const auto unit = 200;
+    constexpr auto unit = 200;
     auto const len = rules.size();
 
-    for (auto i = 0ul; i < len; i += unit) {
+    for (size_t i = 0; i < len; i += unit) {
         boost::copy(rules.at(i)->cssSelector(), back_inserter);
 
         auto const to = std::min(len, i + unit);
@@ -39,15 +39,15 @@ joinSelectors(const ElementHideRules &rules, const StringRange &separator)
 }
 
 static void
-removeWhiteRules(ElementHideRules &rules, const ElementHideRules &whiteRules)
+removeWhiteRules(ElementHideRules &rules, ElementHideRules const& whiteRules)
 {
     if (whiteRules.empty() || rules.empty()) return;
 
-    const auto begin = rules.begin();
+    auto const begin = rules.begin();
     auto end = rules.end();
-    for (const auto &whiteRule: whiteRules) {
+    for (auto const& whiteRule: whiteRules) {
         end = std::remove_if(begin, end,
-            [&whiteRule](const ElementHideRule *rule) {
+            [&](auto* rule) {
                 return rule->cssSelector() == whiteRule->cssSelector();
             }
         );
@@ -76,11 +76,11 @@ query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
         resultSet = m_genericBlackList;
     }
 
-    const auto &domainedBlackList = m_domainedBlackList.query(uri);
+    auto const& domainedBlackList = m_domainedBlackList.query(uri);
     resultSet.insert(resultSet.end(),
                      domainedBlackList.begin(), domainedBlackList.end());
 
-    const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
+    auto const& domainedWhiteList = m_domainedWhiteList.query(uri);
     removeWhiteRules(resultSet, domainedWhiteList);
 
     if (genericDisabler == nullptr) {
@@ -105,11 +105,11 @@ lookupExtendedRule(Uri const& uri, StringRange const& siteKey/*= {}*/) const
         resultSet = m_genericExtendedBlackList;
     }
 
-    const auto &domainedBlackList = m_domainedExtendedBlackList.query(uri);
+    auto const& domainedBlackList = m_domainedExtendedBlackList.query(uri);
     resultSet.insert(resultSet.end(),
                      domainedBlackList.begin(), domainedBlackList.end());
 
-    const auto &domainedWhiteList = m_domainedWhiteList.query(uri);
+    auto const& domainedWhiteList = m_domainedWhiteList.query(uri);
     removeWhiteRules(resultSet, domainedWhiteList);
 
     if (genericDisabler == nullptr) {
@@ -120,7 +120,7 @@ lookupExtendedRule(Uri const& uri, StringRange const& siteKey/*= {}*/) const
 }
 
 void ElementHideRuleBase::
-put(const ElementHideRule &rule)
+put(ElementHideRule const& rule)
 {
     if (typeid(rule) == typeid(BasicElementHideRule)) {
         if (rule.isDomainRestricted()) {

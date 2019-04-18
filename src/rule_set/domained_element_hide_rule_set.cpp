@@ -38,7 +38,6 @@ put(ElementHideRule const& rule)
             ReverseStringRange const revDom { dom.end(), dom.begin() };
 
             m_exception.insert(&rule);
-            //TODO duplication check
         }
     }
 }
@@ -50,7 +49,7 @@ query(Uri const& uri) const
     if (host.empty()) return {};
 
     ElementHideRules results;
-    auto &&inserter = std::back_inserter(results);
+    auto inserter = std::back_inserter(results);
 
     char const* begin = host.data();
     char const* const end = begin + host.size();
@@ -72,14 +71,13 @@ query(Uri const& uri) const
         }
     );
 
-    //TODO more efficient
+    //TODO more efficiently
     ba::copy_if(m_exception, inserter,
         [&](auto* rule) {
             return rule->match(uri);
         }
     );
 
-    //TODO return lazy generator instead of copy
     return results;
 }
 

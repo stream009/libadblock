@@ -226,6 +226,10 @@ TEST(Pattern_DomainMatchPattern, DomainThatEndsWithWildcard)
         Uri url { "http://www.example.com/image.js" };
         EXPECT_TRUE(pattern.match(url));
     }
+    {
+        Uri url { "http://www.example.net/image.js" };
+        EXPECT_TRUE(pattern.match(url));
+    }
 }
 
 TEST(Pattern_DomainMatchPattern, DomainPatternMustMatchWithDotBoundary)

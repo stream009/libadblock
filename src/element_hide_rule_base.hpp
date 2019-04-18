@@ -16,13 +16,8 @@ class FilterRuleBase;
 
 class ElementHideRuleBase
 {
-private:
-    struct CompareBySelector {
-        bool operator()(const ElementHideRule &lhs,
-                        const ElementHideRule &rhs) const;
-    };
 public:
-    using ElementHideRules = std::vector<const ElementHideRule*>;
+    using ElementHideRules = std::vector<ElementHideRule const*>;
 
 public:
     ElementHideRuleBase(FilterRuleBase const&);
@@ -36,7 +31,7 @@ public:
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void put(const ElementHideRule&);
+    void put(ElementHideRule const&);
     void clear();
 
 public:

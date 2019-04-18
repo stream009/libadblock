@@ -39,6 +39,12 @@ splitUri(Uri const& uri)
     return std::make_pair(host, path);
 }
 
+static bool
+isWildcard(char const c)
+{
+    return c == '*';
+}
+
 //
 // DomainMatchPattern
 //
@@ -48,7 +54,6 @@ DomainMatchPattern(StringRange const& pattern,
     : Base { pattern }
     , m_endAnchor { endMatch }
 {
-    //TODO ||*.com
     namespace ba = boost::algorithm;
 
     if (ba::ends_with(pattern, "*")) {
@@ -67,18 +72,20 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
     auto [p_host, p_path] = splitPattern(this->pattern());
 
     Base::Tokens tokens;
-    auto is_wildcard = [](auto c) { return c == '*'; };
 
-    p_host = ba::trim_copy_if(p_host, is_wildcard);
-    ba::split(tokens, p_host, is_wildcard, ba::token_compress_on);
+    bool const t_endAnchor = !p_path.empty() && (p_host.back() != '*');
 
-    if (!this->doMatch(t_host, tokens, false, false, caseSensitive)) {
+    p_host = ba::trim_copy_if(p_host, isWildcard);
+    p_path = ba::trim_copy_if(p_path, isWildcard);
+
+    ba::split(tokens, p_host, isWildcard, ba::token_compress_on);
+
+    if (!this->doMatch(t_host, tokens, false, t_endAnchor, caseSensitive)) {
         return false;
     }
 
     tokens.clear();
-    p_path = ba::trim_copy_if(p_path, is_wildcard);
-    ba::split(tokens, p_path, is_wildcard, ba::token_compress_on);
+    ba::split(tokens, p_path, isWildcard, ba::token_compress_on);
 
     return this->doMatch(t_path, tokens, true, m_endAnchor, caseSensitive);
 }
@@ -89,11 +96,10 @@ doTokens() const
     namespace ba = boost::algorithm;
 
     auto [pattern, _] = splitPattern(this->pattern()); //TODO why?
-    auto pred = [](auto c) { return c == '*'; };
     Base::Tokens tokens;
 
-    pattern = ba::trim_copy_if(pattern, pred);
-    ba::split(tokens, pattern, pred, ba::token_compress_on);
+    pattern = ba::trim_copy_if(pattern, isWildcard);
+    ba::split(tokens, pattern, isWildcard, ba::token_compress_on);
 
     return tokens;
 }

@@ -194,4 +194,52 @@ TEST(Pattern_DomainMatchPattern, InvalidUseOfAnchor)
     EXPECT_TRUE(!pattern.isEndMatch());
 }
 
+TEST(Pattern_DomainMatchPattern, BugFix1)
+{
+    DomainMatchPattern pattern { "example.com/image.js"_r };
+
+    {
+        Uri url { "http://www.example.com/image.js" };
+        EXPECT_TRUE(pattern.match(url));
+    }
+    {
+        Uri url { "http://www.example.com.au/image.js" };
+        EXPECT_FALSE(pattern.match(url));
+    }
+}
+
+TEST(Pattern_DomainMatchPattern, DomainThatStartsWithWildcard)
+{
+    DomainMatchPattern pattern { "*.com/image.js"_r };
+
+    {
+        Uri url { "http://www.example.com/image.js" };
+        EXPECT_TRUE(pattern.match(url));
+    }
+}
+
+TEST(Pattern_DomainMatchPattern, DomainThatEndsWithWildcard)
+{
+    DomainMatchPattern pattern { "example.*/image.js"_r };
+
+    {
+        Uri url { "http://www.example.com/image.js" };
+        EXPECT_TRUE(pattern.match(url));
+    }
+}
+
+TEST(Pattern_DomainMatchPattern, DomainPatternMustMatchWithDotBoundary)
+{
+    DomainMatchPattern pattern { "example.com/image.js"_r };
+
+    {
+        Uri url { "http://www.example.com/image.js" };
+        EXPECT_TRUE(pattern.match(url));
+    }
+    {
+        Uri url { "http://www.someexample.com/image.js" };
+        EXPECT_FALSE(pattern.match(url));
+    }
+}
+
 } // namespace adblock

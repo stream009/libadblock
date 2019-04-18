@@ -12,10 +12,10 @@ BasicMatchPattern(StringRange const& pattern,
 {
     namespace ba = boost::algorithm;
 
-    if (beginMatch && !ba::starts_with(pattern, "*")) { //TODO test
+    if (beginMatch && !ba::starts_with(pattern, "*")) {
         m_anchor = static_cast<Anchor>(m_anchor | Begin);
     }
-    if (endMatch && !ba::ends_with(pattern, "*")) { //TODO test
+    if (endMatch && !ba::ends_with(pattern, "*")) {
         m_anchor = static_cast<Anchor>(m_anchor | End);
     }
 }

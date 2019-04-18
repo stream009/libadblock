@@ -51,7 +51,7 @@ DomainMatchPattern(StringRange const& pattern,
     //TODO ||*.com
     namespace ba = boost::algorithm;
 
-    if (ba::ends_with(pattern, "*")) { //TODO test
+    if (ba::ends_with(pattern, "*")) {
         m_endAnchor = false;
     }
 }

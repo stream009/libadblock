@@ -188,4 +188,10 @@ TEST(Pattern_DomainMatchPatternTest, PathComponentMustMatchFromBeginning)
     EXPECT_FALSE(pattern.match(url));
 }
 
+TEST(Pattern_DomainMatchPattern, InvalidUseOfAnchor)
+{
+    DomainMatchPattern pattern { "foo*"_r, true };
+    EXPECT_TRUE(!pattern.isEndMatch());
+}
+
 } // namespace adblock

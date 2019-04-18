@@ -19,7 +19,7 @@ protected:
     using Tokens = boost::container::small_vector<Token, 3>;
 
 public:
-    bool match(Uri const& url, bool const caseSensitive = false) const override
+    bool match(Uri const& url, bool caseSensitive = false) const override
     {
         return doMatchUrl(url, caseSensitive);
     }

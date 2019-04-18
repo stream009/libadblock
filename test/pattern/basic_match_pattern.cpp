@@ -6,7 +6,6 @@
 
 #include <boost/format.hpp>
 #include <boost/range/algorithm.hpp>
-#include <boost/range/as_literal.hpp>
 #include <boost/range/iterator_range.hpp>
 
 #include <gtest/gtest.h>
@@ -16,25 +15,25 @@ namespace adblock {
 TEST(Pattern_BasicMatchPattern, SubstringMatch)
 {
     {   // substring match
-        BasicMatchPattern pattern { boost::as_literal("google") };
+        BasicMatchPattern pattern { "google"_r };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // match at the begining
-        BasicMatchPattern pattern { boost::as_literal("http") };
+        BasicMatchPattern pattern { "http"_r };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // match at the end
-        BasicMatchPattern pattern { boost::as_literal("com") };
+        BasicMatchPattern pattern { "com"_r };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // doesn't match
-        BasicMatchPattern pattern { boost::as_literal("yahoo") };
+        BasicMatchPattern pattern { "yahoo"_r };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
@@ -44,25 +43,25 @@ TEST(Pattern_BasicMatchPattern, SubstringMatch)
 TEST(Pattern_BasicMatchPattern, BeginMatch)
 {
     {   // begin match
-        BasicMatchPattern pattern { boost::as_literal("http://www"), true };
+        BasicMatchPattern pattern { "http://www"_r, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // partial match but doesn't match at the begining
-        BasicMatchPattern pattern { boost::as_literal("google"), true };
+        BasicMatchPattern pattern { "google"_r, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // match at the end but doesn't match at the begining
-        BasicMatchPattern pattern { boost::as_literal("com"), true };
+        BasicMatchPattern pattern { "com"_r, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // doesn't match at anywhere
-        BasicMatchPattern pattern { boost::as_literal("yahoo"), true };
+        BasicMatchPattern pattern { "yahoo"_r, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
@@ -72,25 +71,25 @@ TEST(Pattern_BasicMatchPattern, BeginMatch)
 TEST(Pattern_BasicMatchPattern, EndMatch)
 {
     {   // match at the ending
-        BasicMatchPattern pattern { boost::as_literal(".com"), false, true };
+        BasicMatchPattern pattern { ".com"_r, false, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // substring match but doesn't match at the end
-        BasicMatchPattern pattern { boost::as_literal("google"), false, true };
+        BasicMatchPattern pattern { "google"_r, false, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // match at the begining but doesn't match at the end
-        BasicMatchPattern pattern { boost::as_literal("http"), false, true };
+        BasicMatchPattern pattern { "http"_r, false, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // doesn't match anywhere
-        BasicMatchPattern pattern { boost::as_literal("yahoo"), false, true };
+        BasicMatchPattern pattern { "yahoo"_r, false, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
@@ -101,35 +100,35 @@ TEST(Pattern_BasicMatchPattern, ExactMatch)
 {
     {   // exact match
         BasicMatchPattern pattern {
-                     boost::as_literal("http://www.google.com"), true, true };
+                     "http://www.google.com"_r, true, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(true, pattern.match(uri));
     }
     {   // match at begining but ending doesn't match
         BasicMatchPattern pattern {
-                    boost::as_literal("http://www.google"), true, true };
+                    "http://www.google"_r, true, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // match at the end but begining doesn't match
         BasicMatchPattern pattern {
-                        boost::as_literal("www.google.com"), true, true };
+                        "www.google.com"_r, true, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // match at the begining but ending doesn't match
         BasicMatchPattern pattern {
-                boost::as_literal("http://www.google.com/test"), true, true };
+                "http://www.google.com/test"_r, true, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
     }
     {   // match at the begining and the end but middle part doesn't match
         BasicMatchPattern pattern {
-                     boost::as_literal("http://www.yahoo.com"), true, true };
+                     "http://www.yahoo.com"_r, true, true };
         Uri uri { "http://www.google.com" };
 
         EXPECT_EQ(false, pattern.match(uri));
@@ -140,7 +139,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
 {
     {   // single asterisk at middle of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("www*com")
+            "www*com"_r
         };
         Uri uri { "http://www.goole.com" };
 
@@ -148,7 +147,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two asterisks at middle of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("www*com*jpg")
+            "www*com*jpg"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -156,7 +155,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // one asterisk at left of the pattern (right asterisk is implied)
         BasicMatchPattern pattern {
-            boost::as_literal("*com")
+            "*com"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -164,7 +163,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // one asterisk at right of the pattern (left asterisk is implied)
         BasicMatchPattern pattern {
-            boost::as_literal("www*")
+            "www*"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -172,7 +171,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two asterisks at both end of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("*www*")
+            "*www*"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -180,7 +179,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two consecutive asterisks at middle of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("www**com")
+            "www**com"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -188,7 +187,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // three consecutive asterisks at middle of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("www***com")
+            "www***com"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -196,7 +195,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two consecutive asterisks at front of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("**www")
+            "**www"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -204,7 +203,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two consecutive asterisks at back of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("www**")
+            "www**"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -212,7 +211,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // two consecutive asterisks at both end of the pattern
         BasicMatchPattern pattern {
-            boost::as_literal("**www**")
+            "**www**"_r
         };
         Uri uri { "http://www.goole.com/image/top.jpg" };
 
@@ -220,7 +219,7 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
     }
     {   // it doesn't care about asterisks in the URI
         BasicMatchPattern pattern {
-            boost::as_literal("image*jpg")
+            "image*jpg"_r
         };
         Uri uri { "http://www.google.com/imag*/top.j*g" };
 
@@ -231,23 +230,24 @@ TEST(Pattern_BasicMatchPattern, WildcardMatch)
 TEST(Pattern_BasicMatchPattern, Separator)
 {
     BasicMatchPattern pattern {
-        boost::as_literal("image^")
+        "image^"_r
     };
 
-    using CharacterRange = const boost::iterator_range<
-                                      const std::string::const_iterator>;
-    const auto &isSeparator = [&pattern](const CharacterRange list,
-                                         const bool expected)
-    {
-        for (auto c: list) {
-            Uri uri {
-                str(boost::format {
-                    "http://www.google.com/image%ctop.jpg"
-                } % c)
-            };
-            EXPECT_EQ(expected, pattern.match(uri)) << "[" << c << "]";
-        }
-    };
+    using CharacterRange =
+        boost::iterator_range<std::string::const_iterator>;
+
+    auto isSeparator =
+        [&](CharacterRange const list, bool const expected)
+        {
+            for (auto c: list) {
+                Uri uri {
+                    str(boost::format {
+                        "http://www.google.com/image%ctop.jpg"
+                    } % c)
+                };
+                EXPECT_EQ(expected, pattern.match(uri)) << "[" << c << "]";
+            }
+        };
 
     // doesn't match with alphabets, digits and other characters
     // defined in the specification.
@@ -286,13 +286,13 @@ TEST(Pattern_BasicMatchPattern, Separator)
 TEST(Pattern_BasicMatchPattern, EndOfLineAsSeparator)
 {
     {
-        BasicMatchPattern pattern { boost::as_literal("com^") };
+        BasicMatchPattern pattern { "com^"_r };
         Uri uri { "http://www.google.com/" };
 
         EXPECT_TRUE(pattern.match(uri));
     }
     {
-        BasicMatchPattern pattern { boost::as_literal("com^") };
+        BasicMatchPattern pattern { "com^"_r };
         Uri uri { "http://www.google.com" };
 
         EXPECT_TRUE(pattern.match(uri));
@@ -302,29 +302,48 @@ TEST(Pattern_BasicMatchPattern, EndOfLineAsSeparator)
 TEST(Pattern_BasicMatchPattern, MatchShouldBeCaseInsensitive1)
 {
     BasicMatchPattern pattern { ".jpg"_r };
-    const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
+    auto const& uri = "http://www.adblock.org/SomeThing.Jpg"_u;
     EXPECT_TRUE(pattern.match(uri));
 }
 
 TEST(Pattern_BasicMatchPattern, MatchShouldBeCaseInsensitive2)
 {
     BasicMatchPattern pattern { ".Jpg"_r };
-    const auto &uri = "http://www.adblock.org/something.jpg"_u;
+    auto const& uri = "http://www.adblock.org/something.jpg"_u;
     EXPECT_TRUE(pattern.match(uri));
 }
 
 TEST(Pattern_BasicMatchPattern, CaseSensitiveMatch)
 {
     BasicMatchPattern pattern { ".Jpg"_r };
-    const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
+    auto const& uri = "http://www.adblock.org/SomeThing.Jpg"_u;
     EXPECT_TRUE(pattern.match(uri, true));
 }
 
 TEST(Pattern_BasicMatchPattern, CaseSensitiveUnmatch)
 {
     BasicMatchPattern pattern { ".jpg"_r };
-    const auto &uri = "http://www.adblock.org/SomeThing.Jpg"_u;
+    auto const& uri = "http://www.adblock.org/SomeThing.Jpg"_u;
     EXPECT_FALSE(pattern.match(uri, true));
+}
+
+TEST(Pattern_BasicMatchPattern, InvalidUseOfAnchor1)
+{
+    BasicMatchPattern pattern { "*foo"_r, true };
+    EXPECT_TRUE(!pattern.isBeginMatch());
+}
+
+TEST(Pattern_BasicMatchPattern, InvalidUseOfAnchor2)
+{
+    BasicMatchPattern pattern { "*foo*"_r, false, true };
+    EXPECT_TRUE(!pattern.isEndMatch());
+}
+
+TEST(Pattern_BasicMatchPattern, InvalidUseOfAnchor3)
+{
+    BasicMatchPattern pattern { "*foo*"_r, true, true };
+    EXPECT_TRUE(!pattern.isBeginMatch());
+    EXPECT_TRUE(!pattern.isEndMatch());
 }
 
 } // namespace adblock

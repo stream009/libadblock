@@ -6,38 +6,63 @@
 #include <iterator>
 #include <ostream>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
-void SuffixMatchFilterRuleSet::
-doPut(const FilterRule &rule)
+static StringRange
+lastToken(StringRange pattern)
 {
-    const auto *pattern =
-                dynamic_cast<const BasicMatchPattern*>(&rule.pattern());
+    namespace ba = boost::algorithm;
+
+    auto isWildcard = [](auto c) { return c == '*'; };
+
+    pattern = ba::trim_right_copy_if(pattern, isWildcard);
+
+    auto it = pattern.end();
+    auto const begin = pattern.begin();
+
+    while (it != begin) {
+        --it;
+        if (*it == '*') break;
+    }
+
+    if (it == begin) {
+        return { begin, pattern.end() };
+    }
+    else {
+        return { it + 1, pattern.end() };
+    }
+
+}
+
+void SuffixMatchFilterRuleSet::
+doPut(FilterRule const& rule)
+{
+    auto* const pattern =
+                dynamic_cast<BasicMatchPattern const*>(&rule.pattern());
     assert(pattern);
     assert(pattern->isEndMatch());
-    const auto &tokens = pattern->tokens();
-    assert(!tokens.empty());
-    const auto &token = tokens.back();
-    const ReverseStringRange reverseToken { token.end(), token.begin() };
+
+    auto const token = lastToken(pattern->pattern());
+    ReverseStringRange const reverseToken { token.end(), token.begin() };
     m_rules.insert(reverseToken, &rule);
 }
 
 SuffixMatchFilterRuleSet::FilterRules SuffixMatchFilterRuleSet::
-doQuery(const Uri &uri) const
+doQuery(Uri const& uri) const
 {
-    std::vector<const FilterRule*> results;
-    const auto &inserter = std::back_inserter(results);
+    std::vector<FilterRule const*> results;
+    auto inserter = std::back_inserter(results);
 
-    const char *begin = &(*uri.begin());
-    const char* const end = begin + std::distance(uri.begin(), uri.end());
+    char const* begin = &(*uri.begin());
+    char const* const end = begin + std::distance(uri.begin(), uri.end());
 
-    const ReverseStringRange uriR { end, begin };
+    ReverseStringRange const uriR { end, begin };
 
-    using Node = Rules::NodeType;
     m_rules.traverse(uriR,
-        [&inserter] (const Node &node, const Node::Key&) {
+        [&](auto &node, auto&) {
             if (node.hasValue()) {
                 boost::copy(node.values(), inserter);
             }

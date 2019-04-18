@@ -1,5 +1,7 @@
 #include "prefix_match_filter_rule_set.hpp"
 
+#include "utility.hpp"
+
 #include "pattern/basic_match_pattern.hpp"
 
 #include <cassert>
@@ -13,29 +15,28 @@ namespace adblock {
 void PrefixMatchFilterRuleSet::
 doPut(const FilterRule &rule)
 {
-    const auto *pattern =
-                dynamic_cast<const BasicMatchPattern*>(&rule.pattern());
+    auto* const pattern =
+                dynamic_cast<BasicMatchPattern const*>(&rule.pattern());
     assert(pattern);
     assert(pattern->isBeginMatch());
-    const auto &tokens = pattern->tokens();
-    assert(!tokens.empty());
-    m_rules.insert(tokens.front(), &rule);
+
+    auto const token = firstToken(pattern->pattern());
+    m_rules.insert(token, &rule);
 }
 
 PrefixMatchFilterRuleSet::FilterRules PrefixMatchFilterRuleSet::
-doQuery(const Uri &uri) const
+doQuery(Uri const& uri) const
 {
-    std::vector<const FilterRule*> results;
-    const auto &inserter = std::back_inserter(results);
+    std::vector<FilterRule const*> results;
+    auto inserter = std::back_inserter(results);
 
-    const char *begin = &(*uri.begin());
-    const char* const end = begin + std::distance(uri.begin(), uri.end());
+    char const* begin = &(*uri.begin());
+    char const* const end = begin + std::distance(uri.begin(), uri.end());
 
-    const StringRange uriR { begin, end, };
+    StringRange const uriR { begin, end, };
 
-    using Node = Rules::NodeType;
     m_rules.traverse(uriR,
-        [&inserter] (const Node &node, const Node::Key&) {
+        [&](auto& node, auto&) {
             if (node.hasValue()) {
                 boost::copy(node.values(), inserter);
             }

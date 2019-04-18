@@ -14,12 +14,13 @@ public:
     DomainMatchPattern(StringRange const& pattern,
                        bool endMatch = false);
 
+    // query
     bool isEndMatch() const { return m_endAnchor; }
+    StringRange domainPattern() const;
 
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(Uri const&, bool caseSensitive) const override;
-    Tokens doTokens() const override;
 
 private:
     bool m_endAnchor = false;

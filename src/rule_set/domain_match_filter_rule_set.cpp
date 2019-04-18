@@ -1,5 +1,7 @@
 #include "domain_match_filter_rule_set.hpp"
 
+#include "utility.hpp"
+
 #include "pattern/domain_match_pattern.hpp"
 
 #include <cassert>
@@ -11,35 +13,33 @@
 namespace adblock {
 
 void DomainMatchFilterRuleSet::
-doPut(const FilterRule &rule)
+doPut(FilterRule const& rule)
 {
-    const auto *pattern =
-                dynamic_cast<const DomainMatchPattern*>(&rule.pattern());
+    auto* const pattern =
+                dynamic_cast<DomainMatchPattern const*>(&rule.pattern());
     assert(pattern);
 
-    const auto &tokens = pattern->tokens();
-    assert(!tokens.empty());
-    m_rules.insert(tokens.front(), &rule);
+    auto const token = firstToken(pattern->domainPattern());
+    m_rules.insert(token, &rule);
 }
 
 DomainMatchFilterRuleSet::FilterRules DomainMatchFilterRuleSet::
-doQuery(const Uri &uri) const
+doQuery(Uri const& uri) const
 {
-    const auto &host = uri.host();
+    auto const& host = uri.host();
     if (host.empty()) return {};
 
-    std::vector<const FilterRule*> results;
-    const auto &inserter = std::back_inserter(results);
+    std::vector<FilterRule const*> results;
+    auto inserter = std::back_inserter(results);
 
-    const char *begin = host.data();
-    const char* const end = begin + host.size();
+    char const* it = host.data();
+    char const* const end = it + host.size();
 
-    for (; begin != end; ++begin) {
-        const StringRange suffix { begin, end, };
+    for (; it != end; ++it) {
+        StringRange const suffix { it, end, };
 
-        using Node = Rules::NodeType;
         m_rules.traverse(suffix,
-            [&inserter] (const Node &node, const Node::Key&) {
+            [&](auto& node, auto&) {
                 if (node.hasValue()) {
                     boost::copy(node.values(), inserter);
                 }

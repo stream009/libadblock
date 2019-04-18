@@ -26,11 +26,8 @@ public:
 
     StringRange const& pattern() const { return m_str; }
 
-    Tokens tokens() const { return doTokens(); }
-
 protected:
     virtual bool doMatchUrl(Uri const&, bool caseSensitive) const = 0;
-    virtual Tokens doTokens() const = 0;
 
     BaseMatchPattern(StringRange const& range);
 

@@ -17,12 +17,12 @@ class SuffixMatchFilterRuleSet : public FilterRuleSet
 public:
     using Base::FilterRules;
     using ReverseStringRange =
-        boost::iterator_range<std::reverse_iterator<const char*>>;
-    using Rules = rule_set::Rules<ReverseStringRange, const FilterRule*>;
+        boost::iterator_range<std::reverse_iterator<char const*>>;
+    using Rules = rule_set::Rules<ReverseStringRange, FilterRule const*>;
 
 private:
-    void doPut(const FilterRule&) override;
-    FilterRules doQuery(const Uri&) const override;
+    void doPut(FilterRule const&) override;
+    FilterRules doQuery(Uri const&) const override;
     boost::property_tree::ptree doStatistics() const override;
     void doClear() override;
 

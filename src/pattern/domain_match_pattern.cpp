@@ -61,6 +61,14 @@ DomainMatchPattern(StringRange const& pattern,
     }
 }
 
+StringRange DomainMatchPattern::
+domainPattern() const
+{
+    auto [result, _] = splitPattern(this->pattern());
+
+    return result;
+}
+
 bool DomainMatchPattern::
 doMatchUrl(Uri const& url, bool const caseSensitive) const
 {
@@ -88,20 +96,6 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
     ba::split(tokens, p_path, isWildcard, ba::token_compress_on);
 
     return this->doMatch(t_path, tokens, true, m_endAnchor, caseSensitive);
-}
-
-BaseMatchPattern::Tokens DomainMatchPattern::
-doTokens() const
-{
-    namespace ba = boost::algorithm;
-
-    auto [pattern, _] = splitPattern(this->pattern()); //TODO why?
-    Base::Tokens tokens;
-
-    pattern = ba::trim_copy_if(pattern, isWildcard);
-    ba::split(tokens, pattern, isWildcard, ba::token_compress_on);
-
-    return tokens;
 }
 
 } // namespace adblock

@@ -23,19 +23,9 @@ BasicMatchPattern(StringRange const& pattern,
 bool BasicMatchPattern::
 doMatchUrl(Uri const& uri, bool const caseSensitive) const
 {
-    StringRange const target { &*uri.begin(), &*uri.end() };
-
-    return this->doMatch(
-        target, doTokens(),
-        m_anchor & Begin, m_anchor & End,
-        caseSensitive
-    );
-}
-
-BaseMatchPattern::Tokens BasicMatchPattern::
-doTokens() const
-{
     namespace ba = boost::algorithm;
+
+    StringRange const target { &*uri.begin(), &*uri.end() };
 
     auto pattern = this->pattern();
     auto pred = [](auto c) { return c == '*'; };
@@ -44,7 +34,11 @@ doTokens() const
     pattern = ba::trim_copy_if(pattern, pred);
     ba::split(tokens, pattern, pred, ba::token_compress_on);
 
-    return tokens;
+    return this->doMatch(
+        target, tokens,
+        m_anchor & Begin, m_anchor & End,
+        caseSensitive
+    );
 }
 
 } // namespace adblock

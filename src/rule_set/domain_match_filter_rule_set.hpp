@@ -14,12 +14,12 @@ class DomainMatchFilterRuleSet : public FilterRuleSet
     using Base = FilterRuleSet;
 public:
     using Base::FilterRules;
-    using Rules = rule_set::Rules<StringRange, const FilterRule*>;
+    using Rules = rule_set::Rules<StringRange, FilterRule const*>;
 
 private:
     // @override FilterRuleSet
-    void doPut(const FilterRule&) override;
-    FilterRules doQuery(const Uri&) const override;
+    void doPut(FilterRule const&) override;
+    FilterRules doQuery(Uri const&) const override;
     boost::property_tree::ptree doStatistics() const override;
     void doClear() override;
 

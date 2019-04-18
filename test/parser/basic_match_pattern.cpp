@@ -27,7 +27,6 @@ TEST(Parser_BasicMatchPattern, Basic)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
     EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
 TEST(Parser_BasicMatchPattern, BeginMatch)
@@ -45,7 +44,6 @@ TEST(Parser_BasicMatchPattern, BeginMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
     EXPECT_TRUE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
 TEST(Parser_BasicMatchPattern, EndMatch)
@@ -63,7 +61,6 @@ TEST(Parser_BasicMatchPattern, EndMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
     EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_TRUE(pattern.isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
 TEST(Parser_BasicMatchPattern, ExactMatch)
@@ -81,7 +78,6 @@ TEST(Parser_BasicMatchPattern, ExactMatch)
     EXPECT_EQ("adblock", boost::lexical_cast<std::string>(pattern));
     EXPECT_TRUE(pattern.isBeginMatch());
     EXPECT_TRUE(pattern.isEndMatch());
-    EXPECT_EQ("adblock"_r, pattern.tokens().front());
 }
 
 TEST(Parser_BasicMatchPattern, BarInMiddleOfPattern)
@@ -99,7 +95,6 @@ TEST(Parser_BasicMatchPattern, BarInMiddleOfPattern)
     EXPECT_EQ("ad|block", boost::lexical_cast<std::string>(pattern));
     EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
-    EXPECT_EQ("ad|block"_r, pattern.tokens().front());
 }
 
 TEST(Parser_BasicMatchPattern, MultiTokenPattern)
@@ -117,5 +112,4 @@ TEST(Parser_BasicMatchPattern, MultiTokenPattern)
     EXPECT_EQ("ad*block", boost::lexical_cast<std::string>(pattern));
     EXPECT_FALSE(pattern.isBeginMatch());
     EXPECT_FALSE(pattern.isEndMatch());
-    EXPECT_EQ("ad"_r, pattern.tokens().front());
 }

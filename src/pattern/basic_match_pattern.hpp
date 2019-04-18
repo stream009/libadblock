@@ -23,7 +23,6 @@ public:
 private:
     // @override BaseMatchPattern
     bool doMatchUrl(Uri const&, bool caseSensitive) const override;
-    Base::Tokens doTokens() const override;
 
 private:
     Anchor m_anchor = None;

@@ -52,7 +52,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
 
     if (tokens.empty()) return true;
 
-    auto tokensCopy = tokens;
+    auto tokensCopy = tokens; //TODO no need to copy
     auto range = target;
     std::optional<std::string> uriCopy;
     Equals const compare { caseSensitive };

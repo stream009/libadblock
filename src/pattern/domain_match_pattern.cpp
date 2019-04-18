@@ -45,6 +45,20 @@ isWildcard(char const c)
     return c == '*';
 }
 
+static StringRange
+subDomain(StringRange const host)
+{
+    auto const end = host.end();
+    auto it = std::find(host.begin(), end, '.');
+
+    if (it == end) {
+        return { end, end };
+    }
+    else {
+        return { it + 1, end };
+    }
+}
+
 //
 // DomainMatchPattern
 //
@@ -81,6 +95,7 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
 
     Base::Tokens tokens;
 
+    bool const t_beginAnchor = p_host.front() != '*';
     bool const t_endAnchor = !p_path.empty() && (p_host.back() != '*');
 
     p_host = ba::trim_copy_if(p_host, isWildcard);
@@ -88,8 +103,15 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
 
     ba::split(tokens, p_host, isWildcard, ba::token_compress_on);
 
-    if (!this->doMatch(t_host, tokens, false, t_endAnchor, caseSensitive)) {
-        return false;
+    while (true) {
+        auto const match = this->doMatch(
+                t_host, tokens, t_beginAnchor, t_endAnchor, caseSensitive);
+        if (match) break;
+
+        t_host = subDomain(t_host);
+        if (t_host.empty()) {
+            return false;
+        }
     }
 
     tokens.clear();

@@ -96,7 +96,8 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
     Base::Tokens tokens;
 
     bool const t_beginAnchor = p_host.front() != '*';
-    bool const t_endAnchor = !p_path.empty() && (p_host.back() != '*');
+    bool const t_endAnchor = !p_path.empty() && p_host.back() != '*';
+    bool const p_beginAnchor = !p_path.empty() && p_path.front() != '*';
 
     p_host = ba::trim_copy_if(p_host, isWildcard);
     p_path = ba::trim_copy_if(p_path, isWildcard);
@@ -117,7 +118,7 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
     tokens.clear();
     ba::split(tokens, p_path, isWildcard, ba::token_compress_on);
 
-    return this->doMatch(t_path, tokens, true, m_endAnchor, caseSensitive);
+    return this->doMatch(t_path, tokens, p_beginAnchor, m_endAnchor, caseSensitive);
 }
 
 } // namespace adblock

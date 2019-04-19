@@ -246,4 +246,18 @@ TEST(Pattern_DomainMatchPattern, DomainPatternMustMatchWithDotBoundary)
     }
 }
 
+TEST(Pattern_DomainMatchPattern, PathEndsWithWildcard)
+{
+    DomainMatchPattern pattern { "reddit.com^*_sponsor.png?"_r };
+
+    {
+        Uri url { "https://www.reddit.com/r/all" };
+        EXPECT_FALSE(pattern.match(url));
+    }
+    {
+        Uri url { "https://www.reddit.com/all/an_sponsor.png?" };
+        EXPECT_TRUE(pattern.match(url));
+    }
+}
+
 } // namespace adblock

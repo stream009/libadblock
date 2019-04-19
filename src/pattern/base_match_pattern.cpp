@@ -71,7 +71,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
     }
 
     if (beginAnchor) {
-        auto const& firstToken = tokensCopy.front();
+        auto const firstToken = tokensCopy.front();
         if (!ba::starts_with(range, firstToken, compare)) {
             return false;
         }

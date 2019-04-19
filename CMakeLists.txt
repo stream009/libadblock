@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(libadblock C CXX)
+project(libadblock
+    VERSION 1.1.3
+    LANGUAGES C CXX
+)
 
 add_subdirectory(src)
 add_subdirectory(third_party/adblock_parser)
@@ -10,3 +13,5 @@ if(BUILD_TESTING)
     add_subdirectory(test)
     add_subdirectory(benchmark)
 endif()
+
+add_subdirectory(arch)

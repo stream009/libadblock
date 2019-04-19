@@ -2,6 +2,7 @@
 
 #include "adblock.hpp"
 #include "context.hpp"
+#include "filter_set.hpp"
 #include "type.hpp"
 
 #include <iostream>
@@ -23,13 +24,13 @@ TEST(Main_AdBlock, Statistics)
     std::locale::global(locale);
     std::cout.imbue(locale);
 
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     AdBlock adBlock;
     adBlock.addFilterSet(path);
 
-    const auto &stats = adBlock.statistics();
+    auto const& stats = adBlock.statistics();
     //boost::property_tree::write_json(std::cout, stats);
 
     EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
@@ -39,7 +40,7 @@ TEST(Main_AdBlock, Statistics)
 
 TEST(Main_AdBlock, DISABLED_EasyList)
 {
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     boost::timer::cpu_timer t;
@@ -51,7 +52,7 @@ TEST(Main_AdBlock, DISABLED_EasyList)
 
 TEST(Main_AdBlock, DISABLED_Fanboy)
 {
-    const auto &path = projectRoot / "test/data/fanboy.txt";
+    auto const& path = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     AdBlock adBlock;
@@ -60,20 +61,20 @@ TEST(Main_AdBlock, DISABLED_Fanboy)
 
 TEST(Main_AdBlock, DISABLED_elementHideRule)
 {
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     AdBlock adBlock;
     adBlock.addFilterSet(path);
     boost::timer::cpu_timer t;
-    const auto &css = adBlock.elementHideCss("http://www.adblockplus.org/"_u);
+    auto const& css = adBlock.elementHideCss("http://www.adblockplus.org/"_u);
     t.stop();
     std::cout << css.size() << "\n" << t.format();
 }
 
 TEST(Main_AdBlock, Reload)
 {
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     boost::timer::cpu_timer t;
@@ -106,38 +107,38 @@ TEST(Main_AdBlock, FilterSets)
 {
     AdBlock adBlock;
 
-    const auto &path1 = projectRoot / "test/data/easylist.txt";
+    auto const& path1 = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path1)) << path1;
 
     adBlock.addFilterSet(path1);
 
-    const auto &path2 = projectRoot / "test/data/fanboy.txt";
+    auto const& path2 = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path2)) << path2;
 
     adBlock.addFilterSet(path2);
 
-    const auto &path3 = projectRoot / "test/data/customlist.txt";
+    auto const& path3 = projectRoot / "test/data/customlist.txt";
     ASSERT_TRUE(bfs::exists(path3)) << path3;
 
     adBlock.addFilterSet(path3);
 
-    const auto &filterSets = adBlock.filterSets();
+    auto const& filterSets = adBlock.filterSets();
     EXPECT_EQ(3, filterSets.size());
 
     auto it = boost::find_if(filterSets,
-        [&](const FilterSet &filterSet) {
+        [&](auto& filterSet) {
             return path1 == filterSet.path();
         });
     EXPECT_NE(it, filterSets.end());
 
     it = boost::find_if(filterSets,
-        [&](const FilterSet &filterSet) {
+        [&](auto& filterSet) {
             return path2 == filterSet.path();
         });
     EXPECT_NE(it, filterSets.end());
 
     it = boost::find_if(filterSets,
-        [&](const FilterSet &filterSet) {
+        [&](auto& filterSet) {
             return path3 == filterSet.path();
         });
     EXPECT_NE(it, filterSets.end());
@@ -147,24 +148,24 @@ TEST(Main_AdBlock, RemoveFilterSet)
 {
     AdBlock adBlock;
 
-    const auto &path1 = projectRoot / "test/data/easylist.txt";
+    auto const& path1 = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path1)) << path1;
 
     adBlock.addFilterSet(path1);
 
-    const auto &path2 = projectRoot / "test/data/fanboy.txt";
+    auto const& path2 = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path2)) << path2;
 
     adBlock.addFilterSet(path2);
 
     EXPECT_EQ(2, adBlock.filterSets().size());
 
-    const auto &beforeStats = adBlock.statistics();
+    auto const& beforeStats = adBlock.statistics();
     //std::cout << beforeStats.get<size_t>("Total") << "\n";
     ASSERT_EQ(66244, beforeStats.get<size_t>("Total"));
 
     auto it = boost::find_if(adBlock.filterSets(),
-        [&](const FilterSet &filterSet) {
+        [&](auto& filterSet) {
             return path1 == filterSet.path();
         });
     EXPECT_NE(it, adBlock.filterSets().end());
@@ -173,7 +174,7 @@ TEST(Main_AdBlock, RemoveFilterSet)
 
     EXPECT_EQ(1, adBlock.filterSets().size());
 
-    const auto &afterStats = adBlock.statistics();
+    auto const& afterStats = adBlock.statistics();
     //std::cout << afterStats.get<size_t>("Total") << "\n";
     ASSERT_EQ(11922, afterStats.get<size_t>("Total"));
 
@@ -186,7 +187,7 @@ TEST(Main_AdBlock, FilterSet)
 {
     AdBlock adBlock;
 
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     adBlock.addFilterSet(path);

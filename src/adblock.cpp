@@ -1,5 +1,7 @@
 #include "adblock.hpp"
 
+#include "context.hpp"
+#include "filter_set.hpp"
 #include "parser/parser.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"
@@ -12,7 +14,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/range/adaptor/indirected.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
@@ -26,15 +27,17 @@ AdBlock()
     , m_elementHideRuleBase { m_filterRuleBase }
 {}
 
+AdBlock::~AdBlock() = default;
+
 //TODO: make origin uri into array of uris.
-std::pair<bool, const FilterRule*> AdBlock::
-shouldBlock(const Uri &uri, const Context &context) const
+std::pair<bool, FilterRule const*> AdBlock::
+shouldBlock(Uri const& uri, Context const& context) const
 {
     return m_filterRuleBase.query(uri, context);
 }
 
 std::string AdBlock::
-elementHideCss(const Uri &uri) const
+elementHideCss(Uri const& uri) const
 {
     return m_elementHideRuleBase.query(uri); //TODO site key
 }
@@ -131,11 +134,12 @@ addFilterSet(Path const& filePath)
 void AdBlock::
 removeFilterSet(Path const& filePath)
 {
-    const auto &it = boost::find_if(m_filterSets,
-        [&](const FilterSetPtr &ptr) {
+    auto const it = boost::find_if(m_filterSets,
+        [&](auto& ptr) {
             return ptr->path() == filePath;
         });
-    assert(it != m_filterSets.end());
+
+    if (it == m_filterSets.end()) return;
 
     m_filterSets.erase(it);
 
@@ -145,11 +149,12 @@ removeFilterSet(Path const& filePath)
 void AdBlock::
 removeFilterSet(FilterSet const& filterSet)
 {
-    const auto &it = boost::find_if(m_filterSets,
-        [&](const FilterSetPtr &ptr) {
+    auto const it = boost::find_if(m_filterSets,
+        [&](auto& ptr) {
             return ptr.get() == &filterSet;
         });
-    assert(it != m_filterSets.end());
+
+    if (it == m_filterSets.end()) return;
 
     m_filterSets.erase(it);
 
@@ -162,7 +167,7 @@ reload()
     m_filterRuleBase.clear();
     m_elementHideRuleBase.clear();
 
-    for (const auto &filterSet: m_filterSets) {
+    for (auto const& filterSet: m_filterSets) {
         filterSet->reload();
 
         registerFilterSetToRuleBases(filterSet);
@@ -170,26 +175,26 @@ reload()
 }
 
 void AdBlock::
-registerFilterSetToRuleBases(const FilterSetPtr &filterSet)
+registerFilterSetToRuleBases(FilterSetPtr const& filterSet)
 {
-    for (const auto &rule: filterSet->rules()) {
-        if (const auto *ptr = dynamic_cast<const BasicFilterRule*>(&rule)) {
+    for (auto const& rule: filterSet->rules()) {
+        if (auto* const ptr = dynamic_cast<BasicFilterRule const*>(&rule)) {
             assert(ptr);
             m_filterRuleBase.put(*ptr);
         }
-        else if (const auto *ptr =
-                          dynamic_cast<const ExceptionFilterRule*>(&rule))
+        else if (auto* const ptr =
+                          dynamic_cast<ExceptionFilterRule const*>(&rule))
         {
             assert(ptr);
             m_filterRuleBase.put(*ptr);
         }
-        else if (const auto *ptr =
-                            dynamic_cast<const ElementHideRule*>(&rule))
+        else if (auto* const ptr =
+                            dynamic_cast<ElementHideRule const*>(&rule))
         {
             assert(ptr);
             m_elementHideRuleBase.put(*ptr);
         }
-        else if (dynamic_cast<const CommentRule*>(&rule)) {
+        else if (dynamic_cast<CommentRule const*>(&rule)) {
             // comment rule will be skipped
         }
         else {

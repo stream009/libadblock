@@ -1,10 +1,8 @@
 #ifndef ADBLOCK_HPP
 #define ADBLOCK_HPP
 
-#include "context.hpp"
 #include "element_hide_rule_base.hpp"
 #include "filter_rule_base.hpp"
-#include "filter_set.hpp"
 #include "type.hpp"
 
 #include <memory>
@@ -12,26 +10,30 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
-#include <boost/range/iterator_range.hpp>
+#include <boost/range/adaptor/indirected.hpp>
 
 namespace adblock {
+
+class Context;
+class FilterSet;
 
 class AdBlock
 {
 public:
     using FilterSetPtr = std::unique_ptr<FilterSet>;
     using FilterSetPtrs = std::vector<FilterSetPtr>;
-    using FilterSetRng = boost::indirected_range<const FilterSetPtrs>;
+    using FilterSetRng = boost::indirected_range<FilterSetPtrs const>;
     using Path = boost::filesystem::path;
 
 public:
     AdBlock();
+    ~AdBlock();
 
     // query
-    std::pair<bool, const FilterRule*>
-        shouldBlock(const Uri&, const Context&) const;
+    std::pair<bool, FilterRule const*>
+        shouldBlock(Uri const&, Context const&) const;
 
-    std::string elementHideCss(const Uri&) const;
+    std::string elementHideCss(Uri const&) const;
 
     std::vector<StringRange> extendedElementHideSelector(Uri const&) const;
 

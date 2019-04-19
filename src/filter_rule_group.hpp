@@ -21,12 +21,12 @@ class FilterRuleGroup
 public:
     // query
     FilterRule const* query(Uri const&, Context const&,
-                            bool const genericDisabled = false) const;
+                            bool genericDisabled = false) const;
 
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void put(const FilterRule&);
+    void put(FilterRule const&);
     void clear();
 
 private:
@@ -34,7 +34,7 @@ private:
     SuffixMatchFilterRuleSet m_suffix;
     SubstringMatchFilterRuleSet m_substring;
     DomainMatchFilterRuleSet m_domain;
-    std::vector<const FilterRule*> m_regex;
+    std::vector<FilterRule const*> m_regex;
 };
 
 } // namespace adblock

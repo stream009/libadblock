@@ -13,11 +13,11 @@
 namespace adblock {
 
 void FilterRuleGroup::
-put(const FilterRule &rule)
+put(FilterRule const& rule)
 {
-    const auto &pattern = rule.pattern();
-    if (const auto *patternP =
-                dynamic_cast<const BasicMatchPattern*>(&pattern))
+    auto const& pattern = rule.pattern();
+    if (auto* const patternP =
+                dynamic_cast<BasicMatchPattern const*>(&pattern))
     {
         if (patternP->isBeginMatch()) {
             m_prefix.put(rule);
@@ -54,19 +54,19 @@ const FilterRule *FilterRuleGroup::
 query(Uri const& uri, Context const& context,
                       bool const specificOnly/*= false*/) const
 {
-    for (const auto *rule: m_prefix.query(uri)) {
+    for (auto* const rule: m_prefix.query(uri)) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }
-    for (const auto *rule: m_suffix.query(uri)) {
+    for (auto* const rule: m_suffix.query(uri)) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }
-    for (const auto *rule: m_domain.query(uri)) {
+    for (auto* const rule: m_domain.query(uri)) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }
-    for (const auto *rule: m_substring.query(uri)) {
+    for (auto* const rule: m_substring.query(uri)) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }
-    for (const auto *rule: m_regex) {
+    for (auto* const rule: m_regex) {
         if (rule->match(uri, context, specificOnly)) return rule;
     }
 

@@ -1,4 +1,4 @@
-#include "suffix_match_filter_rule_set.hpp"
+#include "suffix_match_filter_rule_map.hpp"
 
 #include "pattern/basic_match_pattern.hpp"
 
@@ -37,7 +37,7 @@ lastToken(StringRange pattern)
 
 }
 
-void SuffixMatchFilterRuleSet::
+void SuffixMatchFilterRuleMap::
 doPut(FilterRule const& rule)
 {
     auto* const pattern =
@@ -50,7 +50,7 @@ doPut(FilterRule const& rule)
     m_rules.insert(reverseToken, &rule);
 }
 
-SuffixMatchFilterRuleSet::FilterRules SuffixMatchFilterRuleSet::
+SuffixMatchFilterRuleMap::FilterRules SuffixMatchFilterRuleMap::
 doQuery(Uri const& uri) const
 {
     std::vector<FilterRule const*> results;
@@ -74,13 +74,13 @@ doQuery(Uri const& uri) const
     return results;
 }
 
-boost::property_tree::ptree SuffixMatchFilterRuleSet::
+boost::property_tree::ptree SuffixMatchFilterRuleMap::
 doStatistics() const
 {
     return m_rules.statistics();
 }
 
-void SuffixMatchFilterRuleSet::
+void SuffixMatchFilterRuleMap::
 doClear()
 {
     m_rules.clear();

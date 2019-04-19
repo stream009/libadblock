@@ -1,22 +1,22 @@
-#ifndef ADBLOCK_FILTER_RULE_SET_HPP
-#define ADBLOCK_FILTER_RULE_SET_HPP
+#ifndef ADBLOCK_FILTER_RULE_MAP_HPP
+#define ADBLOCK_FILTER_RULE_MAP_HPP
 
 #include "type.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <vector>
 
-#include <boost/property_tree/ptree_fwd.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
-class FilterRuleSet
+class FilterRuleMap
 {
 public:
     using FilterRules = std::vector<const FilterRule*>;
 public:
     // constructor / destructor
-    virtual ~FilterRuleSet() = default;
+    virtual ~FilterRuleMap() = default;
 
     // modifier
     void put(const FilterRule &rule) { doPut(rule); }
@@ -35,4 +35,4 @@ private:
 
 } // namespace adblock
 
-#endif // ADBLOCK_FILTER_RULE_SET_HPP
+#endif // ADBLOCK_FILTER_RULE_MAP_HPP

@@ -1,4 +1,4 @@
-#include "filter_rule_group.hpp"
+#include "filter_rule_index.hpp"
 
 #include "context.hpp"
 #include "rule/filter_rule.hpp"
@@ -12,7 +12,30 @@
 
 namespace adblock {
 
-void FilterRuleGroup::
+FilterRule const* FilterRuleIndex::
+query(Uri const& uri, Context const& context,
+                      bool const specificOnly/*= false*/) const
+{
+    for (auto* const rule: m_prefix.query(uri)) {
+        if (rule->match(uri, context, specificOnly)) return rule;
+    }
+    for (auto* const rule: m_suffix.query(uri)) {
+        if (rule->match(uri, context, specificOnly)) return rule;
+    }
+    for (auto* const rule: m_domain.query(uri)) {
+        if (rule->match(uri, context, specificOnly)) return rule;
+    }
+    for (auto* const rule: m_substring.query(uri)) {
+        if (rule->match(uri, context, specificOnly)) return rule;
+    }
+    for (auto* const rule: m_regex) {
+        if (rule->match(uri, context, specificOnly)) return rule;
+    }
+
+    return nullptr;
+}
+
+void FilterRuleIndex::
 put(FilterRule const& rule)
 {
     auto const& pattern = rule.pattern();
@@ -40,7 +63,7 @@ put(FilterRule const& rule)
     }
 }
 
-void FilterRuleGroup::
+void FilterRuleIndex::
 clear()
 {
     m_prefix.clear();
@@ -50,30 +73,7 @@ clear()
     m_regex.clear();
 }
 
-const FilterRule *FilterRuleGroup::
-query(Uri const& uri, Context const& context,
-                      bool const specificOnly/*= false*/) const
-{
-    for (auto* const rule: m_prefix.query(uri)) {
-        if (rule->match(uri, context, specificOnly)) return rule;
-    }
-    for (auto* const rule: m_suffix.query(uri)) {
-        if (rule->match(uri, context, specificOnly)) return rule;
-    }
-    for (auto* const rule: m_domain.query(uri)) {
-        if (rule->match(uri, context, specificOnly)) return rule;
-    }
-    for (auto* const rule: m_substring.query(uri)) {
-        if (rule->match(uri, context, specificOnly)) return rule;
-    }
-    for (auto* const rule: m_regex) {
-        if (rule->match(uri, context, specificOnly)) return rule;
-    }
-
-    return nullptr;
-}
-
-boost::property_tree::ptree FilterRuleGroup::
+boost::property_tree::ptree FilterRuleIndex::
 statistics() const
 {
     boost::property_tree::ptree result, detail;

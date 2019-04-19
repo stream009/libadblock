@@ -1,4 +1,4 @@
-#include "substring_match_filter_rule_set.hpp"
+#include "substring_match_filter_rule_map.hpp"
 
 #include "utility.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace adblock {
 
-void SubstringMatchFilterRuleSet::
+void SubstringMatchFilterRuleMap::
 doPut(FilterRule const& rule)
 {
     auto* const pattern =
@@ -23,7 +23,7 @@ doPut(FilterRule const& rule)
     m_rules.insert(token, &rule);
 }
 
-SubstringMatchFilterRuleSet::FilterRules SubstringMatchFilterRuleSet::
+SubstringMatchFilterRuleMap::FilterRules SubstringMatchFilterRuleMap::
 doQuery(Uri const& uri) const
 {
     FilterRules results;
@@ -49,13 +49,13 @@ doQuery(Uri const& uri) const
     return results;
 }
 
-boost::property_tree::ptree SubstringMatchFilterRuleSet::
+boost::property_tree::ptree SubstringMatchFilterRuleMap::
 doStatistics() const
 {
     return m_rules.statistics();
 }
 
-void SubstringMatchFilterRuleSet::
+void SubstringMatchFilterRuleMap::
 doClear()
 {
     m_rules.clear();

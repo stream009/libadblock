@@ -1,4 +1,4 @@
-#include "domained_element_hide_rule_set.hpp"
+#include "domained_element_hide_rule_map.hpp"
 
 #include <ostream>
 #include <string>
@@ -8,7 +8,7 @@
 
 namespace adblock {
 
-void DomainedElementHideRuleSet::
+void DomainedElementHideRuleMap::
 put(ElementHideRule const& rule)
 {
     assert(rule.isDomainRestricted());
@@ -42,7 +42,7 @@ put(ElementHideRule const& rule)
     }
 }
 
-DomainedElementHideRuleSet::ElementHideRules DomainedElementHideRuleSet::
+DomainedElementHideRuleMap::ElementHideRules DomainedElementHideRuleMap::
 query(Uri const& uri) const
 {
     auto const& host = uri.host();
@@ -81,14 +81,14 @@ query(Uri const& uri) const
     return results;
 }
 
-void DomainedElementHideRuleSet::
+void DomainedElementHideRuleMap::
 clear()
 {
     m_normal.clear();
     m_exception.clear();
 }
 
-boost::property_tree::ptree DomainedElementHideRuleSet::
+boost::property_tree::ptree DomainedElementHideRuleMap::
 statistics() const
 {
     auto &&result = m_normal.statistics();

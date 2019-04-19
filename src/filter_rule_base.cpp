@@ -95,7 +95,7 @@ query(Uri const& uri, Context const& context) const
     {
         return std::make_pair(false, rule);
     }
-    else if (auto* const rule = m_exception.query(uri, context)) {
+    else if (auto* rule = m_exception.query(uri, context)) {
         return std::make_pair(false, rule);
     }
     else {

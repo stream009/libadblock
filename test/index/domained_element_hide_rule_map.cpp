@@ -1,7 +1,7 @@
 #include "../parse_rule.hpp"
 
 #include "rule/basic_element_hide_rule.hpp"
-#include "rule_set/domained_element_hide_rule_set.hpp"
+#include "index/domained_element_hide_rule_map.hpp"
 #include "type.hpp"
 
 #include <boost/range/algorithm.hpp>
@@ -10,12 +10,12 @@
 
 using namespace adblock;
 
-TEST(RuleSet_DomainedElementHideRuleSet, Basic)
+TEST(Index_DomainedElementHideRuleMap, Basic)
 {
     auto const rule = parse_rule<BasicElementHideRule>("adblock.org##div"_r);
     ASSERT_TRUE(rule);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule);
 
     auto&& results = ruleSet.query("http://www.adblock.org/ban"_u);
@@ -26,12 +26,12 @@ TEST(RuleSet_DomainedElementHideRuleSet, Basic)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, MultipleDomain)
+TEST(Index_DomainedElementHideRuleMap, MultipleDomain)
 {
     auto const rule = parse_rule<BasicElementHideRule>("adblock.org,google.com##div"_r);
     ASSERT_TRUE(rule);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule);
 
     auto&& results = ruleSet.query("http://www.adblock.org/ban"_u);
@@ -46,12 +46,12 @@ TEST(RuleSet_DomainedElementHideRuleSet, MultipleDomain)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, ExcludedByInverseDomain)
+TEST(Index_DomainedElementHideRuleMap, ExcludedByInverseDomain)
 {
     auto const rule = parse_rule<ElementHideRule>("adblock.org,~sub.adblock.org##div"_r);
     ASSERT_TRUE(rule);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule);
 
     auto&& results = ruleSet.query("http://www.adblock.org/ban"_u);
@@ -62,14 +62,14 @@ TEST(RuleSet_DomainedElementHideRuleSet, ExcludedByInverseDomain)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, MultipleHit)
+TEST(Index_DomainedElementHideRuleMap, MultipleHit)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("adblock.org##div"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicElementHideRule>("sub.adblock.org##table"_r);
     ASSERT_TRUE(rule2);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -87,12 +87,12 @@ TEST(RuleSet_DomainedElementHideRuleSet, MultipleHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, ExcludeOnlyRule)
+TEST(Index_DomainedElementHideRuleMap, ExcludeOnlyRule)
 {
     auto const rule = parse_rule<BasicElementHideRule>("~adblock.org##div"_r);
     ASSERT_TRUE(rule);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule);
 
     auto&& results = ruleSet.query("http://www.adblock.org/something"_u);
@@ -107,7 +107,7 @@ TEST(RuleSet_DomainedElementHideRuleSet, ExcludeOnlyRule)
     EXPECT_EQ(&*rule, results.front());
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, Statistics)
+TEST(Index_DomainedElementHideRuleMap, Statistics)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("adblock.org##div"_r);
     ASSERT_TRUE(rule1);
@@ -116,7 +116,7 @@ TEST(RuleSet_DomainedElementHideRuleSet, Statistics)
     auto const rule3 = parse_rule<BasicElementHideRule>("~adblock.org##div"_r);
     ASSERT_TRUE(rule3);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
     ruleSet.put(*rule3);
@@ -149,7 +149,7 @@ TEST(RuleSet_DomainedElementHideRuleSet, Statistics)
     EXPECT_EQ(1, stats.get<size_t>("Exception only rules"));
 }
 
-TEST(RuleSet_DomainedElementHideRuleSet, Clear)
+TEST(Index_DomainedElementHideRuleMap, Clear)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("adblock.org##div"_r);
     ASSERT_TRUE(rule1);
@@ -158,7 +158,7 @@ TEST(RuleSet_DomainedElementHideRuleSet, Clear)
     auto const rule3 = parse_rule<BasicElementHideRule>("~adblock.org##div"_r);
     ASSERT_TRUE(rule3);
 
-    DomainedElementHideRuleSet ruleSet;
+    DomainedElementHideRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
     ruleSet.put(*rule3);

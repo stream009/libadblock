@@ -1,7 +1,7 @@
 #include "../parse_rule.hpp"
 
 #include "rule/basic_filter_rule.hpp"
-#include "rule_set/substring_match_filter_rule_set.hpp"
+#include "index/substring_match_filter_rule_map.hpp"
 #include "type.hpp"
 
 #include <boost/range/algorithm.hpp>
@@ -10,14 +10,14 @@
 
 using namespace adblock;
 
-TEST(RuleSet_SubstringMatchFilterRuleSet, Basic)
+TEST(Index_SubstringMatchFilterRuleMap, Basic)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("adblock"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
     ASSERT_TRUE(rule2);
 
-    SubstringMatchFilterRuleSet ruleSet;
+    SubstringMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -26,7 +26,7 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, Basic)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
+TEST(Index_SubstringMatchFilterRuleMap, MultipleHit)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("adblock"_r);
     ASSERT_TRUE(rule1);
@@ -37,7 +37,7 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
     auto const rule4 = parse_rule<BasicFilterRule>("adblockplus"_r);
     ASSERT_TRUE(rule4);
 
-    SubstringMatchFilterRuleSet ruleSet;
+    SubstringMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
     ruleSet.put(*rule3);
@@ -52,14 +52,14 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule4) == results.end());
 }
 
-TEST(RuleSet_SubstringMatchFilterRuleSet, NoHit)
+TEST(Index_SubstringMatchFilterRuleMap, NoHit)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("adblocks"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("google.com"_r);
     ASSERT_TRUE(rule2);
 
-    SubstringMatchFilterRuleSet ruleSet;
+    SubstringMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -67,14 +67,14 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, NoHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_SubstringMatchFilterRuleSet, MultiToken)
+TEST(Index_SubstringMatchFilterRuleMap, MultiToken)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("adblock*jpg"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
     ASSERT_TRUE(rule2);
 
-    SubstringMatchFilterRuleSet ruleSet;
+    SubstringMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -83,14 +83,14 @@ TEST(RuleSet_SubstringMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(RuleSet_SubstringMatchFilterRuleSet, Clear)
+TEST(Index_SubstringMatchFilterRuleMap, Clear)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("adblock*jpg"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("adblockplus"_r);
     ASSERT_TRUE(rule2);
 
-    SubstringMatchFilterRuleSet ruleSet;
+    SubstringMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 

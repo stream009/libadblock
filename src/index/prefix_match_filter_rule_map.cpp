@@ -1,4 +1,4 @@
-#include "prefix_match_filter_rule_set.hpp"
+#include "prefix_match_filter_rule_map.hpp"
 
 #include "utility.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace adblock {
 
-void PrefixMatchFilterRuleSet::
+void PrefixMatchFilterRuleMap::
 doPut(const FilterRule &rule)
 {
     auto* const pattern =
@@ -24,10 +24,10 @@ doPut(const FilterRule &rule)
     m_rules.insert(token, &rule);
 }
 
-PrefixMatchFilterRuleSet::FilterRules PrefixMatchFilterRuleSet::
+PrefixMatchFilterRuleMap::FilterRules PrefixMatchFilterRuleMap::
 doQuery(Uri const& uri) const
 {
-    std::vector<FilterRule const*> results;
+    FilterRules results;
     auto inserter = std::back_inserter(results);
 
     char const* begin = &(*uri.begin());
@@ -48,13 +48,13 @@ doQuery(Uri const& uri) const
     return results;
 }
 
-boost::property_tree::ptree PrefixMatchFilterRuleSet::
+boost::property_tree::ptree PrefixMatchFilterRuleMap::
 doStatistics() const
 {
     return m_rules.statistics();
 }
 
-void PrefixMatchFilterRuleSet::
+void PrefixMatchFilterRuleMap::
 doClear()
 {
     m_rules.clear();

@@ -1,5 +1,5 @@
-#ifndef ADBLOCK_RULE_SET_UTILITY_HPP
-#define ADBLOCK_RULE_SET_UTILITY_HPP
+#ifndef ADBLOCK_INDEX_UTILITY_HPP
+#define ADBLOCK_INDEX_UTILITY_HPP
 
 #include "type.hpp"
 
@@ -25,4 +25,4 @@ firstToken(StringRange pattern)
 
 } // namespace adblock
 
-#endif // ADBLOCK_RULE_SET_UTILITY_HPP
+#endif // ADBLOCK_INDEX_UTILITY_HPP

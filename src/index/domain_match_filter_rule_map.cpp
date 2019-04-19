@@ -1,4 +1,4 @@
-#include "domain_match_filter_rule_set.hpp"
+#include "domain_match_filter_rule_map.hpp"
 
 #include "utility.hpp"
 
@@ -12,7 +12,7 @@
 
 namespace adblock {
 
-void DomainMatchFilterRuleSet::
+void DomainMatchFilterRuleMap::
 doPut(FilterRule const& rule)
 {
     auto* const pattern =
@@ -23,7 +23,7 @@ doPut(FilterRule const& rule)
     m_rules.insert(token, &rule);
 }
 
-DomainMatchFilterRuleSet::FilterRules DomainMatchFilterRuleSet::
+DomainMatchFilterRuleMap::FilterRules DomainMatchFilterRuleMap::
 doQuery(Uri const& uri) const
 {
     auto const& host = uri.host();
@@ -52,13 +52,13 @@ doQuery(Uri const& uri) const
     return results;
 }
 
-boost::property_tree::ptree DomainMatchFilterRuleSet::
+boost::property_tree::ptree DomainMatchFilterRuleMap::
 doStatistics() const
 {
     return m_rules.statistics();
 }
 
-void DomainMatchFilterRuleSet::
+void DomainMatchFilterRuleMap::
 doClear()
 {
     m_rules.clear();

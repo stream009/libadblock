@@ -1,5 +1,4 @@
 #include "type.hpp"
-#include "option.hpp"
 #include "rule/comment_rule.hpp"
 
 #include <boost/lexical_cast.hpp>

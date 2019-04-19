@@ -1,24 +1,25 @@
-#ifndef ADBLOCK_SUFFIX_MATCH_FILTER_RULE_SET_HPP
-#define ADBLOCK_SUFFIX_MATCH_FILTER_RULE_SET_HPP
+#ifndef ADBLOCK_SUFFIX_MATCH_FILTER_RULE_MAP_HPP
+#define ADBLOCK_SUFFIX_MATCH_FILTER_RULE_MAP_HPP
 
-#include "config.hpp"
-#include "filter_rule_set.hpp"
+#include "filter_rule_map.hpp"
 #include "type.hpp"
 
 #include <iterator>
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
+#include <radix_tree/radix_tree.hpp>
+
 namespace adblock {
 
-class SuffixMatchFilterRuleSet : public FilterRuleSet
+class SuffixMatchFilterRuleMap : public FilterRuleMap
 {
-    using Base = FilterRuleSet;
+    using Base = FilterRuleMap;
 public:
     using Base::FilterRules;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
-    using Rules = rule_set::Rules<ReverseStringRange, FilterRule const*>;
+    using Map = radix_tree::RadixTree<ReverseStringRange, FilterRule const*>;
 
 private:
     void doPut(FilterRule const&) override;
@@ -27,9 +28,9 @@ private:
     void doClear() override;
 
 private:
-    Rules m_rules;
+    Map m_rules;
 };
 
 } // namespace adblock
 
-#endif // ADBLOCK_SUFFIX_MATCH_FILTER_RULE_SET_HPP
+#endif // ADBLOCK_SUFFIX_MATCH_FILTER_RULE_MAP_HPP

@@ -39,21 +39,20 @@ install(FILES api.h
 add_library(main
     file.cpp
     filter_rule_base.cpp
-    filter_rule_group.cpp
     element_hide_rule_base.cpp
     filter_set.cpp
     adblock.cpp
 )
 target_link_libraries(main
     rule
-    rule_set
+    index
     parser
     uri
     ${Boost_LIBRARIES}
 )
 
 add_subdirectory(rule)
-add_subdirectory(rule_set)
+add_subdirectory(index)
 add_subdirectory(pattern)
 add_subdirectory(parser)
 add_subdirectory(lib/reg_dom)

@@ -16,7 +16,7 @@ add_subdirectory(parser)
 add_subdirectory(rule)
 add_subdirectory(pattern)
 add_subdirectory(option)
-add_subdirectory(rule_set)
+add_subdirectory(index)
 
 add_executable(test_all
     reg_dom.cpp
@@ -34,7 +34,7 @@ target_link_libraries(test_all
         rule_test
         pattern_test
         option_test
-        rule_set_test
+        index_test
     -Wl,--no-whole-archive
     main
     adblock

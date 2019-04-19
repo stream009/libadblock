@@ -1,7 +1,7 @@
 #include "../parse_rule.hpp"
 
 #include "rule/basic_filter_rule.hpp"
-#include "rule_set/domain_match_filter_rule_set.hpp"
+#include "index/domain_match_filter_rule_map.hpp"
 #include "type.hpp"
 
 #include <boost/range/algorithm.hpp>
@@ -10,14 +10,14 @@
 
 using namespace adblock;
 
-TEST(RuleSet_DomainMatchFilterRuleSet, OneHit)
+TEST(Index_DomainMatchFilterRuleMap, OneHit)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("||adblock.org"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("||ban"_r);
     ASSERT_TRUE(rule2);
 
-    DomainMatchFilterRuleSet ruleSet;
+    DomainMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -26,7 +26,7 @@ TEST(RuleSet_DomainMatchFilterRuleSet, OneHit)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(RuleSet_DomainMatchFilterRuleSet, MultipleHit)
+TEST(Index_DomainMatchFilterRuleMap, MultipleHit)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("||adblock.org"_r);
     ASSERT_TRUE(rule1);
@@ -35,7 +35,7 @@ TEST(RuleSet_DomainMatchFilterRuleSet, MultipleHit)
     auto const rule3 = parse_rule<BasicFilterRule>("||adblock.com"_r);
     ASSERT_TRUE(rule3);
 
-    DomainMatchFilterRuleSet ruleSet;
+    DomainMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
     ruleSet.put(*rule3);
@@ -48,14 +48,14 @@ TEST(RuleSet_DomainMatchFilterRuleSet, MultipleHit)
     EXPECT_TRUE(br::find(results, &*rule3) == results.end());
 }
 
-TEST(RuleSet_DomainMatchFilterRuleSet, NoHit)
+TEST(Index_DomainMatchFilterRuleMap, NoHit)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("||foo.adblock.org"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("||adblock.com"_r);
     ASSERT_TRUE(rule2);
 
-    DomainMatchFilterRuleSet ruleSet;
+    DomainMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -63,14 +63,14 @@ TEST(RuleSet_DomainMatchFilterRuleSet, NoHit)
     EXPECT_TRUE(results.empty());
 }
 
-TEST(RuleSet_DomainMatchFilterRuleSet, MultiToken)
+TEST(Index_DomainMatchFilterRuleMap, MultiToken)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("||adblock*org"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("||ban"_r);
     ASSERT_TRUE(rule2);
 
-    DomainMatchFilterRuleSet ruleSet;
+    DomainMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 
@@ -79,14 +79,14 @@ TEST(RuleSet_DomainMatchFilterRuleSet, MultiToken)
     EXPECT_EQ(&*rule1, results.front());
 }
 
-TEST(RuleSet_DomainMatchFilterRuleSet, Clear)
+TEST(Index_DomainMatchFilterRuleMap, Clear)
 {
     auto const rule1 = parse_rule<BasicFilterRule>("||adblock*org"_r);
     ASSERT_TRUE(rule1);
     auto const rule2 = parse_rule<BasicFilterRule>("||ban"_r);
     ASSERT_TRUE(rule2);
 
-    DomainMatchFilterRuleSet ruleSet;
+    DomainMatchFilterRuleMap ruleSet;
     ruleSet.put(*rule1);
     ruleSet.put(*rule2);
 

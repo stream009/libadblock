@@ -2,7 +2,7 @@
 #define ADBLOCK_FILTER_RULE_BASE_HPP
 
 #include "type.hpp"
-#include "filter_rule_group.hpp"
+#include "index/filter_rule_index.hpp"
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
@@ -35,8 +35,8 @@ public:
     void clear();
 
 private:
-    FilterRuleGroup m_normal;
-    FilterRuleGroup m_exception;
+    FilterRuleIndex m_normal;
+    FilterRuleIndex m_exception;
 };
 
 } // namespace adblock

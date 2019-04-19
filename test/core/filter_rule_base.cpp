@@ -1,8 +1,8 @@
-#include "mock_context.hpp"
-#include "parse_rule.hpp"
+#include "../mock_context.hpp"
+#include "../parse_rule.hpp"
 
-#include "filter_rule_base.hpp"
-#include "type.hpp"
+#include "core/filter_rule_base.hpp"
+#include "core/type.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
@@ -13,7 +13,7 @@
 
 using namespace adblock;
 
-TEST(Main_FilterRuleBase, Basic)
+TEST(Core_FilterRuleBase, Basic)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -35,7 +35,7 @@ TEST(Main_FilterRuleBase, Basic)
     }
 }
 
-TEST(Main_FilterRuleBase, Domain)
+TEST(Core_FilterRuleBase, Domain)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -57,7 +57,7 @@ TEST(Main_FilterRuleBase, Domain)
     }
 }
 
-TEST(Main_FilterRuleBase, Regex)
+TEST(Core_FilterRuleBase, Regex)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -79,7 +79,7 @@ TEST(Main_FilterRuleBase, Regex)
     }
 }
 
-TEST(Main_FilterRuleBase, ExceptionBasic)
+TEST(Core_FilterRuleBase, ExceptionBasic)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -106,7 +106,7 @@ TEST(Main_FilterRuleBase, ExceptionBasic)
     }
 }
 
-TEST(Main_FilterRuleBase, ExceptionDomain)
+TEST(Core_FilterRuleBase, ExceptionDomain)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -133,7 +133,7 @@ TEST(Main_FilterRuleBase, ExceptionDomain)
     }
 }
 
-TEST(Main_FilterRuleBase, ExceptionRegex)
+TEST(Core_FilterRuleBase, ExceptionRegex)
 {
     FilterRuleBase rb;
     MockContext cxt;
@@ -160,7 +160,7 @@ TEST(Main_FilterRuleBase, ExceptionRegex)
     }
 }
 
-TEST(Main_FilterRuleBase, Clear)
+TEST(Core_FilterRuleBase, Clear)
 {
     FilterRuleBase rb;
 

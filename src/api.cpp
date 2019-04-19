@@ -1,8 +1,8 @@
 #include "api.h"
 
-#include "adblock.hpp"
-#include "context.hpp"
-#include "filter_set.hpp"
+#include "core/adblock.hpp"
+#include "core/context.hpp"
+#include "core/filter_set.hpp"
 
 #include <algorithm>
 #include <cstring>

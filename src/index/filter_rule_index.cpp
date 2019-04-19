@@ -1,6 +1,6 @@
 #include "filter_rule_index.hpp"
 
-#include "context.hpp"
+#include "core/context.hpp"
 #include "rule/filter_rule.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"

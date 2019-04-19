@@ -3,7 +3,7 @@
 
 #include "filter_option.hpp"
 #include "rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <cassert>
 #include <iosfwd>

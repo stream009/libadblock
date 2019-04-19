@@ -2,7 +2,7 @@
 #define REGEX_PATTERN_HPP
 
 #include "pattern.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <iosfwd>
 #include <optional>

@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_FILTER_RULE_INDEX_HPP
 #define ADBLOCK_FILTER_RULE_INDEX_HPP
 
-#include "type.hpp"
+#include "core/type.hpp"
 #include "prefix_match_filter_rule_map.hpp"
 #include "suffix_match_filter_rule_map.hpp"
 #include "substring_match_filter_rule_map.hpp"

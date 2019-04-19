@@ -2,7 +2,7 @@
 #define ADBLOCK_RULE_EXTENDED_ELEMENT_HIDE_RULE_HPP
 
 #include "element_hide_rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <iosfwd>
 #include <memory>

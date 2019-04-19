@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_FILTER_RULE_MAP_HPP
 #define ADBLOCK_FILTER_RULE_MAP_HPP
 
-#include "type.hpp"
+#include "core/type.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <vector>

@@ -1,16 +1,15 @@
 #include "rule.hpp"
-#include "filter_set.hpp"
 
 namespace adblock {
 
 void Rule::
-setFilterSet(const FilterSet &filterSet)
+setFilterSet(FilterSet const& filterSet)
 {
     m_filterSet = &filterSet;
 }
 
 void Rule::
-setLine(const StringRange &line)
+setLine(StringRange const& line)
 {
     m_line = line;
 }

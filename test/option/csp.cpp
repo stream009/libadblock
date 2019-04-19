@@ -1,6 +1,6 @@
-#include "adblock.hpp"
 #include "api.h"
-#include "context.hpp"
+#include "core/adblock.hpp"
+#include "core/context.hpp"
 
 #include <gtest/gtest.h>
 

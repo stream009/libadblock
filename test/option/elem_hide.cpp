@@ -1,7 +1,7 @@
 #include "../parse_rule.hpp"
 
-#include "element_hide_rule_base.hpp"
-#include "filter_rule_base.hpp"
+#include "core/element_hide_rule_base.hpp"
+#include "core/filter_rule_base.hpp"
 #include "rule/filter_rule.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef PATTERN_HPP
 #define PATTERN_HPP
 
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <ostream>
 

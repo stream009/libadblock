@@ -1,9 +1,9 @@
-#include "mock_context.hpp"
+#include "../mock_context.hpp"
 
-#include "adblock.hpp"
-#include "context.hpp"
-#include "filter_set.hpp"
-#include "type.hpp"
+#include "core/adblock.hpp"
+#include "core/context.hpp"
+#include "core/filter_set.hpp"
+#include "core/type.hpp"
 
 #include <iostream>
 
@@ -18,7 +18,7 @@ using namespace adblock;
 namespace bfs = boost::filesystem;
 static const bfs::path projectRoot { PROJECT_ROOT };
 
-TEST(Main_AdBlock, Statistics)
+TEST(Core_AdBlock, Statistics)
 {
     std::locale locale { "" };
     std::locale::global(locale);
@@ -38,7 +38,7 @@ TEST(Main_AdBlock, Statistics)
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 }
 
-TEST(Main_AdBlock, DISABLED_EasyList)
+TEST(Core_AdBlock, DISABLED_EasyList)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -50,7 +50,7 @@ TEST(Main_AdBlock, DISABLED_EasyList)
     std::cout << t.format();
 }
 
-TEST(Main_AdBlock, DISABLED_Fanboy)
+TEST(Core_AdBlock, DISABLED_Fanboy)
 {
     auto const& path = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -59,7 +59,7 @@ TEST(Main_AdBlock, DISABLED_Fanboy)
     adBlock.addFilterSet(path);
 }
 
-TEST(Main_AdBlock, DISABLED_elementHideRule)
+TEST(Core_AdBlock, DISABLED_elementHideRule)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -72,7 +72,7 @@ TEST(Main_AdBlock, DISABLED_elementHideRule)
     std::cout << css.size() << "\n" << t.format();
 }
 
-TEST(Main_AdBlock, Reload)
+TEST(Core_AdBlock, Reload)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
@@ -103,7 +103,7 @@ TEST(Main_AdBlock, Reload)
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 }
 
-TEST(Main_AdBlock, FilterSets)
+TEST(Core_AdBlock, FilterSets)
 {
     AdBlock adBlock;
 
@@ -144,7 +144,7 @@ TEST(Main_AdBlock, FilterSets)
     EXPECT_NE(it, filterSets.end());
 }
 
-TEST(Main_AdBlock, RemoveFilterSet)
+TEST(Core_AdBlock, RemoveFilterSet)
 {
     AdBlock adBlock;
 
@@ -183,7 +183,7 @@ TEST(Main_AdBlock, RemoveFilterSet)
     ASSERT_EQ(0, adBlock.statistics().get<size_t>("Total"));
 }
 
-TEST(Main_AdBlock, FilterSet)
+TEST(Core_AdBlock, FilterSet)
 {
     AdBlock adBlock;
 

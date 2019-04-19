@@ -2,7 +2,7 @@
 
 #include "rule/basic_element_hide_rule.hpp"
 #include "index/domained_element_hide_rule_map.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <boost/range/algorithm.hpp>
 

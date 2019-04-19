@@ -1,5 +1,5 @@
 #include "api.h"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <cassert>
 #include <iostream>

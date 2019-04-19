@@ -2,7 +2,7 @@
 
 #include "pattern/domain_match_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <memory>
 

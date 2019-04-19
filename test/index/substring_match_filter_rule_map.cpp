@@ -2,7 +2,7 @@
 
 #include "rule/basic_filter_rule.hpp"
 #include "index/substring_match_filter_rule_map.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <boost/range/algorithm.hpp>
 

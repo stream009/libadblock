@@ -1,8 +1,8 @@
 #ifndef ADBLOCK_MOCK_CONTEXT_HPP
 #define ADBLOCK_MOCK_CONTEXT_HPP
 
-#include "context.hpp"
-#include "type.hpp"
+#include "core/context.hpp"
+#include "core/type.hpp"
 
 #include <boost/range/iterator_range.hpp>
 

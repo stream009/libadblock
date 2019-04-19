@@ -1,6 +1,6 @@
-#include "filter_set.hpp"
+#include "core/filter_set.hpp"
+#include "core/type.hpp"
 #include "rule/rule.hpp"
-#include "type.hpp"
 
 #include <memory>
 #include <vector>

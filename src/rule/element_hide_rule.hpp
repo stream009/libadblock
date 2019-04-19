@@ -2,7 +2,7 @@
 #define ELEMENT_HIDE_RULE_HPP
 
 #include "rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <memory>
 #include <vector>

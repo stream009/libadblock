@@ -1,6 +1,6 @@
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"

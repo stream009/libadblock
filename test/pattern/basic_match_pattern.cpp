@@ -1,6 +1,6 @@
 #include "pattern/basic_match_pattern.hpp"
 
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <iostream>
 

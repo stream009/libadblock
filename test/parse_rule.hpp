@@ -1,8 +1,8 @@
 #ifndef ADBLOCK_TEST_PARSE_RULE_HPP
 #define ADBLOCK_TEST_PARSE_RULE_HPP
 
+#include "core/type.hpp"
 #include "parser/parser.hpp"
-#include "type.hpp"
 
 #include <memory>
 

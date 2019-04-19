@@ -1,6 +1,6 @@
 #include "parser/parser.hpp"
 
-#include "type.hpp"
+#include "core/type.hpp"
 #include "rule/comment_rule.hpp"
 
 #include <memory>

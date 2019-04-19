@@ -23,7 +23,7 @@ add_library(option_test STATIC
     csp.cpp
 )
 target_link_libraries(option_test
-    main
+    core
 )
 
 

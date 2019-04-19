@@ -1,7 +1,8 @@
 #include "parser.hpp"
 
-#include "filter_set.hpp"
 #include "rule_builder.hpp"
+
+#include "core/filter_set.hpp"
 
 #include <string_view>
 #include <memory>

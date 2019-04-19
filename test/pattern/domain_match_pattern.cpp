@@ -1,5 +1,5 @@
 #include "pattern/domain_match_pattern.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <gtest/gtest.h>
 

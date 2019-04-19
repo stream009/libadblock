@@ -1,7 +1,7 @@
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 
-#include "filter_rule_base.hpp"
+#include "core/filter_rule_base.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>

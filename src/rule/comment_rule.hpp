@@ -2,7 +2,7 @@
 #define COMMENT_RULE_HPP
 
 #include "rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <iosfwd>
 #include <memory>

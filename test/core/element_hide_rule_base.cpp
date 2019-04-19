@@ -1,8 +1,8 @@
-#include "parse_rule.hpp"
+#include "../parse_rule.hpp"
 
-#include "type.hpp"
-#include "filter_rule_base.hpp"
-#include "element_hide_rule_base.hpp"
+#include "core/type.hpp"
+#include "core/filter_rule_base.hpp"
+#include "core/element_hide_rule_base.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
@@ -11,7 +11,7 @@
 
 using namespace adblock;
 
-TEST(Main_ElementHideRuleBase, Elementary)
+TEST(Core_ElementHideRuleBase, Elementary)
 {
     auto const rule = parse_rule<BasicElementHideRule>("##div"_r);
     ASSERT_TRUE(rule);
@@ -24,7 +24,7 @@ TEST(Main_ElementHideRuleBase, Elementary)
     EXPECT_EQ("div { display: none !important } ", result);
 }
 
-TEST(Main_ElementHideRuleBase, Domained)
+TEST(Core_ElementHideRuleBase, Domained)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
     ASSERT_TRUE(rule1);
@@ -44,7 +44,7 @@ TEST(Main_ElementHideRuleBase, Domained)
     EXPECT_EQ("div, table { display: none !important } ", result);
 }
 
-TEST(Main_ElementHideRuleBase, ExcludedByExceptionRule)
+TEST(Core_ElementHideRuleBase, ExcludedByExceptionRule)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
     ASSERT_TRUE(rule1);
@@ -62,7 +62,7 @@ TEST(Main_ElementHideRuleBase, ExcludedByExceptionRule)
     EXPECT_EQ("", result);
 }
 
-TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
+TEST(Core_ElementHideRuleBase, ExcludedByGenericExceptionRule)
 {
     FilterRuleBase fb;
     ElementHideRuleBase ruleBase { fb };
@@ -88,7 +88,7 @@ TEST(Main_ElementHideRuleBase, ExcludedByGenericExceptionRule)
     }
 }
 
-TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
+TEST(Core_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
     ASSERT_TRUE(rule1);
@@ -106,7 +106,7 @@ TEST(Main_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
     EXPECT_EQ("div { display: none !important } ", result);
 }
 
-TEST(Main_ElementHideRuleBase, Clear)
+TEST(Core_ElementHideRuleBase, Clear)
 {
     auto const rule1 = parse_rule<BasicElementHideRule>("##div"_r);
     ASSERT_TRUE(rule1);
@@ -129,7 +129,7 @@ TEST(Main_ElementHideRuleBase, Clear)
     EXPECT_EQ(0, stats.get<size_t>("Total"));
 }
 
-TEST(Main_ElementHideRuleBase, ExtendedRule)
+TEST(Core_ElementHideRuleBase, ExtendedRule)
 {
     auto const rule = parse_rule<ExtendedElementHideRule>("#?#div"_r);
     ASSERT_TRUE(rule);
@@ -150,7 +150,7 @@ TEST(Main_ElementHideRuleBase, ExtendedRule)
     EXPECT_TRUE("div"_r == selector) << selector;
 }
 
-TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
+TEST(Core_ElementHideRuleBase, DomainedExtendedRule)
 {
     auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
     ASSERT_TRUE(rule1);
@@ -176,7 +176,7 @@ TEST(Main_ElementHideRuleBase, DomainedExtendedRule)
     EXPECT_TRUE("table"_r == rules[1]->cssSelector());
 }
 
-TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
+TEST(Core_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 {
     auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
     ASSERT_TRUE(rule1);
@@ -199,7 +199,7 @@ TEST(Main_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
     EXPECT_TRUE(rules.empty());
 }
 
-TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
+TEST(Core_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
 {
     auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
     ASSERT_TRUE(rule1);
@@ -223,7 +223,7 @@ TEST(Main_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelec
     EXPECT_EQ("div"_r, rules[0]->cssSelector());
 }
 
-TEST(Main_ElementHideRuleBase, ExtendedRule_Clear)
+TEST(Core_ElementHideRuleBase, ExtendedRule_Clear)
 {
     auto const rule1 = parse_rule<ExtendedElementHideRule>("#?#div"_r);
     ASSERT_TRUE(rule1);

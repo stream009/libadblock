@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_DOMAIN_DATA_BASE_HPP
 #define ADBLOCK_DOMAIN_DATA_BASE_HPP
 
-#include "type.hpp"
+#include "core/type.hpp"
 
 namespace adblock {
 

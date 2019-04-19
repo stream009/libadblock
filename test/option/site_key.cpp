@@ -1,7 +1,7 @@
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 
-#include "type.hpp"
+#include "core/type.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <string>

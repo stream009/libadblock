@@ -19,11 +19,19 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--exclude-libs=A
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
+add_subdirectory(core)
+add_subdirectory(rule)
+add_subdirectory(index)
+add_subdirectory(pattern)
+add_subdirectory(parser)
+add_subdirectory(lib/reg_dom)
+add_subdirectory(lib/uri)
+
 add_library(adblock SHARED
     api.cpp
 )
 target_link_libraries(adblock
-    main
+    core
 )
 set_target_properties(adblock PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -35,25 +43,3 @@ install(TARGETS adblock
 install(FILES api.h
     DESTINATION include/adblock
 )
-
-add_library(main
-    file.cpp
-    filter_rule_base.cpp
-    element_hide_rule_base.cpp
-    filter_set.cpp
-    adblock.cpp
-)
-target_link_libraries(main
-    rule
-    index
-    parser
-    uri
-    ${Boost_LIBRARIES}
-)
-
-add_subdirectory(rule)
-add_subdirectory(index)
-add_subdirectory(pattern)
-add_subdirectory(parser)
-add_subdirectory(lib/reg_dom)
-add_subdirectory(lib/uri)

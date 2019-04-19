@@ -1,7 +1,7 @@
 #include "filter_option.hpp"
 
-#include "context.hpp"
-#include "white_list_query_context.hpp"
+#include "core/context.hpp"
+#include "core/white_list_query_context.hpp"
 
 #include <ostream>
 

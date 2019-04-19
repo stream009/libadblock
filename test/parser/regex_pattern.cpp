@@ -2,7 +2,7 @@
 
 #include "pattern/regex_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
-#include "type.hpp"
+#include "core/type.hpp"
 
 #include <boost/lexical_cast.hpp>
 

@@ -67,7 +67,7 @@ public:
 
 
 void FilterRuleBase::
-put(const FilterRule &rule)
+put(FilterRule const& rule)
 {
     if (typeid(rule) == typeid(BasicFilterRule)) {
         m_normal.put(rule);
@@ -87,15 +87,15 @@ clear()
     m_exception.clear();
 }
 
-std::pair<bool, const FilterRule*> FilterRuleBase::
-query(const Uri &uri, const Context &context) const
+std::pair<bool, FilterRule const*> FilterRuleBase::
+query(Uri const& uri, Context const& context) const
 {
-    if (auto* rule = getFrameBlockDisabler(
+    if (auto* const rule = getFrameBlockDisabler(
                             context.origin(), context.siteKey()))
     {
         return std::make_pair(false, rule);
     }
-    else if (auto* rule = m_exception.query(uri, context)) {
+    else if (auto* const rule = m_exception.query(uri, context)) {
         return std::make_pair(false, rule);
     }
     else {

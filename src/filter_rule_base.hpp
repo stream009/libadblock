@@ -14,23 +14,23 @@ class FilterRuleBase
 {
 public:
     // query
-    std::pair<bool, const FilterRule*>
-        query(const Uri&, const Context&) const;
+    std::pair<bool, FilterRule const*>
+        query(Uri const&, Context const&) const;
 
     FilterRule const* getFrameBlockDisabler(
-                         Uri const&, StringRange const siteKey) const;
+                         Uri const&, StringRange siteKey) const;
     FilterRule const* getGenericBlockDisabler(
-                         Uri const&, StringRange const siteKey) const;
+                         Uri const&, StringRange siteKey) const;
 
     FilterRule const* getFrameHideDisabler(
-                          Uri const&, StringRange const siteKey) const;
+                          Uri const&, StringRange siteKey) const;
     FilterRule const* getGenericHideDisabler(
-                          Uri const&, StringRange const siteKey) const;
+                          Uri const&, StringRange siteKey) const;
 
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void put(const FilterRule&);
+    void put(FilterRule const&);
 
     void clear();
 

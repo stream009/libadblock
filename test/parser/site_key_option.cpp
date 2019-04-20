@@ -6,13 +6,9 @@
 
 #include <memory>
 
-#include <boost/algorithm/string.hpp>
-
 #include <gtest/gtest.h>
 
 using namespace adblock;
-
-namespace ba = boost::algorithm;
 
 TEST(Parser_FilterOption, SiteKey_Basic)
 {
@@ -30,7 +26,7 @@ TEST(Parser_FilterOption, SiteKey_Basic)
     auto* const siteKeys = filter->siteKeys();
     ASSERT_TRUE(siteKeys);
     ASSERT_EQ(1, siteKeys->size());
-    EXPECT_TRUE(ba::equals("abcdefg"_r, (*siteKeys)[0]));
+    EXPECT_EQ("abcdefg"_r, (*siteKeys)[0]);
 }
 
 TEST(Parser_FilterOption, SiteKey_MultipleSiteKey)
@@ -49,6 +45,6 @@ TEST(Parser_FilterOption, SiteKey_MultipleSiteKey)
     auto* const siteKeys = filter->siteKeys();
     ASSERT_TRUE(siteKeys);
     ASSERT_EQ(2, siteKeys->size());
-    EXPECT_TRUE(ba::equals("abcdefg"_r, (*siteKeys)[0]));
-    EXPECT_TRUE(ba::equals("hijklmn"_r, (*siteKeys)[1]));
+    EXPECT_EQ("abcdefg"_r, (*siteKeys)[0]);
+    EXPECT_EQ("hijklmn"_r, (*siteKeys)[1]);
 }

@@ -11,8 +11,6 @@
 #include <cassert>
 #include <ostream>
 
-#include <boost/algorithm/string.hpp>
-
 namespace adblock {
 
 FilterRule::
@@ -87,8 +85,6 @@ matchDomain(Context const& cxt) const
 bool FilterRule::
 matchSiteKey(Context const& cxt) const
 {
-    namespace ba = boost::algorithm;
-
     if (!m_siteKeys) return true;
 
     auto const& siteKey = cxt.siteKey();
@@ -96,7 +92,7 @@ matchSiteKey(Context const& cxt) const
     for (auto& key: *m_siteKeys) {
         // [[asserts: !key.empty()]]
 
-        if (ba::equals(key, siteKey)) return true;
+        if (key == siteKey) return true;
     }
 
     return false;
@@ -105,23 +101,21 @@ matchSiteKey(Context const& cxt) const
 bool FilterRule::
 matchOrigin(Uri const& uri, Context const& cxt) const
 {
-    namespace ba = boost::algorithm;
-
     if (m_options.test(FilterOption::SameOrigin)) {
-        DomainDataBase ddb;
+        DomainDataBase const ddb;
 
-        const auto &uriDomain = ddb.getRegisteredDomain(uri);
-        const auto &originDomain = ddb.getRegisteredDomain(cxt.origin());
+        auto const uriDomain = ddb.getRegisteredDomain(uri);
+        auto const originDomain = ddb.getRegisteredDomain(cxt.origin());
 
-        return boost::equals(uriDomain, originDomain);
+        return uriDomain == originDomain;
     }
     else if (m_options.test(FilterOption::ThirdParty)) {
-        DomainDataBase ddb;
+        DomainDataBase const ddb;
 
-        const auto &uriDomain = ddb.getRegisteredDomain(uri);
-        const auto &originDomain = ddb.getRegisteredDomain(cxt.origin());
+        auto const uriDomain = ddb.getRegisteredDomain(uri);
+        auto const originDomain = ddb.getRegisteredDomain(cxt.origin());
 
-        return !ba::equals(uriDomain, originDomain);
+        return uriDomain != originDomain;
     }
     else {
         return true;

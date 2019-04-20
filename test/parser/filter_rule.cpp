@@ -9,14 +9,11 @@
 
 #include <memory>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <gtest/gtest.h>
 
 using namespace adblock;
-
-namespace ba = boost::algorithm;
 
 TEST(Parser_BasicFilterRule, Basic)
 {
@@ -94,7 +91,7 @@ TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
     auto* const domains = filter->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
-    EXPECT_TRUE(ba::equals("foo"_r, (*domains)[0]));
+    EXPECT_EQ("foo"_r, (*domains)[0]);
 }
 
 TEST(Parser_ExceptionFilterRule, Basic)

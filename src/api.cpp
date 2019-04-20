@@ -21,13 +21,13 @@ class Context : public adblock::Context
 public:
     using StringRange = adblock::StringRange;
 public:
-    Context(const struct adblock_context &cxt)
+    Context(struct adblock_context const& cxt)
         : m_cxt { cxt },
           m_origin { m_cxt.origin, m_cxt.origin_len },
           m_siteKey { m_cxt.site_key, m_cxt.site_key + m_cxt.site_key_len }
     {}
 
-    const adblock::Uri &origin() const override
+    adblock::Uri const& origin() const override
     {
         return m_origin; // origin could be invalid.
     }
@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    const struct adblock_context &m_cxt;
+    struct adblock_context const& m_cxt;
     adblock::Uri m_origin;
     adblock::StringRange m_siteKey;
 };
@@ -137,14 +137,14 @@ adblock_destroy(adblock_t adblock)
 
 void
 adblock_add_filter_set(adblock_t adblock,
-                       const char *path_in_utf8, const size_t len)
+                       char const* path_in_utf8, size_t const len)
 {
     auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
     assert(adBlock);
 
     namespace bfs = boost::filesystem;
     try {
-        const adblock::AdBlock::Path path {
+        adblock::AdBlock::Path const path {
                                     path_in_utf8, path_in_utf8 + len };
         if (!bfs::exists(path)) {
             std::cerr << __func__ << ": File doesn't exists: "
@@ -153,7 +153,7 @@ adblock_add_filter_set(adblock_t adblock,
         }
         adBlock->addFilterSet(path);
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << __func__ << ": "
                   << "Uncaught exception: " <<  e.what() << "\n";
     }
@@ -164,10 +164,10 @@ adblock_add_filter_set(adblock_t adblock,
 
 bool
 adblock_should_block(adblock_t adblock,
-                     const char *uri_in_utf8, const size_t len,
-                     const struct adblock_context *cxt,
-                     const char **filter_set, size_t *filter_set_len,
-                     const char **reason, size_t *reason_len)
+                     char const* uri_in_utf8, size_t const len,
+                     struct adblock_context const* cxt,
+                     char const** filter_set, size_t *filter_set_len,
+                     char const** reason, size_t *reason_len)
 {
     auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
     assert(adBlock);
@@ -185,16 +185,16 @@ adblock_should_block(adblock_t adblock,
             return false;
         }
 
-        const Context context { *cxt };
+        Context const context { *cxt };
 
-        const auto &rv = adBlock->shouldBlock(uri, context);
-        const auto &shouldBlock = rv.first;
-        const auto &reasonRule = rv.second;
+        auto const& rv = adBlock->shouldBlock(uri, context);
+        auto const& shouldBlock = rv.first;
+        auto const& reasonRule = rv.second;
 
         if (reasonRule) {
-            const auto* const filterSetP = reasonRule->filterSet();
+            auto* const filterSetP = reasonRule->filterSet();
             if (filterSetP) {
-                const auto &path = filterSetP->path();
+                auto const& path = filterSetP->path();
                 *filter_set = path.c_str();
                 *filter_set_len = std::strlen(path.c_str());
             }
@@ -205,7 +205,7 @@ adblock_should_block(adblock_t adblock,
 
         return shouldBlock;
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << __func__ << ": "
                   << "Uncaught exception: " <<  e.what() << "\n";
     }
@@ -218,16 +218,16 @@ adblock_should_block(adblock_t adblock,
 
 bool
 adblock_remove_filter_set(adblock_t adblock,
-                          const char *path, const size_t len)
+                          char const* path, size_t const len)
 {
     auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
     assert(adBlock);
     assert(path);
 
-    const auto &filterSets = adBlock->filterSets();
+    auto const& filterSets = adBlock->filterSets();
 
-    const auto &it = boost::find_if(filterSets,
-        [&path, &len](const adblock::FilterSet &filterSet) {
+    auto const it = boost::find_if(filterSets,
+        [&path, &len](auto& filterSet) {
             auto* const c_str = filterSet.path().c_str();
             return c_str[len] == '\0' &&
                    std::strncmp(c_str, path, len) == 0;
@@ -241,8 +241,8 @@ adblock_remove_filter_set(adblock_t adblock,
 
 void
 adblock_element_hide_css(adblock_t adblock,
-        const char *uri_in_utf8, const size_t uri_len,
-        const char **css, size_t *css_len)
+        char const* uri_in_utf8, size_t const uri_len,
+        char const** css, size_t* css_len)
 {
     *css = nullptr;
     *css_len = 0;
@@ -262,7 +262,7 @@ adblock_element_hide_css(adblock_t adblock,
             *css_len = str.size();
         }
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << __func__ << ": "
                   << "Uncaught exception: " <<  e.what() << "\n";
     }
@@ -273,8 +273,8 @@ adblock_element_hide_css(adblock_t adblock,
 
 void
 adblock_extended_element_hide_selectors(adblock_t adblock,
-        const adblock_string_t *uri_in_utf8,
-        adblock_string_t **out_selectors,
+        adblock_string_t const* uri_in_utf8,
+        adblock_string_t** out_selectors,
         size_t* out_selector_count)
 {
     *out_selectors = nullptr;
@@ -316,8 +316,8 @@ adblock_extended_element_hide_selectors(adblock_t adblock,
 
 void
 adblock_content_security_policy(adblock_t handle,
-            const adblock_string_t *uri_in_utf8,
-            adblock_string_t *policy /* OUT */)
+            adblock_string_t const* uri_in_utf8,
+            adblock_string_t* policy /* OUT */)
 {
     try {
         auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
@@ -347,10 +347,10 @@ bool
 adblock_filter_set_parameters(
         adblock_t handle,
         adblock_string_t const* const filepath_in_utf8,
-        adblock_string_t **keys, /* OUT */
-        size_t *keys_len, /* OUT */
-        adblock_string_t **values /* OUT */,
-        size_t *values_len /* OUT */)
+        adblock_string_t** keys, /* OUT */
+        size_t* keys_len, /* OUT */
+        adblock_string_t** values /* OUT */,
+        size_t* values_len /* OUT */)
 {
     try {
         auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
@@ -416,12 +416,12 @@ adblock_reload(adblock_t adblock)
 }
 
 void
-adblock_statistics(adblock_t adblock, const char **json, size_t *json_len)
+adblock_statistics(adblock_t adblock, char const** json, size_t* json_len)
 {
     auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
     assert(adBlock);
 
-    const auto &stats = adBlock->statistics();
+    auto const& stats = adBlock->statistics();
 
     std::ostringstream oss;
     boost::property_tree::write_json(oss, stats, false);
@@ -438,12 +438,12 @@ adblock_statistics(adblock_t adblock, const char **json, size_t *json_len)
 }
 
 bool
-adblock_free(const char *ptr)
+adblock_free(char const* ptr)
 {
     try {
-        const auto begin = s_strings.begin(), end = s_strings.end();
-        const auto &it = std::remove_if(begin, end,
-            [ptr](const std::vector<char> &str) {
+        auto const begin = s_strings.begin(), end = s_strings.end();
+        auto const it = std::remove_if(begin, end,
+            [ptr](auto& str) {
                 return str.data() == ptr;
             }
         );
@@ -451,7 +451,7 @@ adblock_free(const char *ptr)
 
         return it != end;
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << __func__ << ": "
                   << "Uncaught exception: " <<  e.what() << "\n";
     }
@@ -478,7 +478,7 @@ removeStringVector(adblock_string_t* const ptr)
 
         return it != end;
     }
-    catch (const std::exception &e) {
+    catch (std::exception const& e) {
         std::cerr << __func__ << ": "
                   << "Uncaught exception: " <<  e.what() << "\n";
     }

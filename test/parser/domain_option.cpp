@@ -6,13 +6,9 @@
 
 #include <memory>
 
-#include <boost/algorithm/string.hpp>
-
 #include <gtest/gtest.h>
 
 using namespace adblock;
-
-namespace ba = boost::algorithm;
 
 TEST(Parser_FilterOption, Domain_Basic)
 {
@@ -30,7 +26,7 @@ TEST(Parser_FilterOption, Domain_Basic)
     auto* const domains = filter->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
-    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
+    EXPECT_EQ("adblock.org", (*domains)[0]);
 }
 
 TEST(Parser_FilterOption, Domain_ExcludeDomain)
@@ -49,7 +45,7 @@ TEST(Parser_FilterOption, Domain_ExcludeDomain)
     auto* const domains = filter->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
-    EXPECT_TRUE(ba::equals("~adblock.org", (*domains)[0]));
+    EXPECT_EQ("~adblock.org", (*domains)[0]);
 }
 
 TEST(Parser_FilterOption, Domain_MultipleDomain1)
@@ -68,8 +64,8 @@ TEST(Parser_FilterOption, Domain_MultipleDomain1)
     auto* const domains = filter->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(2, domains->size());
-    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
-    EXPECT_TRUE(ba::equals("google.com", (*domains)[1]));
+    EXPECT_EQ("adblock.org", (*domains)[0]);
+    EXPECT_EQ("google.com", (*domains)[1]);
 }
 
 TEST(Parser_FilterOption, Domain_MultipleDomain2)
@@ -88,6 +84,6 @@ TEST(Parser_FilterOption, Domain_MultipleDomain2)
     auto* const domains = filter->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(2, domains->size());
-    EXPECT_TRUE(ba::equals("adblock.org", (*domains)[0]));
-    EXPECT_TRUE(ba::equals("~google.com", (*domains)[1]));
+    EXPECT_EQ("adblock.org", (*domains)[0]);
+    EXPECT_EQ("~google.com", (*domains)[1]);
 }

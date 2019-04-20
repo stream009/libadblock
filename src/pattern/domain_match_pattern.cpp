@@ -66,7 +66,7 @@ subDomain(StringRange const host)
 // DomainMatchPattern
 //
 DomainMatchPattern::
-DomainMatchPattern(StringRange const& pattern,
+DomainMatchPattern(StringRange const pattern,
                    bool const endMatch/*= false*/)
     : Base { pattern }
     , m_endAnchor { endMatch }

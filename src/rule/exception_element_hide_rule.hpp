@@ -18,7 +18,7 @@ class ExceptionElementHideRule : public ElementHideRule
     using Base = ElementHideRule;
     using Domains = Base::Domains;
 public:
-    ExceptionElementHideRule(StringRange const& selector,
+    ExceptionElementHideRule(StringRange const selector,
                              std::unique_ptr<Domains> domains)
         : Base { selector, std::move(domains) }
     {}

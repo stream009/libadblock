@@ -19,7 +19,7 @@ public:
     using Domains = std::vector<StringRange>;
 public:
     // accessor
-    StringRange const& cssSelector() const { return m_cssSelector; }
+    StringRange const cssSelector() const { return m_cssSelector; }
     Domains const* domains() const { return m_domains.get(); }
 
     // query
@@ -28,7 +28,7 @@ public:
     bool isDomainRestricted() const { return !!m_domains; }
 
 protected:
-    ElementHideRule(StringRange const& selector,
+    ElementHideRule(StringRange const selector,
                     std::unique_ptr<Domains> domains);
 private:
     // @override Rule

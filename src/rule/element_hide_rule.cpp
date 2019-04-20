@@ -7,7 +7,7 @@
 namespace adblock {
 
 ElementHideRule::
-ElementHideRule(StringRange const& selector,
+ElementHideRule(StringRange const selector,
                 std::unique_ptr<Domains> domains)
     : m_cssSelector { selector }
     , m_domains { std::move(domains) }

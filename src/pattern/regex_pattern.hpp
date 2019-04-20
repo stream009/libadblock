@@ -17,7 +17,7 @@ class Uri;
 class RegexPattern : public Pattern
 {
 public:
-    RegexPattern(StringRange const&);
+    RegexPattern(StringRange const);
 
     bool match(Uri const& target, bool caseSensitive = false) const override;
 

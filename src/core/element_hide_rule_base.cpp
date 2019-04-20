@@ -17,7 +17,7 @@ namespace adblock {
 using ElementHideRules = ElementHideRuleBase::ElementHideRules;
 
 static std::string
-joinSelectors(ElementHideRules const& rules, StringRange const& separator)
+joinSelectors(ElementHideRules const& rules, StringRange const separator)
 {
     if (rules.empty()) return "";
 
@@ -65,7 +65,7 @@ ElementHideRuleBase(FilterRuleBase const& filterRuleBase)
 {}
 
 std::string ElementHideRuleBase::
-query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
+query(Uri const& uri, StringRange const siteKey/*= {}*/) const
 {
     ElementHideRules resultSet;
 
@@ -94,7 +94,7 @@ query(Uri const& uri, StringRange const& siteKey/*= {}*/) const
 }
 
 ElementHideRules ElementHideRuleBase::
-lookupExtendedRule(Uri const& uri, StringRange const& siteKey/*= {}*/) const
+lookupExtendedRule(Uri const& uri, StringRange const siteKey/*= {}*/) const
 {
     ElementHideRules resultSet;
 

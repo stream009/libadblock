@@ -13,7 +13,7 @@ class DomainMatchPattern : public BaseMatchPattern
     using Base = BaseMatchPattern;
     using Base::Tokens;
 public:
-    DomainMatchPattern(StringRange const& pattern,
+    DomainMatchPattern(StringRange const pattern,
                        bool endMatch = false);
 
     // query

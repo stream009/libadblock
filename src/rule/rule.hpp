@@ -18,11 +18,11 @@ public:
 
     // accessor
     FilterSet const* filterSet() const { return m_filterSet; }
-    StringRange const& line() const { return m_line; }
+    StringRange const line() const { return m_line; }
 
     // modifier
     void setFilterSet(FilterSet const&);
-    void setLine(StringRange const&);
+    void setLine(StringRange const);
 
 private:
     virtual void print(std::ostream&) const = 0;

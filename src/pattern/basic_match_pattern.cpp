@@ -8,7 +8,7 @@
 namespace adblock {
 
 BasicMatchPattern::
-BasicMatchPattern(StringRange const& pattern,
+BasicMatchPattern(StringRange const pattern,
                   bool const beginMatch/*= false*/,
                   bool const endMatch/*= false*/)
     : Base { pattern }

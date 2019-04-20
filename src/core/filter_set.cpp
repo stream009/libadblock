@@ -155,7 +155,7 @@ rules() const
 }
 
 static StringRange
-ltrim(StringRange const& range)
+ltrim(StringRange const range)
 {
     if (range.empty()) return {};
 
@@ -168,7 +168,7 @@ ltrim(StringRange const& range)
 }
 
 static StringRange
-rtrim(StringRange const& range)
+rtrim(StringRange const range)
 {
     if (range.empty()) return {};
 
@@ -181,7 +181,7 @@ rtrim(StringRange const& range)
 }
 
 static StringRange
-trim(StringRange const& range)
+trim(StringRange const range)
 {
     return rtrim(ltrim(range));
 }

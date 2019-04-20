@@ -15,7 +15,7 @@ class ExtendedElementHideRule : public ElementHideRule
     using Base = ElementHideRule;
     using Domains = Base::Domains;
 public:
-    ExtendedElementHideRule(StringRange const& selector,
+    ExtendedElementHideRule(StringRange const selector,
                             std::unique_ptr<Domains> domains)
         : Base { selector, std::move(domains) }
     {}

@@ -41,12 +41,12 @@ private:
 // BaseMatchPattern
 //
 BaseMatchPattern::
-BaseMatchPattern(StringRange const& range)
+BaseMatchPattern(StringRange const range)
     : m_str { range }
 {}
 
 bool BaseMatchPattern::
-doMatch(StringRange const& target, Tokens const& tokens,
+doMatch(StringRange const target, Tokens const& tokens,
         bool const beginAnchor, bool const endAnchor, bool const caseSensitive) const
 {
     namespace ba = boost::algorithm;

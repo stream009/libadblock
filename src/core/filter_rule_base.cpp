@@ -19,7 +19,7 @@ namespace adblock {
 class WhiteListQueryContextAdaptor : public WhiteListQueryContext
 {
 public:
-    WhiteListQueryContextAdaptor(Uri const& uri, StringRange const& siteKey)
+    WhiteListQueryContextAdaptor(Uri const& uri, StringRange const siteKey)
         : m_uri { uri }
         , m_siteKey { siteKey }
     {}
@@ -29,7 +29,7 @@ public:
 
 private:
     Uri const& m_uri;
-    StringRange const& m_siteKey;
+    StringRange const m_siteKey;
 };
 
 class BlockWhiteListQueryContext : public WhiteListQueryContextAdaptor

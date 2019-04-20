@@ -15,7 +15,7 @@ public:
     enum Anchor { None = 0, Begin = 1, End = 2 };
 
 public:
-    BasicMatchPattern(StringRange const& pattern,
+    BasicMatchPattern(StringRange const pattern,
                       bool beginMatch = false,
                       bool endMatch = false);
 

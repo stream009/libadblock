@@ -7,7 +7,7 @@
 namespace adblock {
 
 RegexPattern::
-RegexPattern(StringRange const& pattern)
+RegexPattern(StringRange const pattern)
     : m_pattern { pattern }
 {}
 

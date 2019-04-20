@@ -13,7 +13,7 @@ namespace adblock {
 
 struct SiteKeyContext : MockContext
 {
-    SiteKeyContext(StringRange const& siteKey)
+    SiteKeyContext(StringRange const siteKey)
         : m_siteKey { siteKey.begin(), siteKey.end() }
     {}
 

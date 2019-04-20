@@ -25,14 +25,14 @@ public:
         return doMatchUrl(url, caseSensitive);
     }
 
-    StringRange const& pattern() const { return m_str; }
+    StringRange const pattern() const { return m_str; }
 
 protected:
     virtual bool doMatchUrl(Uri const&, bool caseSensitive) const = 0;
 
-    BaseMatchPattern(StringRange const& range);
+    BaseMatchPattern(StringRange const range);
 
-    bool doMatch(StringRange const&, Tokens const&,
+    bool doMatch(StringRange const, Tokens const&,
                  bool beginAnchor, bool endAnchor, bool caseSensitive) const;
 
 private:

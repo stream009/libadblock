@@ -9,7 +9,7 @@ setFilterSet(FilterSet const& filterSet)
 }
 
 void Rule::
-setLine(StringRange const& line)
+setLine(StringRange const line)
 {
     m_line = line;
 }

@@ -1,10 +1,12 @@
 #include "filter_rule.hpp"
 
-#include "core/context.hpp"
-#include "core/white_list_query_context.hpp"
 #include "domain_data_base.hpp"
-#include "pattern/pattern.hpp"
 #include "utility.hpp"
+
+#include "core/context.hpp"
+#include "core/uri.hpp"
+#include "core/white_list_query_context.hpp"
+#include "pattern/pattern.hpp"
 
 #include <cassert>
 #include <ostream>

@@ -2,7 +2,8 @@
 #define REGEX_PATTERN_HPP
 
 #include "pattern.hpp"
-#include "core/type.hpp"
+
+#include "core/string_range.hpp"
 
 #include <iosfwd>
 #include <optional>
@@ -10,6 +11,8 @@
 #include <boost/regex.hpp>
 
 namespace adblock {
+
+class Uri;
 
 class RegexPattern : public Pattern
 {

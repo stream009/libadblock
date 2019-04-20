@@ -1,19 +1,20 @@
 #ifndef ADBLOCK_DOMAIN_DATA_BASE_HPP
 #define ADBLOCK_DOMAIN_DATA_BASE_HPP
 
-#include "core/type.hpp"
-
 namespace adblock {
+
+class StringRange;
+class Uri;
 
 class DomainDataBase
 {
 public:
     DomainDataBase();
 
-    StringRange query(const Uri&) const;
+    StringRange query(Uri const&) const;
 
 private:
-    static void *m_tree;
+    static void* m_tree;
 };
 
 } // namespace adblock

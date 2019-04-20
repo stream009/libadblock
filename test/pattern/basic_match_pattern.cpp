@@ -1,6 +1,7 @@
 #include "pattern/basic_match_pattern.hpp"
 
-#include "core/type.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 
 #include <iostream>
 

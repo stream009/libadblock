@@ -4,7 +4,7 @@
 #include "filter_rule.hpp"
 #include "filter_option.hpp"
 
-#include "core/type.hpp"
+#include "core/string_range.hpp"
 #include "pattern/pattern.hpp"
 
 #include <memory>

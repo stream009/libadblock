@@ -2,6 +2,7 @@
 
 #include "utility.hpp"
 
+#include "core/uri.hpp"
 #include "pattern/basic_match_pattern.hpp"
 
 #include <cassert>
@@ -13,7 +14,7 @@
 namespace adblock {
 
 void PrefixMatchFilterRuleMap::
-doPut(const FilterRule &rule)
+doPut(FilterRule const& rule)
 {
     auto* const pattern =
                 dynamic_cast<BasicMatchPattern const*>(&rule.pattern());

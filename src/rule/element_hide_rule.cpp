@@ -2,6 +2,8 @@
 
 #include "utility.hpp"
 
+#include "core/uri.hpp"
+
 namespace adblock {
 
 ElementHideRule::

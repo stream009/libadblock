@@ -1,8 +1,8 @@
 #include "parser/parser.hpp"
 
+#include "core/string_range.hpp"
 #include "pattern/regex_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
-#include "core/type.hpp"
 
 #include <boost/lexical_cast.hpp>
 

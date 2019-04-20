@@ -1,7 +1,10 @@
 #include "filter_rule_base.hpp"
 
 #include "context.hpp"
+#include "string_range.hpp"
+#include "uri.hpp"
 #include "white_list_query_context.hpp"
+
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 

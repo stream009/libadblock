@@ -2,6 +2,7 @@
 
 #include "utility.hpp"
 
+#include "core/uri.hpp"
 #include "pattern/base_match_pattern.hpp"
 
 #include <cassert>

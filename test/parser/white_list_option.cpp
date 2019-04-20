@@ -1,8 +1,8 @@
 #include "parser/parser.hpp"
 
+#include "core/string_range.hpp"
 #include "rule/filter_option.hpp"
 #include "rule/filter_rule.hpp"
-#include "core/type.hpp"
 
 #include <memory>
 

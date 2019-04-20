@@ -1,7 +1,6 @@
 #ifndef ADBLOCK_ELEMENT_HIDE_RULE_BASE_HPP
 #define ADBLOCK_ELEMENT_HIDE_RULE_BASE_HPP
 
-#include "type.hpp"
 #include "index/domained_element_hide_rule_map.hpp"
 
 #include <string>
@@ -12,6 +11,8 @@
 namespace adblock {
 
 class FilterRuleBase;
+class StringRange;
+class Uri;
 
 class ElementHideRuleBase
 {

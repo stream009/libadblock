@@ -1,10 +1,11 @@
 #include "basic_match_pattern.hpp"
 
+#include "core/uri.hpp"
+
 #include <optional>
 #include <ostream>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/range/iterator_range.hpp>
 
 namespace adblock {
 
@@ -78,7 +79,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
 
         if (!endAnchor || tokensCopy.size() > 1) {
             tokensCopy.erase(tokensCopy.begin());
-            range.drop_front(static_cast<ptrdiff_t>(firstToken.size()));
+            range.remove_prefix(firstToken.size());
         }
     }
 
@@ -89,7 +90,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
         }
 
         tokensCopy.pop_back();
-        range.drop_back(static_cast<ptrdiff_t>(lastToken.size()));
+        range.remove_suffix(lastToken.size());
     }
 
     for (auto const& token: tokensCopy) {
@@ -99,7 +100,7 @@ doMatch(StringRange const& target, Tokens const& tokens,
         auto const& rv = ba::find(range, ba::first_finder(token, compare));
         if (rv.empty()) return false;
 
-        range = boost::make_iterator_range(rv.end(), range.end());
+        range = StringRange { rv.end(), range.end() };
     }
 
     return true;

@@ -1,7 +1,8 @@
 #ifndef ADBLOCK_CONTEXT_HPP
 #define ADBLOCK_CONTEXT_HPP
 
-#include "type.hpp"
+#include "string_range.hpp"
+#include "uri.hpp"
 
 namespace adblock {
 

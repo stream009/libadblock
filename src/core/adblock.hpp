@@ -3,7 +3,7 @@
 
 #include "element_hide_rule_base.hpp"
 #include "filter_rule_base.hpp"
-#include "type.hpp"
+#include "string_range.hpp"
 
 #include <memory>
 #include <vector>
@@ -16,6 +16,7 @@ namespace adblock {
 
 class Context;
 class FilterSet;
+class Uri;
 
 class AdBlock
 {

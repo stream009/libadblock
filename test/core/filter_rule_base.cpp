@@ -2,7 +2,8 @@
 #include "../parse_rule.hpp"
 
 #include "core/filter_rule_base.hpp"
-#include "core/type.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"

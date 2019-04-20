@@ -1,11 +1,11 @@
 #ifndef PATTERN_HPP
 #define PATTERN_HPP
 
-#include "core/type.hpp"
-
 #include <ostream>
 
 namespace adblock {
+
+class Uri;
 
 class Pattern
 {

@@ -1,8 +1,8 @@
 #include "api.h"
-#include "core/type.hpp"
 
 #include <cassert>
 #include <iostream>
+#include <string_view>
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -307,7 +307,6 @@ TEST_F(API_F, adblock_filter_set_parameters)
 
 TEST(Main_API, ContentSecurityPolicy)
 {
-    using namespace adblock;
     FilterFile fs;
 
     fs << "||adblock.com$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
@@ -315,7 +314,7 @@ TEST(Main_API, ContentSecurityPolicy)
     fs << std::flush;
 
     auto const& path = fs.path().string();
-    auto const uri = "http://www.adblock.com"_r;
+    std::string_view const uri { "http://www.adblock.com" };
 
     auto to_string_view = [](auto const& str) {
         return std::string_view(str.ptr, str.length);

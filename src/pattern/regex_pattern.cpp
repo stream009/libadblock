@@ -1,5 +1,7 @@
 #include "regex_pattern.hpp"
 
+#include "core/uri.hpp"
+
 #include <iostream>
 
 namespace adblock {

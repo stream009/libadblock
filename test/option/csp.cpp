@@ -1,6 +1,8 @@
 #include "api.h"
 #include "core/adblock.hpp"
 #include "core/context.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 
 #include <gtest/gtest.h>
 
@@ -38,11 +40,6 @@ public:
 private:
     fs::path m_path;
 };
-
-bool operator==(char const lhs[], StringRange const& rhs)
-{
-    return std::string_view(rhs.begin(), rhs.size()) == lhs;
-}
 
 TEST(Option_Csp, Elementary)
 {

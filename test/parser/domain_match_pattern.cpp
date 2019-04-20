@@ -1,8 +1,8 @@
 #include "parser/parser.hpp"
 
+#include "core/string_range.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
-#include "core/type.hpp"
 
 #include <memory>
 

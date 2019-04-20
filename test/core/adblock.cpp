@@ -3,7 +3,7 @@
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_set.hpp"
-#include "core/type.hpp"
+#include "core/uri.hpp"
 
 #include <iostream>
 

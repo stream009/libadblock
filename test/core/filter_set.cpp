@@ -1,5 +1,6 @@
-#include "core/type.hpp"
 #include "core/filter_set.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 
 #include <exception>
 

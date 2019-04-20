@@ -1,5 +1,7 @@
 #include "suffix_match_filter_rule_map.hpp"
 
+#include "core/uri.hpp"
+#include "core/string_range.hpp"
 #include "pattern/basic_match_pattern.hpp"
 
 #include <cassert>

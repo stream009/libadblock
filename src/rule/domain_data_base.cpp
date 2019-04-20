@@ -1,5 +1,8 @@
 #include "domain_data_base.hpp"
 
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
+
 #include <cassert>
 
 extern "C" {
@@ -18,15 +21,16 @@ DomainDataBase()
 }
 
 StringRange DomainDataBase::
-query(const Uri &uri) const
+query(Uri const& uri) const
 {
-    const auto &host = uri.host();
+    auto const& host = uri.host();
     if (host.empty()) return {};
-    const char *begin = host.data();
-    const auto len = host.size();
-    const char *end = begin + len;
 
-    const char *domain = ::getRegisteredDomain_(begin, len, m_tree);
+    char const* begin = host.data();
+    auto const len = host.size();
+    char const* end = begin + len;
+
+    char const* domain = ::getRegisteredDomain_(begin, len, m_tree);
 
     if (domain) {
         return { domain, end };

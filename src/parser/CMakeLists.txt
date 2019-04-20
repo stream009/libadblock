@@ -8,6 +8,7 @@ target_include_directories(parser PRIVATE
 )
 
 target_link_libraries(parser
+    core
     rule
     adblock_parser
 )

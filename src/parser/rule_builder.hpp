@@ -1,3 +1,4 @@
+#include "core/string_range.hpp"
 #include "rule/rule.hpp"
 #include "rule/filter_option.hpp"
 #include "pattern/pattern.hpp"

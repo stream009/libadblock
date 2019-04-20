@@ -2,13 +2,16 @@
 #define EXCEPTION_ELEMENT_HIDE_RULE_HPP
 
 #include "element_hide_rule.hpp"
-#include "core/type.hpp"
+
+#include "core/string_range.hpp"
 
 #include <iosfwd>
 #include <memory>
 #include <vector>
 
 namespace adblock {
+
+class StringRange;
 
 class ExceptionElementHideRule : public ElementHideRule
 {

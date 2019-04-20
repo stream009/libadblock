@@ -2,6 +2,8 @@
 
 #include "context.hpp"
 #include "filter_set.hpp"
+#include "uri.hpp"
+
 #include "parser/parser.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/comment_rule.hpp"

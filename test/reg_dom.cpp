@@ -1,6 +1,8 @@
-#include <gtest/gtest.h>
+#include <string_view>
 
 #include <boost/algorithm/string.hpp>
+
+#include <gtest/gtest.h>
 
 extern "C" {
 #include "reg_dom/regdom.h"
@@ -21,23 +23,23 @@ TEST(Main_LibRegDom, OriginalAPI)
 
     namespace ba = boost::algorithm;
     {
-        const auto *host = "www.adblock.org";
-        const auto *domain = getRegisteredDomain(host, tree);
+        auto const host = "www.adblock.org";
+        auto const domain = getRegisteredDomain(host, tree);
         EXPECT_TRUE(ba::equals("adblock.org", domain)) << domain;
     }
     {
-        const auto *host = "some.random.deep.domain.com";
-        const auto *domain = getRegisteredDomain(host, tree);
+        auto const host = "some.random.deep.domain.com";
+        auto const domain = getRegisteredDomain(host, tree);
         EXPECT_TRUE(ba::equals("domain.com", domain)) << domain;
     }
     {
-        const auto *host = "non.existent.brah";
-        const auto *domain = getRegisteredDomain(host, tree);
+        auto const host = "non.existent.brah";
+        auto const domain = getRegisteredDomain(host, tree);
         EXPECT_TRUE(ba::equals("existent.brah", domain)) << domain;
     }
     {
-        const auto *host = "non.existent.brah";
-        const auto *domain = getRegisteredDomainDrop(host, tree, true);
+        auto const host = "non.existent.brah";
+        auto const domain = getRegisteredDomainDrop(host, tree, true);
         EXPECT_EQ(nullptr, domain) << domain;
     }
 
@@ -46,14 +48,15 @@ TEST(Main_LibRegDom, OriginalAPI)
 
 TEST(Main_LibRegDom, CustomAPI)
 {
+    namespace ba = boost::algorithm;
+
     auto *tree = loadTldTree();
     ASSERT_TRUE(!!tree);
 
     {
-        const auto host = boost::as_literal("www.adblock.org");
-        const auto *domain = getRegisteredDomain_(
+        std::string_view const host = "www.adblock.org";
+        auto const domain = getRegisteredDomain_(
                                   host.begin(), host.size(), tree);
-        namespace ba = boost::algorithm;
         EXPECT_TRUE(ba::equals("adblock.org", domain)) << domain;
     }
 

@@ -1,6 +1,9 @@
 #include "element_hide_rule_base.hpp"
 
 #include "filter_rule_base.hpp"
+#include "string_range.hpp"
+#include "uri.hpp"
+
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"

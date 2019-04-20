@@ -4,3 +4,6 @@ add_library(pattern
     domain_match_pattern.cpp
     regex_pattern.cpp
 )
+target_link_libraries(pattern
+    ${Boost_LIBRARIES}
+)

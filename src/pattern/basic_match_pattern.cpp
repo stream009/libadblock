@@ -1,5 +1,8 @@
 #include "basic_match_pattern.hpp"
 
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
+
 #include <boost/algorithm/string.hpp>
 
 namespace adblock {

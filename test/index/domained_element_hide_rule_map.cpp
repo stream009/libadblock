@@ -1,8 +1,9 @@
 #include "../parse_rule.hpp"
 
-#include "rule/basic_element_hide_rule.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "index/domained_element_hide_rule_map.hpp"
-#include "core/type.hpp"
+#include "rule/basic_element_hide_rule.hpp"
 
 #include <boost/range/algorithm.hpp>
 

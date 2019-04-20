@@ -2,7 +2,8 @@
 #define ADBLOCK_FILTER_SET_HPP
 
 #include "file.hpp"
-#include "type.hpp"
+#include "string_range.hpp"
+
 #include "rule/rule.hpp"
 
 #include <memory>
@@ -65,7 +66,6 @@ private:
     File m_file;
     Rules m_rules;
 };
-
 
 //TODO derive from application specific base exception class
 class FilterSet::ParseError : public std::exception

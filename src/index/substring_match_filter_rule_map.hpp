@@ -2,13 +2,16 @@
 #define ADBLOCK_SUBSTRING_MATCH_FILTER_RULE_MAP_HPP
 
 #include "filter_rule_map.hpp"
-#include "core/type.hpp"
+
+#include "core/string_range.hpp"
 
 #include <boost/property_tree/ptree_fwd.hpp>
 
 #include <radix_tree/radix_tree.hpp>
 
 namespace adblock {
+
+class Uri;
 
 class SubstringMatchFilterRuleMap : public FilterRuleMap
 {

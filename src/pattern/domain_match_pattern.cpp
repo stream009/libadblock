@@ -1,7 +1,10 @@
 #include "domain_match_pattern.hpp"
 
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
+
 #include <algorithm>
-#include <iterator>
+#include <utility>
 
 #include <boost/algorithm/string.hpp>
 

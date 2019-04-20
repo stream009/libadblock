@@ -16,13 +16,13 @@ own QtWebEngine base browser. Currently it is used as an component of
 ### provided
 - parsing filter file
 - build database
-- response to the query from client
+- respond to the query from client
 
 ### NOT provided (should be done by the client)
-- actual blocking
+- actual blocking request/content
 - updating filter file from the Internet
 - editing custom filter list
-- providing UI
+- UI
 
 ## API
 see [api.h](https://gitlab.com/stream9/libadblock/blob/master/src/api.h)

@@ -2,12 +2,15 @@
 #define ELEMENT_HIDE_RULE_HPP
 
 #include "rule.hpp"
-#include "core/type.hpp"
+
+#include "core/string_range.hpp"
 
 #include <memory>
 #include <vector>
 
 namespace adblock {
+
+class Uri;
 
 class ElementHideRule : public Rule
 {

@@ -3,14 +3,15 @@
 
 #include "pattern.hpp"
 
-#include <algorithm>
-#include <cassert>
+#include "core/string_range.hpp"
+
 #include <iosfwd>
-#include <vector>
 
 #include <boost/container/small_vector.hpp>
 
 namespace adblock {
+
+class Uri;
 
 class BaseMatchPattern : public Pattern
 {

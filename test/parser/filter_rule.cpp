@@ -1,11 +1,11 @@
 #include "parser/parser.hpp"
 
+#include "core/string_range.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 #include "rule/filter_option.hpp"
-#include "core/type.hpp"
 
 #include <memory>
 

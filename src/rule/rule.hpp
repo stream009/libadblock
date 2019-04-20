@@ -1,7 +1,7 @@
 #ifndef RULE_HPP
 #define RULE_HPP
 
-#include "core/type.hpp"
+#include "core/string_range.hpp"
 
 #include <ostream>
 

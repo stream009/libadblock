@@ -1,4 +1,4 @@
-#include "core/type.hpp"
+#include "core/string_range.hpp"
 #include "rule/comment_rule.hpp"
 
 #include <boost/lexical_cast.hpp>
@@ -9,8 +9,8 @@ using namespace adblock;
 
 TEST(Rule_CommentRule, Basic)
 {
-    const auto &comment = "!comment"_r;
-    const CommentRule rule { comment };
+    auto const comment = "!comment"_r;
+    CommentRule const rule { comment };
 
     EXPECT_EQ(comment, boost::lexical_cast<std::string>(rule));
 }

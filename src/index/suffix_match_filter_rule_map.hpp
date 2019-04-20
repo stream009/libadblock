@@ -2,7 +2,6 @@
 #define ADBLOCK_SUFFIX_MATCH_FILTER_RULE_MAP_HPP
 
 #include "filter_rule_map.hpp"
-#include "core/type.hpp"
 
 #include <iterator>
 
@@ -11,6 +10,8 @@
 #include <radix_tree/radix_tree.hpp>
 
 namespace adblock {
+
+class Uri;
 
 class SuffixMatchFilterRuleMap : public FilterRuleMap
 {

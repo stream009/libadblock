@@ -2,6 +2,8 @@
 
 #include "core/element_hide_rule_base.hpp"
 #include "core/filter_rule_base.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 
 #include <gtest/gtest.h>

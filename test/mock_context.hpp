@@ -2,9 +2,8 @@
 #define ADBLOCK_MOCK_CONTEXT_HPP
 
 #include "core/context.hpp"
-#include "core/type.hpp"
-
-#include <boost/range/iterator_range.hpp>
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 
 namespace adblock {
 
@@ -16,7 +15,7 @@ public:
           m_siteKey { ""_r }
     {}
 
-    const Uri &origin() const override { return m_uri; }
+    Uri const& origin() const override { return m_uri; }
 
     bool fromScriptTag() const override { return false; }
     bool fromImageTag() const override { return false; }

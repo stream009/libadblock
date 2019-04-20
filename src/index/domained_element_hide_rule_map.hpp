@@ -1,7 +1,6 @@
 #ifndef ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 #define ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 
-#include "core/type.hpp"
 #include "rule/element_hide_rule.hpp"
 
 #include <memory>
@@ -13,6 +12,8 @@
 #include <radix_tree/radix_tree.hpp>
 
 namespace adblock {
+
+class Uri;
 
 class DomainedElementHideRuleMap
 {

@@ -2,7 +2,8 @@
 #include "../parse_rule.hpp"
 
 #include "core/filter_rule_base.hpp"
-#include "parser/parser.hpp"
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>

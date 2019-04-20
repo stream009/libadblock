@@ -1,6 +1,8 @@
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
 
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "rule/filter_rule.hpp"
 
 #include <gtest/gtest.h>

@@ -1,9 +1,14 @@
-#include "core/filter_set.hpp"
-#include "core/type.hpp"
 #include "rule/rule.hpp"
 
 #include <memory>
 #include <vector>
+
+namespace adblock {
+
+class FilterSet;
+class StringRange;
+
+} // namespace adblock
 
 namespace adblock::parser {
 

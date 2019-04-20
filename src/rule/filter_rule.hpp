@@ -3,7 +3,8 @@
 
 #include "filter_option.hpp"
 #include "rule.hpp"
-#include "core/type.hpp"
+
+#include "core/string_range.hpp"
 
 #include <cassert>
 #include <iosfwd>
@@ -12,8 +13,9 @@
 
 namespace adblock {
 
-class Pattern;
 class Context;
+class Pattern;
+class Uri;
 class WhiteListQueryContext;
 
 class FilterRule : public Rule

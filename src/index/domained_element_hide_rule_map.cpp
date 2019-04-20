@@ -1,5 +1,7 @@
 #include "domained_element_hide_rule_map.hpp"
 
+#include "core/uri.hpp"
+
 #include <ostream>
 #include <string>
 

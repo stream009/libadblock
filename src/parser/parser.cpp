@@ -3,6 +3,7 @@
 #include "rule_builder.hpp"
 
 #include "core/filter_set.hpp"
+#include "core/string_range.hpp"
 
 #include <string_view>
 #include <memory>

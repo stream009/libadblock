@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_INDEX_UTILITY_HPP
 #define ADBLOCK_INDEX_UTILITY_HPP
 
-#include "core/type.hpp"
+#include "core/string_range.hpp"
 
 #include <algorithm>
 

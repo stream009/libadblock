@@ -1,10 +1,7 @@
 #include "pattern/regex_pattern.hpp"
 
-#include <iostream>
-
-#include <boost/format.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/iterator_range.hpp>
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 
 #include <gtest/gtest.h>
 
@@ -12,33 +9,33 @@ namespace adblock {
 
 TEST(Pattern_RegexPattern, Match)
 {
-    const RegexPattern pattern { ".*adblock.*"_r };
-    const auto &uri = "http://adblock.org"_u;
+    RegexPattern const pattern { ".*adblock.*"_r };
+    auto const& uri = "http://adblock.org"_u;
 
     EXPECT_TRUE(pattern.match(uri));
 }
 
 TEST(Pattern_RegexPattern, MatchWithDifferentCase1)
 {
-    const RegexPattern pattern { ".*adblock.*"_r };
-    const auto &uri = "http://Adblock.Org"_u;
+    RegexPattern const pattern { ".*adblock.*"_r };
+    auto const& uri = "http://Adblock.Org"_u;
 
     EXPECT_TRUE(pattern.match(uri));
 }
 
 TEST(Pattern_RegexPattern, MatchWithDifferentCase2)
 {
-    const RegexPattern pattern { ".*AdBlock.*"_r };
-    const auto &uri = "http://adblock.org"_u;
+    RegexPattern const pattern { ".*AdBlock.*"_r };
+    auto const& uri = "http://adblock.org"_u;
 
     EXPECT_TRUE(pattern.match(uri));
 }
 
 TEST(Pattern_RegexPattern, CaseSensitiveMatch)
 {
-    const RegexPattern pattern { ".*AdBlock.*"_r };
-    const auto &uri1 = "http://AdBlock.org"_u;
-    const auto &uri2 = "http://adblock.org"_u;
+    RegexPattern const pattern { ".*AdBlock.*"_r };
+    auto const& uri1 = "http://AdBlock.org"_u;
+    auto const& uri2 = "http://adblock.org"_u;
 
     EXPECT_TRUE(pattern.match(uri1, true));
     EXPECT_TRUE(pattern.match(uri2, false));

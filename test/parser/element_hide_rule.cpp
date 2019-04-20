@@ -1,5 +1,6 @@
 #include "parser/parser.hpp"
 
+#include "core/string_range.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"

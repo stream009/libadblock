@@ -2,9 +2,11 @@
 #define BASIC_MATCH_PATTERN
 
 #include "base_match_pattern.hpp"
-#include "core/type.hpp"
 
 namespace adblock {
+
+class StringRange;
+class Uri;
 
 class BasicMatchPattern : public BaseMatchPattern
 {

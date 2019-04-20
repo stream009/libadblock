@@ -1,7 +1,6 @@
 #ifndef ADBLOCK_FILTER_RULE_BASE_HPP
 #define ADBLOCK_FILTER_RULE_BASE_HPP
 
-#include "type.hpp"
 #include "index/filter_rule_index.hpp"
 
 #include <boost/property_tree/ptree_fwd.hpp>
@@ -9,6 +8,8 @@
 namespace adblock {
 
 class Context;
+class StringRange;
+class Uri;
 
 class FilterRuleBase
 {

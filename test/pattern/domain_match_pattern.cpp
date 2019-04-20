@@ -1,5 +1,6 @@
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "pattern/domain_match_pattern.hpp"
-#include "core/type.hpp"
 
 #include <gtest/gtest.h>
 

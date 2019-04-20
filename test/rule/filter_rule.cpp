@@ -1,6 +1,7 @@
+#include "core/string_range.hpp"
+#include "core/uri.hpp"
 #include "rule/basic_filter_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
-#include "core/type.hpp"
 
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"

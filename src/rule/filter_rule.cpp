@@ -110,16 +110,16 @@ matchOrigin(Uri const& uri, Context const& cxt) const
     if (m_options.test(FilterOption::SameOrigin)) {
         DomainDataBase ddb;
 
-        const auto &uriDomain = ddb.query(uri);
-        const auto &originDomain = ddb.query(cxt.origin());
+        const auto &uriDomain = ddb.getRegisteredDomain(uri);
+        const auto &originDomain = ddb.getRegisteredDomain(cxt.origin());
 
         return boost::equals(uriDomain, originDomain);
     }
     else if (m_options.test(FilterOption::ThirdParty)) {
         DomainDataBase ddb;
 
-        const auto &uriDomain = ddb.query(uri);
-        const auto &originDomain = ddb.query(cxt.origin());
+        const auto &uriDomain = ddb.getRegisteredDomain(uri);
+        const auto &originDomain = ddb.getRegisteredDomain(cxt.origin());
 
         return !ba::equals(uriDomain, originDomain);
     }

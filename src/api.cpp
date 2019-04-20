@@ -7,12 +7,12 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/make_unique.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/range/iterator_range.hpp>
 
@@ -115,7 +115,7 @@ static std::vector<std::vector<adblock_string_t>> s_stringVectors;
 adblock_t
 adblock_create()
 {
-    s_adBlocks.emplace_back(boost::make_unique<adblock::AdBlock>());
+    s_adBlocks.emplace_back(std::make_unique<adblock::AdBlock>());
 
     return reinterpret_cast<adblock_t>(s_adBlocks.back().get());
 }

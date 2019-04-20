@@ -21,7 +21,7 @@ DomainDataBase()
 }
 
 StringRange DomainDataBase::
-query(Uri const& uri) const
+getRegisteredDomain(Uri const& uri) const
 {
     auto const& host = uri.host();
     if (host.empty()) return {};

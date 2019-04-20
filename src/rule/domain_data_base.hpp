@@ -11,7 +11,7 @@ class DomainDataBase
 public:
     DomainDataBase();
 
-    StringRange query(Uri const&) const;
+    StringRange getRegisteredDomain(Uri const&) const;
 
 private:
     static void* m_tree;

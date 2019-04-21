@@ -67,7 +67,7 @@ public:
         return m_cxt.content_type == TYPE_OBJECT_SUBREQUEST;
     }
 
-    bool isSubDocument() const override
+    bool isSubdocument() const override
     {
         return m_cxt.content_type == TYPE_SUBDOCUMENT;
     }

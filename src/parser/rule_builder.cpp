@@ -173,10 +173,10 @@ void RuleBuilder::
 object_subrequest_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
     if (inverse) {
-        m_options.set(FilterOption::ObjectSubRequestInv);
+        m_options.set(FilterOption::ObjectSubrequestInv);
     }
     else {
-        m_options.set(FilterOption::ObjectSubRequest);
+        m_options.set(FilterOption::ObjectSubrequest);
     }
 }
 
@@ -184,10 +184,10 @@ void RuleBuilder::
 subdocument_option(iterator /*begin*/, iterator /*end*/, bool const inverse)
 {
     if (inverse) {
-        m_options.set(FilterOption::SubDocumentInv);
+        m_options.set(FilterOption::SubdocumentInv);
     }
     else {
-        m_options.set(FilterOption::SubDocument);
+        m_options.set(FilterOption::Subdocument);
     }
 }
 

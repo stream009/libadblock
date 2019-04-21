@@ -9,57 +9,57 @@
 
 namespace adblock {
 
-struct SubDocumentContext : MockContext
+struct SubdocumentContext : MockContext
 {
-    SubDocumentContext(bool const flag)
+    SubdocumentContext(bool const flag)
         : m_flag { flag }
     {}
 
-    bool isSubDocument() const override { return m_flag; }
+    bool isSubdocument() const override { return m_flag; }
 
     bool m_flag;
 };
 
-TEST(Option_SubDocumentOption, SubDocumentContext)
+TEST(Option_SubdocumentOption, SubdocumentContext)
 {
     auto const rule = parse_rule<FilterRule>("adblock$subdocument"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/doc.html" };
-    SubDocumentContext const context { true };
+    SubdocumentContext const context { true };
 
     EXPECT_TRUE(rule->match(uri, context));
 }
 
-TEST(Option_SubDocumentOption, NotSubDocumentContext)
+TEST(Option_SubdocumentOption, NotSubdocumentContext)
 {
     auto const rule = parse_rule<FilterRule>("adblock$subdocument"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/doc.html" };
-    SubDocumentContext const context { false };
+    SubdocumentContext const context { false };
 
     EXPECT_FALSE(rule->match(uri, context));
 }
 
-TEST(Option_SubDocumentOption, SubDocumentContextWithInverseOption)
+TEST(Option_SubdocumentOption, SubdocumentContextWithInverseOption)
 {
     auto const rule = parse_rule<FilterRule>("adblock$~subdocument"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/doc.html" };
-    SubDocumentContext const context { true };
+    SubdocumentContext const context { true };
 
     EXPECT_FALSE(rule->match(uri, context));
 }
 
-TEST(Option_SubDocumentOption, NotSubDocumentContextWithInverseOption)
+TEST(Option_SubdocumentOption, NotSubdocumentContextWithInverseOption)
 {
     auto const rule = parse_rule<FilterRule>("adblock$~subdocument"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/doc.html" };
-    SubDocumentContext const context { false };
+    SubdocumentContext const context { false };
 
     EXPECT_TRUE(rule->match(uri, context));
 }

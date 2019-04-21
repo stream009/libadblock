@@ -22,7 +22,7 @@ struct OtherContext : MockContext
     bool fromObjectTag() const override { return !m_flag; }
     bool fromXmlHttpRequest() const override { return !m_flag; }
     bool fromPlugins() const override { return !m_flag; }
-    bool isSubDocument() const override { return !m_flag; }
+    bool isSubdocument() const override { return !m_flag; }
 
     bool m_flag;
 };

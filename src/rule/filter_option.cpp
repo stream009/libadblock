@@ -53,8 +53,8 @@ typeSpecified() const
         | FilterOption::FontInv
         | FilterOption::Object
         | FilterOption::ObjectInv
-        | FilterOption::SubDocument
-        | FilterOption::SubDocumentInv
+        | FilterOption::Subdocument
+        | FilterOption::SubdocumentInv
         | FilterOption::WebSocket
         | FilterOption::WebSocketInv
         | FilterOption::WebRtc
@@ -63,8 +63,8 @@ typeSpecified() const
         | FilterOption::PingInv
         | FilterOption::XmlHttpRequest
         | FilterOption::XmlHttpRequestInv
-        | FilterOption::ObjectSubRequest
-        | FilterOption::ObjectSubRequestInv
+        | FilterOption::ObjectSubrequest
+        | FilterOption::ObjectSubrequestInv
         // query type
         | FilterOption::Popup
         | FilterOption::Document
@@ -121,11 +121,11 @@ matchTypeOptions(Context const& cxt) const
     if (test(FilterOption::ObjectInv)) {
         if (!cxt.fromObjectTag()) return true;
     }
-    if (test(FilterOption::SubDocument)) {
-        if (cxt.isSubDocument()) return true;
+    if (test(FilterOption::Subdocument)) {
+        if (cxt.isSubdocument()) return true;
     }
-    if (test(FilterOption::SubDocumentInv)) {
-        if (!cxt.isSubDocument()) return true;
+    if (test(FilterOption::SubdocumentInv)) {
+        if (!cxt.isSubdocument()) return true;
     }
     if (test(FilterOption::WebSocket)) {
         if (cxt.isWebSocket()) return true;
@@ -151,10 +151,10 @@ matchTypeOptions(Context const& cxt) const
     if (test(FilterOption::XmlHttpRequestInv)) {
         if (!cxt.fromXmlHttpRequest()) return true;
     }
-    if (test(FilterOption::ObjectSubRequest)) {
+    if (test(FilterOption::ObjectSubrequest)) {
         if (cxt.fromPlugins()) return true;
     }
-    if (test(FilterOption::ObjectSubRequestInv)) {
+    if (test(FilterOption::ObjectSubrequestInv)) {
         if (!cxt.fromPlugins()) return true;
     }
     if (test(FilterOption::Csp)) { //TODO separate
@@ -170,7 +170,7 @@ matchTypeOptions(Context const& cxt) const
             && !cxt.fromAudioVideoTag()
             && !cxt.isFont()
             && !cxt.fromObjectTag()
-            && !cxt.isSubDocument()
+            && !cxt.isSubdocument()
             && !cxt.isWebSocket()
             && !cxt.isWebRtc()
             && !cxt.isPing()
@@ -187,7 +187,7 @@ matchTypeOptions(Context const& cxt) const
             || cxt.fromAudioVideoTag()
             || cxt.isFont()
             || cxt.fromObjectTag()
-            || cxt.isSubDocument()
+            || cxt.isSubdocument()
             || cxt.isWebSocket()
             || cxt.isWebRtc()
             || cxt.isPing()
@@ -265,11 +265,11 @@ operator<<(std::ostream& os, FilterOptionSet const& options)
     if (options.test(FilterOption::ObjectInv)) {
         os << "ObjectInv, ";
     }
-    if (options.test(FilterOption::SubDocument)) {
-        os << "SubDocument, ";
+    if (options.test(FilterOption::Subdocument)) {
+        os << "Subdocument, ";
     }
-    if (options.test(FilterOption::SubDocumentInv)) {
-        os << "SubDocumentInv, ";
+    if (options.test(FilterOption::SubdocumentInv)) {
+        os << "SubdocumentInv, ";
     }
     if (options.test(FilterOption::WebSocket)) {
         os << "WebSocket, ";
@@ -295,11 +295,11 @@ operator<<(std::ostream& os, FilterOptionSet const& options)
     if (options.test(FilterOption::XmlHttpRequestInv)) {
         os << "XmlHttpRequestInv, ";
     }
-    if (options.test(FilterOption::ObjectSubRequest)) {
-        os << "ObjectSubRequest, ";
+    if (options.test(FilterOption::ObjectSubrequest)) {
+        os << "ObjectSubrequest, ";
     }
-    if (options.test(FilterOption::ObjectSubRequestInv)) {
-        os << "ObjectSubRequestInv, ";
+    if (options.test(FilterOption::ObjectSubrequestInv)) {
+        os << "ObjectSubrequestInv, ";
     }
     if (options.test(FilterOption::Popup)) {
         os << "Popup, ";

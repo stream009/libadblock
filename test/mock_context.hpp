@@ -24,7 +24,7 @@ public:
     bool fromObjectTag() const override { return false; }
     bool fromXmlHttpRequest() const override { return false; }
     bool fromPlugins() const override { return false; }
-    bool isSubDocument() const override { return false; }
+    bool isSubdocument() const override { return false; }
     bool isPopUp() const override { return false; }
     bool isFont() const override { return false; }
     bool isWebSocket() const override { return false; }

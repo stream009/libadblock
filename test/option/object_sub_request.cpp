@@ -9,9 +9,9 @@
 
 namespace adblock {
 
-struct ObjectSubRequestContext : MockContext
+struct ObjectSubrequestContext : MockContext
 {
-    ObjectSubRequestContext(bool const flag)
+    ObjectSubrequestContext(bool const flag)
         : m_flag { flag }
     {}
 
@@ -20,46 +20,46 @@ struct ObjectSubRequestContext : MockContext
     bool m_flag;
 };
 
-TEST(Option_ObjectSubRequestOption, ObjectSubRequestContext)
+TEST(Option_ObjectSubrequestOption, ObjectSubrequestContext)
 {
     auto const rule = parse_rule<FilterRule>("adblock$object-subrequest"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/data.json" };
-    ObjectSubRequestContext const context { true };
+    ObjectSubrequestContext const context { true };
 
     EXPECT_TRUE(rule->match(uri, context));
 }
 
-TEST(Option_ObjectSubRequestOption, NotObjectSubRequestContext)
+TEST(Option_ObjectSubrequestOption, NotObjectSubrequestContext)
 {
     auto const rule = parse_rule<FilterRule>("adblock$object-subrequest"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/data.json" };
-    ObjectSubRequestContext const context { false };
+    ObjectSubrequestContext const context { false };
 
     EXPECT_FALSE(rule->match(uri, context));
 }
 
-TEST(Option_ObjectSubRequestOption, ObjectSubRequestContextWithInverseOption)
+TEST(Option_ObjectSubrequestOption, ObjectSubrequestContextWithInverseOption)
 {
     auto const rule = parse_rule<FilterRule>("adblock$~object-subrequest"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/data.json" };
-    ObjectSubRequestContext const context { true };
+    ObjectSubrequestContext const context { true };
 
     EXPECT_FALSE(rule->match(uri, context));
 }
 
-TEST(Option_ObjectSubRequestOption, NotObjectSubRequestContextWithInverseOption)
+TEST(Option_ObjectSubrequestOption, NotObjectSubrequestContextWithInverseOption)
 {
     auto const rule = parse_rule<FilterRule>("adblock$~object-subrequest"_r);
     ASSERT_TRUE(rule);
 
     Uri const uri { "http://adblock.org/data.json" };
-    ObjectSubRequestContext const context { false };
+    ObjectSubrequestContext const context { false };
 
     EXPECT_TRUE(rule->match(uri, context));
 }

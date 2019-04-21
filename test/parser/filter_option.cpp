@@ -150,7 +150,7 @@ TEST(Parser_FilterOption, XmlHttpRequest_Inverse)
     EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequestInv));
 }
 
-TEST(Parser_FilterOption, ObjectSubRequest_Normal)
+TEST(Parser_FilterOption, ObjectSubrequest_Normal)
 {
     auto const& line = "adblock$object-subrequest"_r;
 
@@ -161,10 +161,10 @@ TEST(Parser_FilterOption, ObjectSubRequest_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubRequest));
+    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubrequest));
 }
 
-TEST(Parser_FilterOption, ObjectSubRequest_Inverse)
+TEST(Parser_FilterOption, ObjectSubrequest_Inverse)
 {
     auto const& line = "adblock$~object-subrequest"_r;
 
@@ -175,10 +175,10 @@ TEST(Parser_FilterOption, ObjectSubRequest_Inverse)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubRequestInv));
+    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubrequestInv));
 }
 
-TEST(Parser_FilterOption, SubDocument_Normal)
+TEST(Parser_FilterOption, Subdocument_Normal)
 {
     auto const& line = "adblock$subdocument"_r;
 
@@ -189,10 +189,10 @@ TEST(Parser_FilterOption, SubDocument_Normal)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::SubDocument));
+    EXPECT_TRUE(filter->hasOption(FilterOption::Subdocument));
 }
 
-TEST(Parser_FilterOption, SubDocument_Inverse)
+TEST(Parser_FilterOption, Subdocument_Inverse)
 {
     auto const& line = "adblock$~subdocument"_r;
 
@@ -203,7 +203,7 @@ TEST(Parser_FilterOption, SubDocument_Inverse)
     ASSERT_TRUE(filter);
 
     ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::SubDocumentInv));
+    EXPECT_TRUE(filter->hasOption(FilterOption::SubdocumentInv));
 }
 
 TEST(Parser_FilterOption, Other_Normal)

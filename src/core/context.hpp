@@ -20,7 +20,7 @@ public:
     virtual bool fromObjectTag() const { return false; }
     virtual bool fromXmlHttpRequest() const { return false; }
     virtual bool fromPlugins() const { return false; }
-    virtual bool isSubDocument() const { return false; }
+    virtual bool isSubdocument() const { return false; }
     virtual bool isPopUp() const { return false; }
     virtual bool isFont() const { return false; }
     virtual bool isWebSocket() const { return false; }

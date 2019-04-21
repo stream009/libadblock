@@ -67,7 +67,7 @@ TEST(Core_AdBlock, DISABLED_elementHideRule)
     AdBlock adBlock;
     adBlock.addFilterList(path);
     boost::timer::cpu_timer t;
-    auto const& css = adBlock.elementHideCss("http://www.adblockplus.org/"_u);
+    auto const& css = adBlock.elementHideSelectors("http://www.adblockplus.org/"_u);
     t.stop();
     std::cout << css.size() << "\n" << t.format();
 }

@@ -10,6 +10,16 @@
 
 namespace adblock {
 
+template<typename T, typename U>
+static bool
+contains(std::vector<T> const& vec, U const& value)
+{
+    return std::find_if(
+        vec.begin(), vec.end(),
+        [&](auto& v) { return v == value; }
+    ) != vec.end();
+}
+
 TEST(Option_GenericHide, Elementary)
 {
     FilterRuleBase fb;
@@ -21,8 +31,9 @@ TEST(Option_GenericHide, Elementary)
     rb.put(*rule1);
 
     { // elment hide rule "div" should be applied
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important } ", result);
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule1.get(), rules[0]);
     }
 
     auto const disabler = parse_rule<FilterRule>("@@||adblock.org$generichide"_r);
@@ -31,8 +42,8 @@ TEST(Option_GenericHide, Elementary)
     fb.put(*disabler);
 
     { // element hide rule "div" should be excluded by generichide rule
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_TRUE(result.empty()) << result;
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_TRUE(rules.empty());
     }
 }
 
@@ -52,8 +63,10 @@ TEST(Option_GenericHide, OnlyGenericShouldBeHidden)
     rb.put(*rule2);
 
     { // both generic and domain specific rule should be applied
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div, table { display: none !important } ", result) << result;
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(2, rules.size());
+        EXPECT_TRUE(contains(rules, rule1.get()));
+        EXPECT_TRUE(contains(rules, rule2.get()));
     }
 
     auto const disabler = parse_rule<FilterRule>("@@||adblock.org$generichide"_r);
@@ -62,8 +75,9 @@ TEST(Option_GenericHide, OnlyGenericShouldBeHidden)
     fb.put(*disabler);
 
     { // generic rule should be hidden but domained rule should remain
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("table { display: none !important } ", result) << result;
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_TRUE(contains(rules, rule2.get()));
     }
 }
 

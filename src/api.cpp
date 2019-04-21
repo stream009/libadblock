@@ -3,6 +3,7 @@
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_list.hpp"
+#include "core/string_range.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -14,7 +15,30 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/range/iterator_range.hpp>
+
+static std::string
+joinSelectors(std::vector<adblock::StringRange> const& selectors)
+{
+    std::string result;
+
+    if (selectors.empty()) return result;
+
+    constexpr auto unit = 200;
+    auto const len = selectors.size();
+
+    for (size_t i = 0; i < len; i += unit) {
+        result.append(selectors[i]);
+
+        auto const to = std::min(len, i + unit);
+        for (auto j = i + 1; j < to; ++j) {
+            result.append(", ");
+            result.append(selectors[j]);
+        }
+        result.append(" { display: none !important } ");
+    }
+
+    return result;
+}
 
 class Context : public adblock::Context
 {
@@ -253,7 +277,7 @@ adblock_element_hide_css(adblock_t adblock,
     try {
         adblock::Uri const uri { uri_in_utf8, uri_len };
 
-        auto &&cssStr = adBlock->elementHideCss(uri);
+        auto cssStr = joinSelectors(adBlock->elementHideSelectors(uri));
 
         if (!cssStr.empty()) {
             s_strings.emplace_back(cssStr.begin(), cssStr.end());
@@ -286,7 +310,7 @@ adblock_extended_element_hide_selectors(adblock_t adblock,
     try {
         adblock::Uri const uri { uri_in_utf8->ptr, uri_in_utf8->length };
 
-        auto results = adBlock->extendedElementHideSelector(uri);
+        auto results = adBlock->extendedElementHideSelectors(uri);
 
         if (!results.empty()) {
             std::vector<adblock_string_t> strings;

@@ -22,8 +22,9 @@ TEST(Option_ElemHide, Elementary)
     rb.put(*rule1);
 
     { // elment hide rule "div" should be applied
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important } ", result);
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule1.get(), rules[0]);
     }
 
     auto const disabler = parse_rule<FilterRule>("@@||adblock.org$elemhide"_r);
@@ -32,8 +33,8 @@ TEST(Option_ElemHide, Elementary)
     fb.put(*disabler);
 
     { // element hide rule "div" should be excluded by elemhide rule
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_TRUE(result.empty()) << result;
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_TRUE(rules.empty());
     }
 }
 
@@ -48,8 +49,9 @@ TEST(Option_ElemHide, Inversed)
     rb.put(*rule1);
 
     { // elment hide rule "div" should be applied
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important } ", result);
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule1.get(), rules[0]);
     }
 
     auto const disabler = parse_rule<FilterRule>("@@||adblock.org$~elemhide"_r);
@@ -58,8 +60,9 @@ TEST(Option_ElemHide, Inversed)
     fb.put(*disabler);
 
     { // inverted elemhide rule should be just ignored
-        auto const& result = rb.query("http://www.adblock.org"_u);
-        ASSERT_EQ("div { display: none !important } ", result);
+        auto const& rules = rb.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule1.get(), rules[0]);
     }
 }
 

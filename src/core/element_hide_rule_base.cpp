@@ -9,37 +9,10 @@
 #include "rule/extended_element_hide_rule.hpp"
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/range/adaptors.hpp>
-#include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
 using ElementHideRules = ElementHideRuleBase::ElementHideRules;
-
-static std::string
-joinSelectors(ElementHideRules const& rules, StringRange const separator)
-{
-    if (rules.empty()) return "";
-
-    std::string result;
-    auto back_inserter = std::back_inserter(result);
-
-    constexpr auto unit = 200;
-    auto const len = rules.size();
-
-    for (size_t i = 0; i < len; i += unit) {
-        boost::copy(rules.at(i)->cssSelector(), back_inserter);
-
-        auto const to = std::min(len, i + unit);
-        for (auto j = i + 1; j < to; ++j) {
-            boost::copy(separator, back_inserter);
-            boost::copy(rules.at(j)->cssSelector(), back_inserter);
-        }
-        result.append(" { display: none !important } ");
-    }
-
-    return result;
-}
 
 static void
 removeWhiteRules(ElementHideRules &rules, ElementHideRules const& whiteRules)
@@ -58,68 +31,68 @@ removeWhiteRules(ElementHideRules &rules, ElementHideRules const& whiteRules)
     rules.erase(end, rules.end());
 }
 
-
+//
+// ELementHideRuleBase
+//
 ElementHideRuleBase::
 ElementHideRuleBase(FilterRuleBase const& filterRuleBase)
     : m_filterRuleBase { filterRuleBase }
 {}
 
-std::string ElementHideRuleBase::
-query(Uri const& uri, StringRange const siteKey/*= {}*/) const
+ElementHideRuleBase::~ElementHideRuleBase() = default;
+
+ElementHideRules ElementHideRuleBase::
+lookupRules(Uri const& uri, StringRange const siteKey/*= {}*/) const
 {
-    ElementHideRules resultSet;
+    ElementHideRules result;
 
-    auto* const disabler = m_filterRuleBase.getFrameHideDisabler(uri, siteKey);
-    if (disabler != nullptr) return {};
+    if (isWhiteListed(uri, siteKey)) return result;
 
-    auto* const genericDisabler
-                       = m_filterRuleBase.getGenericHideDisabler(uri, siteKey);
+    auto const specificOnly = isDomainSpecificOnly(uri, siteKey);
 
-    if (genericDisabler == nullptr) {
-        resultSet = m_genericBlackList;
+    if (!specificOnly) {
+        result = m_genericBlackList;
     }
 
     auto const& domainedBlackList = m_domainedBlackList.query(uri);
-    resultSet.insert(resultSet.end(),
-                     domainedBlackList.begin(), domainedBlackList.end());
+    result.insert(result.end(),
+                  domainedBlackList.begin(), domainedBlackList.end());
 
     auto const& domainedWhiteList = m_domainedWhiteList.query(uri);
-    removeWhiteRules(resultSet, domainedWhiteList);
+    removeWhiteRules(result, domainedWhiteList);
 
-    if (genericDisabler == nullptr) {
-        removeWhiteRules(resultSet, m_genericWhiteList);
+    if (!specificOnly) {
+        removeWhiteRules(result, m_genericWhiteList);
     }
 
-    return joinSelectors(resultSet, ", "_r);
+    return result;
 }
 
 ElementHideRules ElementHideRuleBase::
-lookupExtendedRule(Uri const& uri, StringRange const siteKey/*= {}*/) const
+lookupExtendedRules(Uri const& uri, StringRange const siteKey/*= {}*/) const
 {
-    ElementHideRules resultSet;
+    ElementHideRules result;
 
-    auto* const disabler = m_filterRuleBase.getFrameHideDisabler(uri, siteKey);
-    if (disabler != nullptr) return {};
+    if (isWhiteListed(uri, siteKey)) return result;
 
-    auto* const genericDisabler
-                       = m_filterRuleBase.getGenericHideDisabler(uri, siteKey);
+    auto const specificOnly = isDomainSpecificOnly(uri, siteKey);
 
-    if (genericDisabler == nullptr) {
-        resultSet = m_genericExtendedBlackList;
+    if (!specificOnly) {
+        result = m_genericExtendedBlackList;
     }
 
     auto const& domainedBlackList = m_domainedExtendedBlackList.query(uri);
-    resultSet.insert(resultSet.end(),
-                     domainedBlackList.begin(), domainedBlackList.end());
+    result.insert(result.end(),
+                  domainedBlackList.begin(), domainedBlackList.end());
 
     auto const& domainedWhiteList = m_domainedWhiteList.query(uri);
-    removeWhiteRules(resultSet, domainedWhiteList);
+    removeWhiteRules(result, domainedWhiteList);
 
-    if (genericDisabler == nullptr) {
-        removeWhiteRules(resultSet, m_genericWhiteList);
+    if (!specificOnly) {
+        removeWhiteRules(result, m_genericWhiteList);
     }
 
-    return resultSet;
+    return result;
 }
 
 void ElementHideRuleBase::
@@ -207,6 +180,18 @@ clear()
 
     m_domainedExtendedBlackList.clear();
     m_genericExtendedBlackList.clear();
+}
+
+bool ElementHideRuleBase::
+isWhiteListed(Uri const& uri, StringRange const siteKey/*= {}*/) const
+{
+    return m_filterRuleBase.getFrameHideDisabler(uri, siteKey) != nullptr;
+}
+
+bool ElementHideRuleBase::
+isDomainSpecificOnly(Uri const& uri, StringRange const siteKey/*= {}*/) const
+{
+    return m_filterRuleBase.getGenericHideDisabler(uri, siteKey) != nullptr;;
 }
 
 } // namespace adblock

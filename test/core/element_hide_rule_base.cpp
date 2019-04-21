@@ -8,9 +8,21 @@
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
 
+#include <algorithm>
+
 #include <gtest/gtest.h>
 
 using namespace adblock;
+
+template<typename T, typename U>
+static bool
+contains(std::vector<T> const& vec, U const& value)
+{
+    return std::find_if(
+        vec.begin(), vec.end(),
+        [&](auto& v) { return v == value; }
+    ) != vec.end();
+}
 
 TEST(Core_ElementHideRuleBase, Elementary)
 {
@@ -21,8 +33,9 @@ TEST(Core_ElementHideRuleBase, Elementary)
     ElementHideRuleBase ruleBase { fb };
     ruleBase.put(*rule);
 
-    auto const& result = ruleBase.query("http://www.adblock.org"_u);
-    EXPECT_EQ("div { display: none !important } ", result);
+    auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+    ASSERT_EQ(1, rules.size());
+    EXPECT_EQ(rule.get(), rules[0]);
 }
 
 TEST(Core_ElementHideRuleBase, Domained)
@@ -39,10 +52,10 @@ TEST(Core_ElementHideRuleBase, Domained)
     ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
-    const auto &result = ruleBase.query("http://www.adblock.org"_u);
-    // either is ok.
-    //EXPECT_EQ("table, div { display: none !important }", result);
-    EXPECT_EQ("div, table { display: none !important } ", result);
+    auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+    ASSERT_EQ(2, rules.size());
+    EXPECT_TRUE(contains(rules, rule1.get()));
+    EXPECT_TRUE(contains(rules, rule2.get()));
 }
 
 TEST(Core_ElementHideRuleBase, ExcludedByExceptionRule)
@@ -59,8 +72,8 @@ TEST(Core_ElementHideRuleBase, ExcludedByExceptionRule)
     ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
-    const auto &result = ruleBase.query("http://www.adblock.org"_u);
-    EXPECT_EQ("", result);
+    auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+    ASSERT_TRUE(rules.empty());
 }
 
 TEST(Core_ElementHideRuleBase, ExcludedByGenericExceptionRule)
@@ -74,8 +87,9 @@ TEST(Core_ElementHideRuleBase, ExcludedByGenericExceptionRule)
     ruleBase.put(*rule1);
 
     {
-        auto const& result = ruleBase.query("http://www.adblock.org"_u);
-        EXPECT_EQ("div { display: none !important } ", result);
+        auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule1.get(), rules[0]);
     }
 
     auto const rule2 = parse_rule<ExceptionElementHideRule>("#@#div"_r);
@@ -84,8 +98,8 @@ TEST(Core_ElementHideRuleBase, ExcludedByGenericExceptionRule)
     ruleBase.put(*rule2);
 
     {
-        auto const& result = ruleBase.query("http://www.adblock.org"_u);
-        EXPECT_EQ("", result);
+        auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+        ASSERT_TRUE(rules.empty());
     }
 }
 
@@ -103,8 +117,9 @@ TEST(Core_ElementHideRuleBase, DomainMatchWithExceptionRuleButSelectorIsnTSame)
     ruleBase.put(*rule1);
     ruleBase.put(*rule2);
 
-    const auto &result = ruleBase.query("http://www.adblock.org"_u);
-    EXPECT_EQ("div { display: none !important } ", result);
+    auto const& rules = ruleBase.lookupRules("http://www.adblock.org"_u);
+    ASSERT_EQ(1, rules.size());
+    EXPECT_EQ(rule1.get(), rules[0]);
 }
 
 TEST(Core_ElementHideRuleBase, Clear)
@@ -141,14 +156,15 @@ TEST(Core_ElementHideRuleBase, ExtendedRule)
 
     auto const& uri = "http://www.adblock.org"_u;
 
-    auto const& result = ruleBase.query(uri);
-    EXPECT_EQ("", result);
-
-    auto const& rules = ruleBase.lookupExtendedRule(uri);
-    ASSERT_EQ(1, rules.size());
-
-    auto const& selector = rules[0]->cssSelector();
-    EXPECT_TRUE("div"_r == selector) << selector;
+    {
+        auto const& rules = ruleBase.lookupRules(uri);
+        ASSERT_TRUE(rules.empty());
+    }
+    {
+        auto const& rules = ruleBase.lookupExtendedRules(uri);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_EQ(rule.get(), rules[0]);
+    }
 }
 
 TEST(Core_ElementHideRuleBase, DomainedExtendedRule)
@@ -167,14 +183,16 @@ TEST(Core_ElementHideRuleBase, DomainedExtendedRule)
 
     auto const& uri = "http://www.adblock.org"_u;
 
-    auto const& result = ruleBase.query(uri);
-    EXPECT_EQ("", result);
-
-    auto const& rules = ruleBase.lookupExtendedRule(uri);
-    ASSERT_EQ(2, rules.size());
-
-    EXPECT_TRUE("div"_r == rules[0]->cssSelector());
-    EXPECT_TRUE("table"_r == rules[1]->cssSelector());
+    {
+        auto const& rules = ruleBase.lookupRules(uri);
+        ASSERT_TRUE(rules.empty());
+    }
+    {
+        auto const& rules = ruleBase.lookupExtendedRules(uri);
+        ASSERT_EQ(2, rules.size());
+        EXPECT_TRUE(contains(rules, rule1.get()));
+        EXPECT_TRUE(contains(rules, rule2.get()));
+    }
 }
 
 TEST(Core_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
@@ -193,11 +211,14 @@ TEST(Core_ElementHideRuleBase, Extended_ExcludedByExceptionRule)
 
     auto const& uri = "http://www.adblock.org"_u;
 
-    auto const& result = ruleBase.query(uri);
-    EXPECT_EQ("", result);
-
-    auto const& rules = ruleBase.lookupExtendedRule(uri);
-    EXPECT_TRUE(rules.empty());
+    {
+        auto const& rules = ruleBase.lookupRules(uri);
+        ASSERT_TRUE(rules.empty());
+    }
+    {
+        auto const& rules = ruleBase.lookupExtendedRules(uri);
+        ASSERT_TRUE(rules.empty());
+    }
 }
 
 TEST(Core_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelectorIsnTSame)
@@ -215,13 +236,15 @@ TEST(Core_ElementHideRuleBase, ExtendedRule_DomainMatchWithExceptionRuleButSelec
     ruleBase.put(*rule2);
 
     auto const& uri = "http://www.adblock.org"_u;
-
-    auto const& result = ruleBase.query(uri);
-    EXPECT_TRUE(result.empty());
-
-    auto const& rules = ruleBase.lookupExtendedRule(uri);
-    ASSERT_EQ(1, rules.size());
-    EXPECT_EQ("div"_r, rules[0]->cssSelector());
+    {
+        auto const& rules = ruleBase.lookupRules(uri);
+        ASSERT_TRUE(rules.empty());
+    }
+    {
+        auto const& rules = ruleBase.lookupExtendedRules(uri);
+        ASSERT_EQ(1, rules.size());
+        EXPECT_TRUE(contains(rules, rule1.get()));
+    }
 }
 
 TEST(Core_ElementHideRuleBase, ExtendedRule_Clear)

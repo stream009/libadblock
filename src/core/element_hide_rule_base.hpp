@@ -21,18 +21,24 @@ public:
 
 public:
     ElementHideRuleBase(FilterRuleBase const&);
+    ~ElementHideRuleBase();
 
     // query
-    std::string query(Uri const&, StringRange const siteKey = {}) const;
+    ElementHideRules
+        lookupRules(Uri const&, StringRange siteKey = {}) const;
 
     ElementHideRules
-        lookupExtendedRule(Uri const&, StringRange const siteKey = {}) const;
+        lookupExtendedRules(Uri const&, StringRange siteKey = {}) const;
 
     boost::property_tree::ptree statistics() const;
 
     // modifier
     void put(ElementHideRule const&);
     void clear();
+
+private:
+    bool isWhiteListed(Uri const&, StringRange siteKey = {}) const;
+    bool isDomainSpecificOnly(Uri const&, StringRange siteKey = {}) const;
 
 public:
     DomainedElementHideRuleMap m_domainedBlackList;

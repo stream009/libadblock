@@ -34,9 +34,11 @@ public:
     std::pair<bool, FilterRule const*>
         shouldBlock(Uri const&, Context const&) const;
 
-    std::string elementHideCss(Uri const&) const;
+    std::vector<StringRange>
+        elementHideSelectors(Uri const&, StringRange siteKey = {}) const;
 
-    std::vector<StringRange> extendedElementHideSelector(Uri const&) const;
+    std::vector<StringRange>
+        extendedElementHideSelectors(Uri const&, StringRange siteKey = {}) const;
 
     StringRange contentSecurityPolicy(Uri const&) const;
 

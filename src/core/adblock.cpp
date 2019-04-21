@@ -36,18 +36,29 @@ shouldBlock(Uri const& uri, Context const& context) const
     return m_filterRuleBase.query(uri, context);
 }
 
-std::string AdBlock::
-elementHideCss(Uri const& uri) const
-{
-    return m_elementHideRuleBase.query(uri);
-}
-
 std::vector<StringRange> AdBlock::
-extendedElementHideSelector(Uri const& uri) const
+elementHideSelectors(Uri const& uri, StringRange const siteKey/* = {}*/) const
 {
     std::vector<StringRange> results;
 
-    auto const& rules = m_elementHideRuleBase.lookupExtendedRule(uri);
+    auto const& rules =
+        m_elementHideRuleBase.lookupRules(uri, siteKey);
+
+    for (auto const& rule: rules) {
+        results.push_back(rule->cssSelector());
+    }
+
+    return results;
+}
+
+std::vector<StringRange> AdBlock::
+extendedElementHideSelectors(Uri const& uri,
+                             StringRange const siteKey/*= {}*/) const
+{
+    std::vector<StringRange> results;
+
+    auto const& rules =
+        m_elementHideRuleBase.lookupExtendedRules(uri, siteKey);
 
     for (auto const& rule: rules) {
         results.push_back(rule->cssSelector());

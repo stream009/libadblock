@@ -47,7 +47,7 @@ public:
         m_adblock = ::adblock_create();
         ASSERT_TRUE(m_adblock);
 
-        const auto &path1 = projectRoot / "test/data/easylist.txt";
+        auto const& path1 = projectRoot / "test/data/easylist.txt";
         ASSERT_TRUE(bfs::exists(path1)) << path1;
 
         ::adblock_add_filter_set(m_adblock, path1.c_str(), strlen(path1.c_str()));
@@ -75,39 +75,39 @@ TEST_F(API_F, adblock_should_block)
 
     context.content_type = TYPE_SCRIPT;
 
-    const std::string uri1 { "http://a.kickass.to/sc-b98b537.js" };
+    std::string const uri1 { "http://a.kickass.to/sc-b98b537.js" };
 
-    const char *filterSet = nullptr;
-    size_t filterSetLen = 0;
-    const char *reason = nullptr;
+    char const* filterList = nullptr;
+    size_t filterListLen = 0;
+    char const* reason = nullptr;
     size_t reasonLen = 0;
     bool rv = ::adblock_should_block(this->adblock(),
                 uri1.c_str(), uri1.size(), &context,
-                &filterSet, &filterSetLen, &reason, &reasonLen);
+                &filterList, &filterListLen, &reason, &reasonLen);
     ASSERT_TRUE(rv);
-    EXPECT_NE(nullptr, filterSet);
-    EXPECT_NE(0, filterSetLen);
+    EXPECT_NE(nullptr, filterList);
+    EXPECT_NE(0, filterListLen);
     EXPECT_NE(nullptr, reason);
     EXPECT_NE(0, reasonLen);
 
     context.content_type = TYPE_DOCUMENT;
 
-    const std::string uri2 { "http://barhbarhbarh.com" };
+    std::string const uri2 { "http://barhbarhbarh.com" };
     rv = ::adblock_should_block(this->adblock(),
                 uri2.c_str(), uri2.size(), &context,
-                &filterSet, &filterSetLen, &reason, &reasonLen);
+                &filterList, &filterListLen, &reason, &reasonLen);
     ASSERT_FALSE(rv);
-    EXPECT_EQ(nullptr, filterSet);
-    EXPECT_EQ(0, filterSetLen);
+    EXPECT_EQ(nullptr, filterList);
+    EXPECT_EQ(0, filterListLen);
     EXPECT_EQ(nullptr, reason);
     EXPECT_EQ(0, reasonLen);
 }
 
 TEST_F(API_F, adblock_element_hide_css)
 {
-    const std::string uri { "http://www.adblockplus.org/" };
+    std::string const uri { "http://www.adblockplus.org/" };
 
-    const char *css = nullptr;
+    char const* css = nullptr;
     size_t cssLen = 0;
 
     ::adblock_element_hide_css(
@@ -122,8 +122,8 @@ TEST_F(API_F, adblock_element_hide_css)
 
 TEST_F(API_F, adblock_free)
 {
-    const std::string uri1 { "http://www.adblockplus.org/" };
-    const char *css1 = nullptr;
+    std::string const uri1 { "http://www.adblockplus.org/" };
+    char const* css1 = nullptr;
     size_t css1Len = 0;
 
     adblock_element_hide_css(
@@ -133,8 +133,8 @@ TEST_F(API_F, adblock_free)
     );
     ASSERT_NE(0, css1Len);
 
-    const std::string uri2 { "http://www.google.org/" };
-    const char *css2 = nullptr;
+    std::string const uri2 { "http://www.google.org/" };
+    char const* css2 = nullptr;
     size_t css2Len = 0;
 
     adblock_element_hide_css(
@@ -152,7 +152,7 @@ TEST_F(API_F, adblock_free)
 
 TEST_F(API_F, statistics)
 {
-    const char *json = nullptr;
+    char const* json = nullptr;
     size_t json_len = 0;
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
@@ -172,7 +172,7 @@ TEST_F(API_F, statistics)
 }
 
 static boost::property_tree::ptree
-parseJsonStats(const char* const json, const size_t json_len)
+parseJsonStats(char const* const json, size_t const json_len)
 {
     namespace bpt = boost::property_tree;
 
@@ -187,17 +187,17 @@ TEST_F(API_F, reload) //TODO more reliable test
 {
     namespace bpt = boost::property_tree;
 
-    const char *json = nullptr;
+    char const* json = nullptr;
     size_t json_len = 0;
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-    const auto &before = parseJsonStats(json, json_len);
+    auto const& before = parseJsonStats(json, json_len);
     ::adblock_free(json);
 
     ::adblock_reload(this->adblock());
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-    const auto &after = parseJsonStats(json, json_len);
+    auto const& after = parseJsonStats(json, json_len);
     ::adblock_free(json);
 
     EXPECT_EQ(after.get<size_t>("Filter rule"),
@@ -210,50 +210,50 @@ TEST_F(API_F, reload) //TODO more reliable test
 
 TEST_F(API_F, remove_filter_set)
 {
-    const auto &path = projectRoot / "test/data/fanboy.txt";
+    auto const& path = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     ::adblock_add_filter_set(
                 this->adblock(), path.c_str(), strlen(path.c_str()));
 
-    const char *json = nullptr;
+    char const* json = nullptr;
     size_t json_len = 0u;
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
 
-    const auto &before = parseJsonStats(json, json_len);
+    auto const& before = parseJsonStats(json, json_len);
     ::adblock_free(json);
     EXPECT_EQ(66244, before.get<size_t>("Total"));
 
-    const auto &rc = ::adblock_remove_filter_set(
+    auto const& rc = ::adblock_remove_filter_set(
                         this->adblock(), path.c_str(), strlen(path.c_str()));
     EXPECT_TRUE(rc);
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
 
-    const auto &after = parseJsonStats(json, json_len);
+    auto const& after = parseJsonStats(json, json_len);
     ::adblock_free(json);
     EXPECT_EQ(54322, after.get<size_t>("Total"));
 }
 
 TEST(Main_API, adblock_create)
 {
-    const auto adblock = ::adblock_create();
+    auto const adblock = ::adblock_create();
     EXPECT_NE(nullptr, adblock);
 }
 
 TEST(Main_API, adblock_destroy)
 {
-    const auto adblock = ::adblock_create();
+    auto const adblock = ::adblock_create();
     EXPECT_NE(nullptr, adblock);
 
-    const auto rc = ::adblock_destroy(adblock);
+    auto const rc = ::adblock_destroy(adblock);
     EXPECT_TRUE(rc);
 }
 
 TEST_F(API_F, adblock_filter_set_parameters)
 {
-    const auto &path = projectRoot / "test/data/fanboy.txt";
+    auto const& path = projectRoot / "test/data/fanboy.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
 
     ::adblock_add_filter_set(
@@ -336,4 +336,3 @@ TEST(Main_API, ContentSecurityPolicy)
     ASSERT_TRUE(p.length != 0);
     EXPECT_TRUE(to_string_view(p) == "script-src 'self' * 'unsafe-inline' 'unsafe-eval'");
 }
-

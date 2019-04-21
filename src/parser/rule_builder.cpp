@@ -32,8 +32,8 @@ print_error_line(std::ostream& os, StringRange const line,
 }
 
 RuleBuilder::
-RuleBuilder(FilterSet const& filterSet, std::vector<RulePtr>& rules)
-    : m_filterSet { &filterSet }
+RuleBuilder(FilterList const& filterList, std::vector<RulePtr>& rules)
+    : m_filterList { &filterList }
     , m_rules { rules }
 {}
 
@@ -474,8 +474,8 @@ error(iterator const begin, iterator const end, std::string_view const msg)
 void RuleBuilder::
 add_rule(RulePtr rule)
 {
-    if (m_filterSet) {
-        rule->setFilterSet(*m_filterSet);
+    if (m_filterList) {
+        rule->setFilterList(*m_filterList);
     }
 
     rule->setLine(m_line);

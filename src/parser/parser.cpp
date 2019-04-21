@@ -2,7 +2,7 @@
 
 #include "rule_builder.hpp"
 
-#include "core/filter_set.hpp"
+#include "core/filter_list.hpp"
 #include "core/string_range.hpp"
 
 #include <string_view>
@@ -12,7 +12,7 @@
 namespace adblock::parser {
 
 std::vector<std::unique_ptr<Rule>>
-parse(FilterSet const& set, StringRange const text)
+parse(FilterList const& set, StringRange const text)
 {
     std::vector<std::unique_ptr<Rule>> rules;
     std::string_view sv { text.begin(), text.size() };

@@ -19,7 +19,7 @@ class RuleBuilder : public adblock_parser::event_handler
     using PatternPtr = std::unique_ptr<Pattern>;
 
 public:
-    RuleBuilder(FilterSet const&, std::vector<RulePtr>&);
+    RuleBuilder(FilterList const&, std::vector<RulePtr>&);
     RuleBuilder(std::vector<RulePtr>&);
 
     ~RuleBuilder() override;
@@ -130,7 +130,7 @@ private:
     void add_rule(RulePtr);
 
 private:
-    FilterSet const* const m_filterSet = nullptr;
+    FilterList const* const m_filterList = nullptr;
     std::vector<RulePtr>& m_rules;
 
     PatternPtr m_pattern;

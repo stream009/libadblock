@@ -2,7 +2,7 @@
 
 #include "core/adblock.hpp"
 #include "core/context.hpp"
-#include "core/filter_set.hpp"
+#include "core/filter_list.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -151,7 +151,7 @@ adblock_add_filter_set(adblock_t adblock,
                                   << path << "\n";
             return;
         }
-        adBlock->addFilterSet(path);
+        adBlock->addFilterList(path);
     }
     catch (std::exception const& e) {
         std::cerr << __func__ << ": "
@@ -192,9 +192,9 @@ adblock_should_block(adblock_t adblock,
         auto const& reasonRule = rv.second;
 
         if (reasonRule) {
-            auto* const filterSetP = reasonRule->filterSet();
-            if (filterSetP) {
-                auto const& path = filterSetP->path();
+            auto* const filterListP = reasonRule->filterList();
+            if (filterListP) {
+                auto const& path = filterListP->path();
                 *filter_set = path.c_str();
                 *filter_set_len = std::strlen(path.c_str());
             }
@@ -224,17 +224,17 @@ adblock_remove_filter_set(adblock_t adblock,
     assert(adBlock);
     assert(path);
 
-    auto const& filterSets = adBlock->filterSets();
+    auto const& filterLists = adBlock->filterLists();
 
-    auto const it = boost::find_if(filterSets,
-        [&path, &len](auto& filterSet) {
-            auto* const c_str = filterSet.path().c_str();
+    auto const it = boost::find_if(filterLists,
+        [&path, &len](auto& filterList) {
+            auto* const c_str = filterList.path().c_str();
             return c_str[len] == '\0' &&
                    std::strncmp(c_str, path, len) == 0;
         });
-    if (it == filterSets.end()) return false;
+    if (it == filterLists.end()) return false;
 
-    adBlock->removeFilterSet(*it);
+    adBlock->removeFilterList(*it);
 
     return true;
 }
@@ -360,10 +360,10 @@ adblock_filter_set_parameters(
             filepath_in_utf8->ptr,
             filepath_in_utf8->ptr + filepath_in_utf8->length };
 
-        auto const& filterSet = adBlock->filterSet(filePath);
-        if (!filterSet) throw "invalid path";
+        auto const& filterList = adBlock->filterList(filePath);
+        if (!filterList) throw "invalid path";
 
-        auto const& params = filterSet->parameters();
+        auto const& params = filterList->parameters();
 
         std::vector<adblock_string_t> keysVector;
         keysVector.reserve(params.size());

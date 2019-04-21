@@ -1,4 +1,4 @@
-#include "core/filter_set.hpp"
+#include "core/filter_list.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 
@@ -15,39 +15,39 @@ using namespace adblock;
 namespace bfs = boost::filesystem;
 static const bfs::path projectRoot { PROJECT_ROOT };
 
-TEST(Core_FilterSet, Elementary)
+TEST(Core_FilterList, Elementary)
 {
-    const auto &path = projectRoot / "test/data/elementary.txt";
+    auto const& path = projectRoot / "test/data/elementary.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
-    FilterSet filterSet { path };
+    FilterList filterList { path };
 
-    const auto lines = boost::count(filterSet, '\n');
+    auto const lines = boost::count(filterList, '\n');
 
     EXPECT_EQ(32, lines);
-    EXPECT_EQ(31, filterSet.rules().size());
+    EXPECT_EQ(31, filterList.rules().size());
 }
 
-TEST(Core_FilterSet, FileDoesNotExist)
+TEST(Core_FilterList, FileDoesNotExist)
 {
-    const auto &path = projectRoot / "test/data/xxxxx.txt";
+    auto const& path = projectRoot / "test/data/xxxxx.txt";
     ASSERT_FALSE(bfs::exists(path)) << path;
-    EXPECT_THROW(FilterSet filterSet { path }, std::ios_base::failure);
+    EXPECT_THROW(FilterList filterList { path }, std::ios_base::failure);
 }
 
-TEST(Core_FilterSet, WrongVersion)
+TEST(Core_FilterList, WrongVersion)
 {
-    const auto &path = projectRoot / "test/data/wrong_version.txt";
+    auto const& path = projectRoot / "test/data/wrong_version.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
-    EXPECT_NO_THROW(FilterSet filterSet { path });
+    EXPECT_NO_THROW(FilterList filterList { path });
 }
 
-TEST(Core_FilterSet, Statistics)
+TEST(Core_FilterList, Statistics)
 {
-    const auto &path = projectRoot / "test/data/elementary.txt";
+    auto const& path = projectRoot / "test/data/elementary.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
-    FilterSet filterSet { path };
+    FilterList filterList { path };
 
-    const auto &stats = filterSet.statistics();
+    auto const& stats = filterList.statistics();
 
     EXPECT_EQ(9, stats.get<size_t>("Basic filter rule"));
     EXPECT_EQ(9, stats.get<size_t>("Exception filter rule"));
@@ -58,27 +58,27 @@ TEST(Core_FilterSet, Statistics)
     //boost::property_tree::write_json(std::cout, stats);
 }
 
-TEST(Core_FilterSet, DISABLED_EasyList)
+TEST(Core_FilterList, DISABLED_EasyList)
 {
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
-    FilterSet filterSet { path };
+    FilterList filterList { path };
 
-    //const auto lines = boost::count(filterSet, '\n');
+    //const auto lines = boost::count(filterList, '\n');
 
     //EXPECT_EQ(46671, lines); // last line doesn't have '\n'
-    //EXPECT_EQ(46671, filterSet.rules().size());
+    //EXPECT_EQ(46671, filterList.rules().size());
 
-    //boost::property_tree::write_json(std::cout, filterSet.statistics());
+    //boost::property_tree::write_json(std::cout, filterList.statistics());
 }
 
-TEST(Core_FilterSet, Parameter)
+TEST(Core_FilterList, Parameter)
 {
-    const auto &path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(bfs::exists(path)) << path;
-    FilterSet filterSet { path };
+    FilterList filterList { path };
 
-    auto&& params = filterSet.parameters();
+    auto&& params = filterList.parameters();
 
     ASSERT_EQ(5, params.size());
     EXPECT_EQ("bj7+igbVYKyRz2SssbmDOw"_r, params["Checksum"_r]);

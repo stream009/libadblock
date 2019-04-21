@@ -15,15 +15,15 @@
 namespace adblock {
 
 class Context;
-class FilterSet;
+class FilterList;
 class Uri;
 
 class AdBlock
 {
 public:
-    using FilterSetPtr = std::unique_ptr<FilterSet>;
-    using FilterSetPtrs = std::vector<FilterSetPtr>;
-    using FilterSetRng = boost::indirected_range<FilterSetPtrs const>;
+    using FilterListPtr = std::unique_ptr<FilterList>;
+    using FilterListPtrs = std::vector<FilterListPtr>;
+    using FilterListRng = boost::indirected_range<FilterListPtrs const>;
     using Path = boost::filesystem::path;
 
 public:
@@ -40,23 +40,23 @@ public:
 
     StringRange contentSecurityPolicy(Uri const&) const;
 
-    FilterSetRng filterSets() const;
-    FilterSet* filterSet(Path const& filePath) const;
+    FilterListRng filterLists() const;
+    FilterList* filterList(Path const& filePath) const;
 
     boost::property_tree::ptree statistics() const;
 
     // modifier
-    void addFilterSet(Path const& filePath);
-    void removeFilterSet(Path const& filePath);
-    void removeFilterSet(FilterSet const&);
+    void addFilterList(Path const& filePath);
+    void removeFilterList(Path const& filePath);
+    void removeFilterList(FilterList const&);
 
     void reload();
 
 private:
-    void registerFilterSetToRuleBases(FilterSetPtr const&);
+    void registerFilterListToRuleBases(FilterListPtr const&);
 
 private:
-    FilterSetPtrs m_filterSets;
+    FilterListPtrs m_filterLists;
     FilterRuleBase m_filterRuleBase;
     ElementHideRuleBase m_elementHideRuleBase;
 };

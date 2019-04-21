@@ -5,7 +5,7 @@
 
 namespace adblock {
 
-class FilterSet;
+class FilterList;
 class StringRange;
 
 } // namespace adblock
@@ -14,7 +14,7 @@ namespace adblock::parser {
 
 // parse filter list
 std::vector<std::unique_ptr<Rule>>
-    parse(FilterSet const&, StringRange list);
+    parse(FilterList const&, StringRange list);
 
 // parse single line
 std::unique_ptr<Rule>

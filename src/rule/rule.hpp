@@ -9,7 +9,7 @@
 
 namespace adblock {
 
-class FilterSet;
+class FilterList;
 
 class Rule : boost::noncopyable
 {
@@ -17,11 +17,11 @@ public:
     virtual ~Rule() = default;
 
     // accessor
-    FilterSet const* filterSet() const { return m_filterSet; }
+    FilterList const* filterList() const { return m_filterList; }
     StringRange const line() const { return m_line; }
 
     // modifier
-    void setFilterSet(FilterSet const&);
+    void setFilterList(FilterList const&);
     void setLine(StringRange const);
 
 private:
@@ -34,7 +34,7 @@ private:
     }
 
 private:
-    FilterSet const* m_filterSet = nullptr;
+    FilterList const* m_filterList = nullptr;
     StringRange m_line;
 };
 

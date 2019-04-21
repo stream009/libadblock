@@ -1,5 +1,5 @@
-#ifndef ADBLOCK_FILTER_SET_HPP
-#define ADBLOCK_FILTER_SET_HPP
+#ifndef ADBLOCK_FILTER_LIST_HPP
+#define ADBLOCK_FILTER_LIST_HPP
 
 #include "file.hpp"
 #include "string_range.hpp"
@@ -16,7 +16,7 @@
 
 namespace adblock {
 
-class FilterSet //TODO change name to FilterList
+class FilterList
 {
 public:
     using RulePtr = std::unique_ptr<Rule>;
@@ -28,7 +28,7 @@ public:
 
 public:
     // constructors
-    FilterSet(Path const& filePath);
+    FilterList(Path const& filePath);
 
     // accessors
     const_iterator begin() const;
@@ -55,4 +55,4 @@ private:
 
 } // namespace adblock
 
-#endif // ADBLOCK_FILTER_SET_HPP
+#endif // ADBLOCK_FILTER_LIST_HPP

@@ -3,9 +3,9 @@
 namespace adblock {
 
 void Rule::
-setFilterSet(FilterSet const& filterSet)
+setFilterList(FilterList const& filterList)
 {
-    m_filterSet = &filterSet;
+    m_filterList = &filterList;
 }
 
 void Rule::

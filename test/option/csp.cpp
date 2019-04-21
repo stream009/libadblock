@@ -50,7 +50,7 @@ TEST(Option_Csp, Elementary)
     fs << std::flush;
 
     AdBlock adblock;
-    adblock.addFilterSet(fs.path());
+    adblock.addFilterList(fs.path());
 
     auto policy = adblock.contentSecurityPolicy("http://www.adblock.com"_u);
 
@@ -70,7 +70,7 @@ TEST(Option_Csp, ExceptionRule)
     fs << std::flush;
 
     AdBlock adblock;
-    adblock.addFilterSet(fs.path());
+    adblock.addFilterList(fs.path());
 
     auto policy = adblock.contentSecurityPolicy("http://www.adblock.com"_u);
 
@@ -93,7 +93,7 @@ TEST(Option_Csp, DISABLED_CantInverseOption)
     fs << std::flush;
 
     AdBlock adblock;
-    adblock.addFilterSet(fs.path());
+    adblock.addFilterList(fs.path());
 }
 
 TEST(Option_Csp, WontInterfereWithNormalFilterRule)
@@ -104,7 +104,7 @@ TEST(Option_Csp, WontInterfereWithNormalFilterRule)
     fs << std::flush;
 
     AdBlock adblock;
-    adblock.addFilterSet(fs.path());
+    adblock.addFilterList(fs.path());
 
     struct MockContext : Context {
         Uri const& origin() const override

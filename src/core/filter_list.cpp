@@ -1,4 +1,4 @@
-#include "filter_set.hpp"
+#include "filter_list.hpp"
 
 #include "parser/parser.hpp"
 #include "pattern/basic_match_pattern.hpp"
@@ -17,9 +17,9 @@
 
 namespace adblock {
 
-using Rules = FilterSet::Rules;
-using RulesRange = FilterSet::RulesRange;
-using const_iterator = FilterSet::const_iterator;
+using Rules = FilterList::Rules;
+using RulesRange = FilterList::RulesRange;
+using const_iterator = FilterList::const_iterator;
 
 static StringRange
 ltrim(StringRange const range)
@@ -76,7 +76,7 @@ struct Statistics
     ElementHideRule exceptionElementHideRule;
     size_t          commentRule = 0u;
 
-    Statistics(FilterSet::Rules const&);
+    Statistics(FilterList::Rules const&);
 
 private:
     void countFilterRule(adblock::FilterRule const& rule,
@@ -86,7 +86,7 @@ private:
 };
 
 Statistics::
-Statistics(FilterSet::Rules const& rules)
+Statistics(FilterList::Rules const& rules)
 {
     for (auto const& ptr: rules) {
         assert(ptr);
@@ -152,34 +152,34 @@ countElementHideRule(adblock::ElementHideRule const& rule,
 
 } // unnamed namespace
 
-// FilterSet
+// FilterList
 
-FilterSet::
-FilterSet(Path const& filePath)
+FilterList::
+FilterList(Path const& filePath)
     : m_file { filePath }
 {
     parse(m_file.data(), m_file.size());
 }
 
-const_iterator FilterSet::
+const_iterator FilterList::
 begin() const
 {
     return m_file.data();
 }
 
-const_iterator FilterSet::
+const_iterator FilterList::
 end() const
 {
     return m_file.data() + m_file.size();
 }
 
-RulesRange FilterSet::
+RulesRange FilterList::
 rules() const
 {
     return m_rules | boost::adaptors::indirected;
 }
 
-FilterSet::Parameters FilterSet::
+FilterList::Parameters FilterList::
 parameters() const
 {
     namespace bad = boost::adaptors;
@@ -217,7 +217,7 @@ parameters() const
     return result;
 }
 
-void FilterSet::
+void FilterList::
 reload()
 {
     m_file.reload();
@@ -226,7 +226,7 @@ reload()
     parse(m_file.data(), m_file.size());
 }
 
-boost::property_tree::ptree FilterSet::
+boost::property_tree::ptree FilterList::
 statistics() const
 {
     using ptree = boost::property_tree::ptree;
@@ -275,7 +275,7 @@ statistics() const
     return result;
 }
 
-void FilterSet::
+void FilterList::
 parse(char const* const buffer, size_t const size)
 {
     StringRange const buf { buffer, buffer + size };

@@ -1,7 +1,7 @@
 #include "adblock.hpp"
 
 #include "context.hpp"
-#include "filter_set.hpp"
+#include "filter_list.hpp"
 #include "uri.hpp"
 
 #include "parser/parser.hpp"
@@ -19,8 +19,8 @@
 
 namespace adblock {
 
-using FilterSetPtr = AdBlock::FilterSetPtr;
-using FilterSetRng = AdBlock::FilterSetRng;
+using FilterListPtr = AdBlock::FilterListPtr;
+using FilterListRng = AdBlock::FilterListRng;
 
 AdBlock::
 AdBlock()
@@ -77,18 +77,18 @@ contentSecurityPolicy(Uri const& uri) const
     return *policy;
 }
 
-FilterSetRng AdBlock::
-filterSets() const
+FilterListRng AdBlock::
+filterLists() const
 {
-    return boost::adaptors::indirect(m_filterSets);
+    return boost::adaptors::indirect(m_filterLists);
 }
 
-FilterSet* AdBlock::
-filterSet(Path const& filePath) const
+FilterList* AdBlock::
+filterList(Path const& filePath) const
 {
-    for (auto const& filterSet: m_filterSets) {
-        if (filterSet->path() == filePath) {
-            return filterSet.get();
+    for (auto const& filterList: m_filterLists) {
+        if (filterList->path() == filePath) {
+            return filterList.get();
         }
     }
 
@@ -122,41 +122,41 @@ statistics() const
 }
 
 void AdBlock::
-addFilterSet(Path const& filePath)
+addFilterList(Path const& filePath)
 {
-    auto &&filterSet = std::make_unique<FilterSet>(filePath);
+    auto filterList = std::make_unique<FilterList>(filePath);
 
-    registerFilterSetToRuleBases(filterSet);
+    registerFilterListToRuleBases(filterList);
 
-    m_filterSets.push_back(std::move(filterSet));
+    m_filterLists.push_back(std::move(filterList));
 }
 
 void AdBlock::
-removeFilterSet(Path const& filePath)
+removeFilterList(Path const& filePath)
 {
-    auto const it = boost::find_if(m_filterSets,
+    auto const it = boost::find_if(m_filterLists,
         [&](auto& ptr) {
             return ptr->path() == filePath;
         });
 
-    if (it == m_filterSets.end()) return;
+    if (it == m_filterLists.end()) return;
 
-    m_filterSets.erase(it);
+    m_filterLists.erase(it);
 
     reload();
 }
 
 void AdBlock::
-removeFilterSet(FilterSet const& filterSet)
+removeFilterList(FilterList const& filterList)
 {
-    auto const it = boost::find_if(m_filterSets,
+    auto const it = boost::find_if(m_filterLists,
         [&](auto& ptr) {
-            return ptr.get() == &filterSet;
+            return ptr.get() == &filterList;
         });
 
-    if (it == m_filterSets.end()) return;
+    if (it == m_filterLists.end()) return;
 
-    m_filterSets.erase(it);
+    m_filterLists.erase(it);
 
     reload();
 }
@@ -167,17 +167,17 @@ reload()
     m_filterRuleBase.clear();
     m_elementHideRuleBase.clear();
 
-    for (auto const& filterSet: m_filterSets) {
-        filterSet->reload();
+    for (auto const& filterList: m_filterLists) {
+        filterList->reload();
 
-        registerFilterSetToRuleBases(filterSet);
+        registerFilterListToRuleBases(filterList);
     }
 }
 
 void AdBlock::
-registerFilterSetToRuleBases(FilterSetPtr const& filterSet)
+registerFilterListToRuleBases(FilterListPtr const& filterList)
 {
-    for (auto const& rule: filterSet->rules()) {
+    for (auto const& rule: filterList->rules()) {
         if (auto* const ptr = dynamic_cast<BasicFilterRule const*>(&rule)) {
             assert(ptr);
             m_filterRuleBase.put(*ptr);

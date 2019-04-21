@@ -10,7 +10,6 @@
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
 
-#include <iomanip>
 #include <regex>
 
 #include <boost/property_tree/ptree.hpp>
@@ -21,6 +20,38 @@ namespace adblock {
 using Rules = FilterSet::Rules;
 using RulesRange = FilterSet::RulesRange;
 using const_iterator = FilterSet::const_iterator;
+
+static StringRange
+ltrim(StringRange const range)
+{
+    if (range.empty()) return {};
+
+    auto it = range.begin(), end = range.end();
+    for(; it != end; ++it) {
+        if (*it != ' ') break;
+    }
+
+    return { it, end };
+}
+
+static StringRange
+rtrim(StringRange const range)
+{
+    if (range.empty()) return {};
+
+    auto it = range.end() - 1, begin = range.begin();
+    for(; it != begin; --it) {
+        if (*it != ' ') break;
+    }
+
+    return { begin, it + 1 };
+}
+
+static StringRange
+trim(StringRange const range)
+{
+    return rtrim(ltrim(range));
+}
 
 namespace {
 
@@ -121,12 +152,6 @@ countElementHideRule(adblock::ElementHideRule const& rule,
 
 } // unnamed namespace
 
-char const* FilterSet::ParseError::
-what() const noexcept
-{
-    return "Error: Fail to parse header.";
-}
-
 // FilterSet
 
 FilterSet::
@@ -152,38 +177,6 @@ RulesRange FilterSet::
 rules() const
 {
     return m_rules | boost::adaptors::indirected;
-}
-
-static StringRange
-ltrim(StringRange const range)
-{
-    if (range.empty()) return {};
-
-    auto it = range.begin(), end = range.end();
-    for(; it != end; ++it) {
-        if (*it != ' ') break;
-    }
-
-    return { it, end };
-}
-
-static StringRange
-rtrim(StringRange const range)
-{
-    if (range.empty()) return {};
-
-    auto it = range.end() - 1, begin = range.begin();
-    for(; it != begin; --it) {
-        if (*it != ' ') break;
-    }
-
-    return { begin, it + 1 };
-}
-
-static StringRange
-trim(StringRange const range)
-{
-    return rtrim(ltrim(range));
 }
 
 FilterSet::Parameters FilterSet::
@@ -222,12 +215,6 @@ parameters() const
     }
 
     return result;
-}
-
-StringRange FilterSet::
-supportedVersion()
-{
-    return "2.0"_r; //TODO configurable
 }
 
 void FilterSet::

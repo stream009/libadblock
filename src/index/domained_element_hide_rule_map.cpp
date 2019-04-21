@@ -28,7 +28,6 @@ put(ElementHideRule const& rule)
             ReverseStringRange const revDom { dom.end(), dom.begin() };
 
             m_normal.insert(revDom, &rule);
-            //TODO duplication check
         }
         else {
             hasExclude = true;
@@ -47,6 +46,8 @@ put(ElementHideRule const& rule)
 DomainedElementHideRuleMap::ElementHideRules DomainedElementHideRuleMap::
 query(Uri const& uri) const
 {
+    namespace ba = boost::algorithm;
+
     auto const& host = uri.host();
     if (host.empty()) return {};
 
@@ -56,8 +57,6 @@ query(Uri const& uri) const
     char const* begin = host.data();
     char const* const end = begin + host.size();
 
-    namespace ba = boost::algorithm;
-    StringRange const hostR { begin, end, };
     ReverseStringRange const reverseHostR { end, begin, };
 
     m_normal.traverse(reverseHostR,
@@ -73,7 +72,6 @@ query(Uri const& uri) const
         }
     );
 
-    //TODO more efficiently
     ba::copy_if(m_exception, inserter,
         [&](auto* rule) {
             return rule->match(uri);

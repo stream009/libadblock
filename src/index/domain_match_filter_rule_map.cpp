@@ -49,7 +49,6 @@ doQuery(Uri const& uri) const
         );
     }
 
-    //TODO return lazy generator instead of copy
     return results;
 }
 

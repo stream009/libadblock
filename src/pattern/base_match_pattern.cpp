@@ -46,14 +46,13 @@ BaseMatchPattern(StringRange const range)
 {}
 
 bool BaseMatchPattern::
-doMatch(StringRange const target, Tokens const& tokens,
+doMatch(StringRange const target, Tokens& tokens,
         bool const beginAnchor, bool const endAnchor, bool const caseSensitive) const
 {
     namespace ba = boost::algorithm;
 
     if (tokens.empty()) return true;
 
-    auto tokensCopy = tokens; //TODO no need to copy
     auto range = target;
     std::optional<std::string> uriCopy;
     Equals const compare { caseSensitive };
@@ -62,7 +61,7 @@ doMatch(StringRange const target, Tokens const& tokens,
     // So, if a pattern ends with '^' and a URI doesn't have
     // a separator on its tail, we copy URI string and append
     // a dummy separator to it.
-    auto const& lastToken = tokens.back();
+    auto const lastToken = tokens.back();
     if ((!lastToken.empty() && lastToken.back() == '^') &&
         (!range.empty() && !compare(range.back(), '^')))
     {
@@ -72,32 +71,32 @@ doMatch(StringRange const target, Tokens const& tokens,
     }
 
     if (beginAnchor) {
-        auto const firstToken = tokensCopy.front();
+        auto const firstToken = tokens.front();
         if (!ba::starts_with(range, firstToken, compare)) {
             return false;
         }
 
-        if (!endAnchor || tokensCopy.size() > 1) {
-            tokensCopy.erase(tokensCopy.begin());
+        if (!endAnchor || tokens.size() > 1) {
+            tokens.erase(tokens.begin());
             range.remove_prefix(firstToken.size());
         }
     }
 
     if (endAnchor) {
-        auto const& lastToken = tokensCopy.back();
+        auto const lastToken = tokens.back();
         if (!ba::ends_with(range, lastToken, compare)) {
             return false;
         }
 
-        tokensCopy.pop_back();
+        tokens.pop_back();
         range.remove_suffix(lastToken.size());
     }
 
-    for (auto const& token: tokensCopy) {
+    for (auto const token: tokens) {
         // empty token matches to everything
         if (token.empty()) return true;
 
-        auto const& rv = ba::find(range, ba::first_finder(token, compare));
+        auto const rv = ba::find(range, ba::first_finder(token, compare));
         if (rv.empty()) return false;
 
         range = StringRange { rv.end(), range.end() };

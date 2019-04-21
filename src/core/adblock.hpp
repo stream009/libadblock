@@ -53,7 +53,7 @@ public:
     void reload();
 
 private:
-    void registerFilterSetToRuleBases(const FilterSetPtr&);
+    void registerFilterSetToRuleBases(FilterSetPtr const&);
 
 private:
     FilterSetPtrs m_filterSets;

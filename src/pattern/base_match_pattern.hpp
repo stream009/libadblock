@@ -32,7 +32,7 @@ protected:
 
     BaseMatchPattern(StringRange const range);
 
-    bool doMatch(StringRange const, Tokens const&,
+    bool doMatch(StringRange const, Tokens&,
                  bool beginAnchor, bool endAnchor, bool caseSensitive) const;
 
 private:

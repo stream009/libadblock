@@ -30,7 +30,6 @@ AdBlock()
 
 AdBlock::~AdBlock() = default;
 
-//TODO: make origin uri into array of uris.
 std::pair<bool, FilterRule const*> AdBlock::
 shouldBlock(Uri const& uri, Context const& context) const
 {
@@ -40,7 +39,7 @@ shouldBlock(Uri const& uri, Context const& context) const
 std::string AdBlock::
 elementHideCss(Uri const& uri) const
 {
-    return m_elementHideRuleBase.query(uri); //TODO site key
+    return m_elementHideRuleBase.query(uri);
 }
 
 std::vector<StringRange> AdBlock::

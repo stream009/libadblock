@@ -7,16 +7,11 @@
 namespace uri {
 
 uri::
-uri(std::string str)
+uri(std::string&& str)
     : m_str { std::move(str) }
 {
     parse(m_str); // throws parse_error
 }
-
-uri::
-uri(char const* const ptr, size_t const len)
-    : uri { std::string(ptr, len) }
-{}
 
 std::string_view uri::
 scheme() const

@@ -13,8 +13,11 @@ public:
     using const_iterator = std::string::const_iterator;
 
 public:
-    uri(std::string);
-    uri(char const* ptr, size_t len);
+    uri(std::string&&);
+    uri(std::string_view s) : uri { std::string(s) } {}
+    uri(char const* ptr) : uri { std::string(ptr) } {}
+    uri(char const* ptr, size_t len) : uri { std::string(ptr, len) } {}
+
     ~uri() = default;
 
     // query

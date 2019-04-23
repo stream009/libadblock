@@ -2,15 +2,14 @@
 #define ADBLOCK_FILE_HPP
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
-
-#include <boost/filesystem/path.hpp>
 
 namespace adblock {
 
 class File
 {
-    using Path = boost::filesystem::path;
+    using Path = std::filesystem::path;
 public:
     File(Path);
     ~File();

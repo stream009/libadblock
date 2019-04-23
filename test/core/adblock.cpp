@@ -5,6 +5,7 @@
 #include "core/filter_list.hpp"
 #include "core/uri.hpp"
 
+#include <filesystem>
 #include <iostream>
 
 #include <boost/range/algorithm.hpp>
@@ -15,8 +16,8 @@
 
 using namespace adblock;
 
-namespace bfs = boost::filesystem;
-static const bfs::path projectRoot { PROJECT_ROOT };
+namespace fs = std::filesystem;
+static const fs::path projectRoot { PROJECT_ROOT };
 
 TEST(Core_AdBlock, Statistics)
 {
@@ -25,7 +26,7 @@ TEST(Core_AdBlock, Statistics)
     std::cout.imbue(locale);
 
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     AdBlock adBlock;
     adBlock.addFilterList(path);
@@ -41,7 +42,7 @@ TEST(Core_AdBlock, Statistics)
 TEST(Core_AdBlock, DISABLED_EasyList)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     boost::timer::cpu_timer t;
     AdBlock adBlock;
@@ -53,7 +54,7 @@ TEST(Core_AdBlock, DISABLED_EasyList)
 TEST(Core_AdBlock, DISABLED_Fanboy)
 {
     auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     AdBlock adBlock;
     adBlock.addFilterList(path);
@@ -62,7 +63,7 @@ TEST(Core_AdBlock, DISABLED_Fanboy)
 TEST(Core_AdBlock, DISABLED_elementHideRule)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     AdBlock adBlock;
     adBlock.addFilterList(path);
@@ -75,7 +76,7 @@ TEST(Core_AdBlock, DISABLED_elementHideRule)
 TEST(Core_AdBlock, Reload)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     boost::timer::cpu_timer t;
 
@@ -108,17 +109,17 @@ TEST(Core_AdBlock, FilterLists)
     AdBlock adBlock;
 
     auto const& path1 = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path1)) << path1;
+    ASSERT_TRUE(fs::exists(path1)) << path1;
 
     adBlock.addFilterList(path1);
 
     auto const& path2 = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(bfs::exists(path2)) << path2;
+    ASSERT_TRUE(fs::exists(path2)) << path2;
 
     adBlock.addFilterList(path2);
 
     auto const& path3 = projectRoot / "test/data/customlist.txt";
-    ASSERT_TRUE(bfs::exists(path3)) << path3;
+    ASSERT_TRUE(fs::exists(path3)) << path3;
 
     adBlock.addFilterList(path3);
 
@@ -149,12 +150,12 @@ TEST(Core_AdBlock, RemoveFilterList)
     AdBlock adBlock;
 
     auto const& path1 = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path1)) << path1;
+    ASSERT_TRUE(fs::exists(path1)) << path1;
 
     adBlock.addFilterList(path1);
 
     auto const& path2 = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(bfs::exists(path2)) << path2;
+    ASSERT_TRUE(fs::exists(path2)) << path2;
 
     adBlock.addFilterList(path2);
 
@@ -188,7 +189,7 @@ TEST(Core_AdBlock, FilterList)
     AdBlock adBlock;
 
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     adBlock.addFilterList(path);
 

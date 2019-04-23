@@ -3,8 +3,8 @@
 #include "core/uri.hpp"
 
 #include <exception>
+#include <filesystem>
 
-#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm.hpp>
 
@@ -12,13 +12,13 @@
 
 using namespace adblock;
 
-namespace bfs = boost::filesystem;
-static const bfs::path projectRoot { PROJECT_ROOT };
+namespace fs = std::filesystem;
+static const fs::path projectRoot { PROJECT_ROOT };
 
 TEST(Core_FilterList, Elementary)
 {
     auto const& path = projectRoot / "test/data/elementary.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
     FilterList filterList { path };
 
     auto const lines = boost::count(filterList, '\n');
@@ -30,21 +30,21 @@ TEST(Core_FilterList, Elementary)
 TEST(Core_FilterList, FileDoesNotExist)
 {
     auto const& path = projectRoot / "test/data/xxxxx.txt";
-    ASSERT_FALSE(bfs::exists(path)) << path;
+    ASSERT_FALSE(fs::exists(path)) << path;
     EXPECT_THROW(FilterList filterList { path }, std::ios_base::failure);
 }
 
 TEST(Core_FilterList, WrongVersion)
 {
     auto const& path = projectRoot / "test/data/wrong_version.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
     EXPECT_NO_THROW(FilterList filterList { path });
 }
 
 TEST(Core_FilterList, Statistics)
 {
     auto const& path = projectRoot / "test/data/elementary.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
     FilterList filterList { path };
 
     auto const& stats = filterList.statistics();
@@ -61,7 +61,7 @@ TEST(Core_FilterList, Statistics)
 TEST(Core_FilterList, DISABLED_EasyList)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
     FilterList filterList { path };
 
     //const auto lines = boost::count(filterList, '\n');
@@ -75,7 +75,7 @@ TEST(Core_FilterList, DISABLED_EasyList)
 TEST(Core_FilterList, Parameter)
 {
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
     FilterList filterList { path };
 
     auto&& params = filterList.parameters();

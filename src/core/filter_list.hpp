@@ -6,11 +6,11 @@
 
 #include "rule/rule.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <vector>
 
 #include <boost/container/flat_map.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/range/adaptor/indirected.hpp>
 
@@ -23,7 +23,7 @@ public:
     using Rules = std::vector<RulePtr>;
     using RulesRange = boost::indirected_range<Rules const>;
     using const_iterator = StringRange::const_iterator;
-    using Path = boost::filesystem::path;
+    using Path = std::filesystem::path;
     using Parameters = boost::container::flat_map<StringRange, StringRange>;
 
 public:

@@ -7,13 +7,13 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
-
-#include <boost/filesystem.hpp>
 
 namespace adblock {
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 class FilterFile : public std::ofstream
 {

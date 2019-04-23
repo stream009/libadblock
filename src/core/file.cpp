@@ -1,5 +1,6 @@
 #include "file.hpp"
 
+#include <cassert>
 #include <fstream>
 #include <sstream>
 

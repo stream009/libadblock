@@ -1,6 +1,6 @@
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost 1.57 REQUIRED
-             COMPONENTS filesystem regex system timer)
+             COMPONENTS regex timer)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARIES_DIRS})
 

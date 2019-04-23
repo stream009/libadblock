@@ -5,10 +5,10 @@
 #include "filter_rule_base.hpp"
 #include "string_range.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <vector>
 
-#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/range/adaptor/indirected.hpp>
 
@@ -24,7 +24,7 @@ public:
     using FilterListPtr = std::unique_ptr<FilterList>;
     using FilterListPtrs = std::vector<FilterListPtr>;
     using FilterListRng = boost::indirected_range<FilterListPtrs const>;
-    using Path = boost::filesystem::path;
+    using Path = std::filesystem::path;
 
 public:
     AdBlock();

@@ -7,13 +7,13 @@
 
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
 static std::string
@@ -166,11 +166,11 @@ adblock_add_filter_set(adblock_t adblock,
     auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
     assert(adBlock);
 
-    namespace bfs = boost::filesystem;
+    namespace fs = std::filesystem;
     try {
         adblock::AdBlock::Path const path {
                                     path_in_utf8, path_in_utf8 + len };
-        if (!bfs::exists(path)) {
+        if (!fs::exists(path)) {
             std::cerr << __func__ << ": File doesn't exists: "
                                   << path << "\n";
             return;

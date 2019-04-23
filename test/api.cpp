@@ -1,17 +1,17 @@
 #include "api.h"
 
 #include <cassert>
+#include <filesystem>
 #include <iostream>
 #include <string_view>
 
-#include <boost/filesystem.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #include <gtest/gtest.h>
 
-namespace bfs = boost::filesystem;
-static const bfs::path projectRoot { PROJECT_ROOT };
+namespace fs = std::filesystem;
+static const fs::path projectRoot { PROJECT_ROOT };
 
 class FilterFile : public std::ofstream
 {
@@ -30,13 +30,13 @@ public:
 
     ~FilterFile()
     {
-        bfs::remove(m_path);
+        fs::remove(m_path);
     }
 
     auto const& path() const { return m_path; }
 
 private:
-    bfs::path m_path;
+    fs::path m_path;
 };
 
 class API_F : public ::testing::Test
@@ -48,7 +48,7 @@ public:
         ASSERT_TRUE(m_adblock);
 
         auto const& path1 = projectRoot / "test/data/easylist.txt";
-        ASSERT_TRUE(bfs::exists(path1)) << path1;
+        ASSERT_TRUE(fs::exists(path1)) << path1;
 
         ::adblock_add_filter_set(m_adblock, path1.c_str(), strlen(path1.c_str()));
     }
@@ -211,7 +211,7 @@ TEST_F(API_F, reload) //TODO more reliable test
 TEST_F(API_F, remove_filter_set)
 {
     auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     ::adblock_add_filter_set(
                 this->adblock(), path.c_str(), strlen(path.c_str()));
@@ -254,7 +254,7 @@ TEST(Main_API, adblock_destroy)
 TEST_F(API_F, adblock_filter_set_parameters)
 {
     auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(bfs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path)) << path;
 
     ::adblock_add_filter_set(
                 this->adblock(), path.c_str(), strlen(path.c_str()));
@@ -262,7 +262,7 @@ TEST_F(API_F, adblock_filter_set_parameters)
 
     ::adblock_string_t fsPath;
     fsPath.ptr = path.c_str();
-    fsPath.length = path.size();
+    fsPath.length = path.native().size();
 
     ::adblock_string_t *keys = nullptr, *values = nullptr;
     size_t keys_len = 0, values_len = 0;

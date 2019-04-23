@@ -40,7 +40,7 @@ public:
     std::vector<StringRange>
         extendedElementHideSelectors(Uri const&, StringRange siteKey = {}) const;
 
-    StringRange contentSecurityPolicy(Uri const&) const;
+    StringRange contentSecurityPolicy(Uri const&, StringRange siteKey = {}) const;
 
     FilterListRng filterLists() const;
     FilterList* filterList(Path const& filePath) const;

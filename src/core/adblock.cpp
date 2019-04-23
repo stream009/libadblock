@@ -68,16 +68,22 @@ extendedElementHideSelectors(Uri const& uri,
 }
 
 StringRange AdBlock::
-contentSecurityPolicy(Uri const& uri) const
+contentSecurityPolicy(Uri const& uri,
+                      StringRange const siteKey/*= {}*/) const
 {
     struct CspContext : Context {
-        CspContext(Uri const& uri) : m_uri { uri } {}
+        CspContext(Uri const& uri, StringRange const siteKey)
+            : m_uri { uri }
+            , m_siteKey { siteKey }
+        {}
 
-        Uri const& origin() const { return m_uri; }
+        Uri const& origin() const override { return m_uri; }
         bool isCsp() const override { return true; }
+        StringRange siteKey() const override { return m_siteKey; }
 
         Uri const& m_uri;
-    } cxt { uri };
+        StringRange m_siteKey;
+    } cxt { uri, siteKey };
 
     auto const& [found, rule] = m_filterRuleBase.query(uri, cxt);
     if (!found) return {};

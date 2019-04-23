@@ -321,7 +321,7 @@ TEST(Parser_FilterOption, DoNotTrack)
     EXPECT_TRUE(option);
 }
 #endif
-TEST(Parser_FilterOption, PopUp)
+TEST(Parser_FilterOption, Popup)
 {
     auto const& line = "adblock$popup"_r;
 

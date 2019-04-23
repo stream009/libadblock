@@ -161,7 +161,7 @@ matchTypeOptions(Context const& cxt) const
         if (cxt.isCsp()) return true;
     }
     if (test(FilterOption::Popup)) { //TODO separate
-        if (cxt.isPopUp()) return true;
+        if (cxt.isPopup()) return true;
     }
     if (test(FilterOption::Other)) {
         if (   !cxt.fromScriptTag()

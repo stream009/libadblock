@@ -21,7 +21,7 @@ public:
     virtual bool fromXmlHttpRequest() const { return false; }
     virtual bool fromPlugins() const { return false; }
     virtual bool isSubdocument() const { return false; }
-    virtual bool isPopUp() const { return false; }
+    virtual bool isPopup() const { return false; }
     virtual bool isFont() const { return false; }
     virtual bool isWebSocket() const { return false; }
     virtual bool isPing() const { return false; }

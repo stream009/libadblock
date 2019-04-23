@@ -96,7 +96,7 @@ public:
         return m_cxt.content_type == TYPE_SUBDOCUMENT;
     }
 
-    bool isPopUp() const override
+    bool isPopup() const override
     {
         return m_cxt.is_popup;
     }

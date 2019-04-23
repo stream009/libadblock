@@ -9,23 +9,23 @@
 
 namespace adblock {
 
-struct PopUpContext : MockContext
+struct PopupContext : MockContext
 {
-    bool isPopUp() const override { return true; }
+    bool isPopup() const override { return true; }
 };
 
-TEST(Option_PopUpOption, PopUpContext)
+TEST(Option_PopupOption, PopupContext)
 {
     auto const rule = parse_rule<FilterRule>("whatever$popup"_r);
     ASSERT_TRUE(rule);
 
     auto const& uri = "http://idontcare.whatever.com/image.jpg"_u;
-    PopUpContext const context;
+    PopupContext const context;
 
     EXPECT_TRUE(rule->match(uri, context));
 }
 
-TEST(Option_PopUpOption, NotPopUpContext)
+TEST(Option_PopupOption, NotPopupContext)
 {
     auto const rule = parse_rule<FilterRule>("whatever$popup"_r);
     ASSERT_TRUE(rule);

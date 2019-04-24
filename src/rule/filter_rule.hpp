@@ -48,7 +48,7 @@ protected:
                std::unique_ptr<SiteKeys>,
                std::unique_ptr<StringRange> cspValue);
 private:
-    bool matchRestrictionOptions(Uri const&, Context const&) const;
+    bool checkRestrictions(Uri const&, Context const&) const;
     bool matchDomain(Context const&) const;
     bool matchSiteKey(Context const&) const;
     bool matchOrigin(Uri const&, Context const&) const;

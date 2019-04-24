@@ -40,11 +40,11 @@ match(Uri const& uri, Context const& cxt,
 
     if (auto* const c = dynamic_cast<WhiteListQueryContext const*>(&cxt)) {
         return m_options.matchWhiteListOptions(*c)
-            && matchRestrictionOptions(uri, cxt);
+            && checkRestrictions(uri, cxt);
     }
     else {
         return m_options.matchTypeOptions(cxt)
-            && matchRestrictionOptions(uri, cxt);
+            && checkRestrictions(uri, cxt);
     }
 }
 
@@ -67,7 +67,7 @@ numOptions() const
 }
 
 bool FilterRule::
-matchRestrictionOptions(Uri const& uri, Context const& cxt) const
+checkRestrictions(Uri const& uri, Context const& cxt) const
 {
     return matchDomain(cxt)
         && matchSiteKey(cxt)

@@ -157,10 +157,10 @@ matchTypeOptions(Context const& cxt) const
     if (test(FilterOption::ObjectSubrequestInv)) {
         if (!cxt.fromPlugins()) return true;
     }
-    if (test(FilterOption::Csp)) { //TODO separate
+    if (test(FilterOption::Csp)) {
         if (cxt.isCsp()) return true;
     }
-    if (test(FilterOption::Popup)) { //TODO separate
+    if (test(FilterOption::Popup)) {
         if (cxt.isPopup()) return true;
     }
     if (test(FilterOption::Other)) {

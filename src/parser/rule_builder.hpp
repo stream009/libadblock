@@ -142,6 +142,7 @@ private:
 
     int64_t m_line_no = 0;
     StringRange m_line;
+    bool m_skip = false;
 };
 
 } // namespace adblock::parser

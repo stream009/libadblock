@@ -421,6 +421,15 @@ TEST(Parser_FilterOption, Multiple_Inverse)
     EXPECT_TRUE(filter->hasOption(FilterOption::ImageInv));
 }
 
+TEST(Parser_FilterOption, Rewrite)
+{
+    auto const line = "/https:\\/\\/foo.com\\/file1.txt/$rewrite=/file2.txt"_r;
+
+    auto const rule = parser::parse(line);
+    //TODO check error
+    ASSERT_FALSE(rule);
+}
+
 //TODO $script,~image
 //TODO $~script,image
 //TODO $~script,script

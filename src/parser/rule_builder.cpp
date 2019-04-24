@@ -56,6 +56,11 @@ begin_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 void RuleBuilder::
 end_basic_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
+    if (m_skip) {
+        m_skip = false;
+        return;
+    }
+
     add_rule(
         std::make_unique<BasicFilterRule>(
             std::move(m_pattern),
@@ -76,6 +81,11 @@ begin_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 void RuleBuilder::
 end_exception_filter_rule(iterator /*bol*/, iterator /*eol*/)
 {
+    if (m_skip) {
+        m_skip = false;
+        return;
+    }
+
     add_rule(
         std::make_unique<ExceptionFilterRule>(
             std::move(m_pattern),
@@ -334,10 +344,11 @@ csp_option(iterator /*begin*/, iterator /*end*/,
 }
 
 void RuleBuilder::
-rewrite_option(iterator /*begin*/, iterator /*end*/,
+rewrite_option(iterator const begin, iterator const end,
                iterator /*value_begin*/, iterator /*value_end*/)
 {
-    //TODO
+    error(begin, end, "rewrite option is deprecated");
+    m_skip = true;
 }
 
 void RuleBuilder::
@@ -462,6 +473,7 @@ comment(iterator const bol, iterator const eol)
 void RuleBuilder::
 error(iterator const begin, iterator const end, std::string_view const msg)
 {
+    //TODO make error reporting testable
     auto const column = begin - m_line.begin();
     auto const len = end - begin;
 

@@ -1,4 +1,4 @@
-#include "api.h"
+#include <adblock/api.h>
 
 #include <cassert>
 #include <filesystem>

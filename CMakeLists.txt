@@ -5,6 +5,8 @@ project(libadblock
     LANGUAGES C CXX
 )
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(src)
 add_subdirectory(third_party/adblock_parser)
 add_subdirectory(third_party/radix_tree)

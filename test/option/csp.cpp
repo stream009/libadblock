@@ -1,4 +1,5 @@
-#include "api.h"
+#include <adblock/api.h>
+
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/string_range.hpp"

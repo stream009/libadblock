@@ -3,6 +3,7 @@
 
 #include "element_hide_rule_base.hpp"
 #include "filter_rule_base.hpp"
+#include "snippet_rule_base.hpp"
 #include "string_range.hpp"
 
 #include <filesystem>
@@ -42,6 +43,9 @@ public:
 
     StringRange contentSecurityPolicy(Uri const&, StringRange siteKey = {}) const;
 
+    std::vector<SnippetRule const*>
+        snippets(Uri const&, StringRange siteKey = {}) const;
+
     FilterListRng filterLists() const;
     FilterList* filterList(Path const& filePath) const;
 
@@ -61,6 +65,7 @@ private:
     FilterListPtrs m_filterLists;
     FilterRuleBase m_filterRuleBase;
     ElementHideRuleBase m_elementHideRuleBase;
+    SnippetRuleBase m_snippetRuleBase;
 };
 
 } // namespace adblock

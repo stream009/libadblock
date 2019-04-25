@@ -23,7 +23,7 @@ public:
     {}
 
     using Base::Base;
-    using Base::operator=;
+    //using Base::operator=; // cause ambiguity on s = {};
 };
 
 inline StringRange

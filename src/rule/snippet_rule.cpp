@@ -1,4 +1,4 @@
-#include "element_hide_rule.hpp"
+#include "snippet_rule.hpp"
 
 #include "utility.hpp"
 
@@ -8,23 +8,23 @@
 
 namespace adblock {
 
-ElementHideRule::
-ElementHideRule(StringRange const selector,
-                std::unique_ptr<Domains> domains)
-    : m_cssSelector { selector }
+SnippetRule::
+SnippetRule(StringRange snippet,
+            std::unique_ptr<Domains> domains)
+    : m_snippet { snippet }
     , m_domains { std::move(domains) }
 {}
 
-bool ElementHideRule::
+bool SnippetRule::
 match(Uri const& uri) const
 {
     return matchDomain(uri.host(), m_domains.get());
 }
 
-void ElementHideRule::
+void SnippetRule::
 print(std::ostream& os) const
 {
-    os << "CSS selector: " << m_cssSelector << "\n";
+    os << "snippet: " << m_snippet << "\n";
     if (m_domains) {
         os << "domains: ";
         for (auto const domain: *m_domains) {

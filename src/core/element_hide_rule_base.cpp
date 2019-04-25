@@ -183,15 +183,15 @@ clear()
 }
 
 bool ElementHideRuleBase::
-isWhiteListed(Uri const& uri, StringRange const siteKey/*= {}*/) const
+isWhiteListed(Uri const& uri, StringRange const siteKey) const
 {
     return m_filterRuleBase.getFrameHideDisabler(uri, siteKey) != nullptr;
 }
 
 bool ElementHideRuleBase::
-isDomainSpecificOnly(Uri const& uri, StringRange const siteKey/*= {}*/) const
+isDomainSpecificOnly(Uri const& uri, StringRange const siteKey) const
 {
-    return m_filterRuleBase.getGenericHideDisabler(uri, siteKey) != nullptr;;
+    return m_filterRuleBase.getGenericHideDisabler(uri, siteKey) != nullptr;
 }
 
 } // namespace adblock

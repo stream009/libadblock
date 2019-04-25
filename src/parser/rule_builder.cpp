@@ -10,6 +10,7 @@
 #include "rule/exception_filter_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
 #include "rule/filter_option.hpp"
+#include "rule/snippet_rule.hpp"
 
 #include <iostream>
 #include <string>
@@ -436,19 +437,23 @@ css_selector(iterator const begin, iterator const end)
 void RuleBuilder::
 begin_snippet_filter_rule(iterator /*begin*/, iterator /*end*/)
 {
-    //TODO
+    m_snippet = {};
 }
 
 void RuleBuilder::
 end_snippet_filter_rule(iterator /*begin*/, iterator /*end*/)
 {
-    //TODO
+    add_rule(
+        std::make_unique<SnippetRule>(
+            m_snippet, std::move(m_domains)
+        )
+    );
 }
 
 void RuleBuilder::
-snippet(iterator /*begin*/, iterator /*end*/)
+snippet(iterator const begin, iterator const end)
 {
-    //TODO
+    m_snippet = { begin, end };
 }
 
 //

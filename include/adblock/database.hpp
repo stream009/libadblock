@@ -113,6 +113,18 @@ public:
         content_security_policy(std::string_view url,
                                 std::string_view site_key = {}) const;
 
+    // Query snippet for the URL
+    //
+    // @param url request URL
+    // @param site_key (optional) site key of the page
+    //
+    // @return vector of snippet string
+    //
+    // @throw url_parse_error
+    std::vector<std::string_view>
+        snippets(std::string_view url,
+                 std::string_view site_key = {}) const;
+
     // Query parameters of the filter list
     //
     // @param path path to the filter list

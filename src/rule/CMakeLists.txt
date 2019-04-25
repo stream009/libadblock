@@ -5,6 +5,7 @@ add_library(rule
     basic_element_hide_rule.cpp
     exception_element_hide_rule.cpp
     extended_element_hide_rule.cpp
+    snippet_rule.cpp
     comment_rule.cpp
     filter_option.cpp
     domain_data_base.cpp

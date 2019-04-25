@@ -1,10 +1,11 @@
-#ifndef ELEMENT_HIDE_RULE_HPP
-#define ELEMENT_HIDE_RULE_HPP
+#ifndef ADBLOCK_RULE_SNIPPET_HPP
+#define ADBLOCK_RULE_SNIPPET_HPP
 
 #include "rule.hpp"
 
 #include "core/string_range.hpp"
 
+#include <iosfwd>
 #include <memory>
 #include <vector>
 
@@ -12,38 +13,32 @@ namespace adblock {
 
 class Uri;
 
-class ElementHideRule : public Rule
+class SnippetRule : public Rule
 {
     using Base = Rule;
 public:
     using Domains = std::vector<StringRange>;
+
 public:
+    SnippetRule(StringRange snippet,
+                std::unique_ptr<Domains> domains);
+
     // accessor
-    StringRange cssSelector() const { return m_cssSelector; }
+    StringRange snippet() const { return m_snippet; }
     Domains const* domains() const { return m_domains.get(); }
 
     // query
     bool match(Uri const&) const;
 
-    bool isDomainRestricted() const { return !!m_domains; }
-
-protected:
-    ElementHideRule(StringRange const selector,
-                    std::unique_ptr<Domains> domains);
 private:
     // @override Rule
     void print(std::ostream&) const override;
 
-    void varidate() const
-    {
-        assert(!m_cssSelector.empty());
-    }
-
 private:
-    StringRange const m_cssSelector;
+    StringRange const m_snippet;
     std::unique_ptr<Domains> m_domains;
 };
 
 } // namespace adblock
 
-#endif // ELEMENT_HIDE_RULE_HPP
+#endif // ADBLOCK_RULE_SNIPPET_HPP

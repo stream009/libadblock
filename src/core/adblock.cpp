@@ -11,6 +11,7 @@
 #include "rule/exception_filter_rule.hpp"
 #include "rule/filter_rule.hpp"
 #include "rule/rule.hpp"
+#include "rule/snippet_rule.hpp"
 
 #include <memory>
 
@@ -26,6 +27,7 @@ AdBlock::
 AdBlock()
     : m_filterRuleBase {}
     , m_elementHideRuleBase { m_filterRuleBase }
+    , m_snippetRuleBase { m_filterRuleBase }
 {}
 
 AdBlock::~AdBlock() = default;
@@ -94,6 +96,12 @@ contentSecurityPolicy(Uri const& uri,
     return *policy;
 }
 
+std::vector<SnippetRule const*> AdBlock::
+snippets(Uri const& uri, StringRange const siteKey/*= {}*/) const
+{
+    return m_snippetRuleBase.lookup(uri, siteKey);
+}
+
 FilterListRng AdBlock::
 filterLists() const
 {
@@ -130,6 +138,12 @@ statistics() const
     total += num;
     result.put("Element hide rule", num);
     detail.put_child("Element hide rule", stats);
+
+    stats = m_snippetRuleBase.statistics();
+    num = stats.get<size_t>("Total");
+    total += num;
+    result.put("Snippet rule", num);
+    detail.put_child("Snippet rule", stats);
 
     result.put("Total", total);
 
@@ -210,6 +224,10 @@ registerFilterListToRuleBases(FilterListPtr const& filterList)
         {
             assert(ptr);
             m_elementHideRuleBase.put(*ptr);
+        }
+        else if (auto* const ptr = dynamic_cast<SnippetRule const*>(&rule)) {
+            assert(ptr);
+            m_snippetRuleBase.put(*ptr);
         }
         else if (dynamic_cast<CommentRule const*>(&rule)) {
             // comment rule will be skipped

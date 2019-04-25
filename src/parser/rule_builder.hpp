@@ -139,6 +139,7 @@ private:
     std::unique_ptr<std::vector<StringRange>> m_siteKeys;
     std::unique_ptr<StringRange> m_cspValue;
     StringRange m_selector;
+    StringRange m_snippet;
 
     int64_t m_line_no = 0;
     StringRange m_line;

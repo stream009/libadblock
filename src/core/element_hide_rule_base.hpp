@@ -3,7 +3,6 @@
 
 #include "index/domained_element_hide_rule_map.hpp"
 
-#include <string>
 #include <vector>
 
 #include <boost/property_tree/ptree_fwd.hpp>
@@ -37,8 +36,8 @@ public:
     void clear();
 
 private:
-    bool isWhiteListed(Uri const&, StringRange siteKey = {}) const;
-    bool isDomainSpecificOnly(Uri const&, StringRange siteKey = {}) const;
+    bool isWhiteListed(Uri const&, StringRange siteKey) const;
+    bool isDomainSpecificOnly(Uri const&, StringRange siteKey) const;
 
 public:
     DomainedElementHideRuleMap m_domainedBlackList;

@@ -6,6 +6,7 @@
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "lib/uri/parser.hpp"
+#include "rule/snippet_rule.hpp"
 
 #include <memory>
 #include <sstream>
@@ -142,6 +143,24 @@ content_security_policy(std::string_view const url,
 {
     try {
         return m_adblock->contentSecurityPolicy(url, site_key);
+    }
+    catch (uri::parse_error const& e) {
+        throw url_parse_error { e.uri(), e.what(), e.location() };
+    }
+}
+
+std::vector<std::string_view> database::
+snippets(std::string_view const url, std::string_view site_key/*= {}*/) const
+{
+    try {
+        //TODO return filter list path too
+        std::vector<std::string_view> result;
+
+        for (auto* const s: m_adblock->snippets(url, site_key)) {
+            result.push_back(s->snippet());
+        }
+
+        return result;
     }
     catch (uri::parse_error const& e) {
         throw url_parse_error { e.uri(), e.what(), e.location() };

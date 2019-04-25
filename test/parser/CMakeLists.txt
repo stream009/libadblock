@@ -8,6 +8,7 @@ add_library(parser_test STATIC
     site_key_option.cpp
     filter_rule.cpp
     element_hide_rule.cpp
+    snippet_rule.cpp
     comment_rule.cpp
 )
 target_link_libraries(parser_test

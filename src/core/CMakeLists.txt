@@ -2,6 +2,7 @@ add_library(core
     file.cpp
     filter_rule_base.cpp
     element_hide_rule_base.cpp
+    snippet_rule_base.cpp
     filter_list.cpp
     adblock.cpp
 )

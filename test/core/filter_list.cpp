@@ -54,8 +54,6 @@ TEST(Core_FilterList, Statistics)
     EXPECT_EQ(6, stats.get<size_t>("Basic element hide rule"));
     EXPECT_EQ(6, stats.get<size_t>("Exception element hide rule"));
     EXPECT_EQ(1, stats.get<size_t>("Comment rule"));
-
-    //boost::property_tree::write_json(std::cout, stats);
 }
 
 TEST(Core_FilterList, DISABLED_EasyList)

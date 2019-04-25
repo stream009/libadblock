@@ -6,11 +6,6 @@
 #include "core/uri.hpp"
 
 #include <filesystem>
-#include <iostream>
-
-#include <boost/range/algorithm.hpp>
-#include <boost/timer/timer.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 #include <gtest/gtest.h>
 
@@ -19,58 +14,129 @@ using namespace adblock;
 namespace fs = std::filesystem;
 static const fs::path projectRoot { PROJECT_ROOT };
 
+TEST(Core_AdBlock, AddFilterList)
+{
+    AdBlock adblock;
+
+    auto const path1 = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path1)) << path1;
+
+    EXPECT_FALSE(adblock.filterList(path1));
+    adblock.addFilterList(path1);
+    EXPECT_TRUE(adblock.filterList(path1));
+}
+
+
+TEST(Core_AdBlock, RemoveFilterList)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    EXPECT_FALSE(adblock.filterList(path));
+    adblock.addFilterList(path);
+    EXPECT_TRUE(adblock.filterList(path));
+
+    adblock.removeFilterList(path);
+    EXPECT_FALSE(adblock.filterList(path));
+}
+
+TEST(Core_AdBlock, ShouldBlock)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    adblock.addFilterList(path);
+
+    struct Cxt : Context {
+        bool fromScriptTag() const override { return true; }
+        Uri const& origin() const override { return m_origin; }
+        Uri m_origin { "http://example.com" };
+    } cxt;
+
+    auto const [block, rule] =
+        adblock.shouldBlock("http://example.com/?&ad_box_"_u, cxt);
+    EXPECT_TRUE(block);
+    ASSERT_TRUE(rule);
+    ASSERT_TRUE(rule->filterList());
+    EXPECT_EQ(path, rule->filterList()->path());
+    EXPECT_EQ("&ad_box_", rule->line());
+}
+
+TEST(Core_AdBlock, ElementHideSelectors)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    adblock.addFilterList(path);
+
+    auto rules = adblock.elementHideSelectors("http://example.com"_u);
+    ASSERT_EQ(3, rules.size());
+
+    rules = adblock.elementHideSelectors("http://aol.com"_u);
+    ASSERT_EQ(4, rules.size());
+}
+
+TEST(Core_AdBlock, ExtendedElementHideSelectors)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    adblock.addFilterList(path);
+
+    auto const rules =
+        adblock.extendedElementHideSelectors("http://aliexpress.com"_u);
+    ASSERT_EQ(1, rules.size());
+}
+
+TEST(Core_AdBlock, ContentSecurityPolicy)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    adblock.addFilterList(path);
+
+    auto const policy = adblock.contentSecurityPolicy("http://example.com");
+
+    EXPECT_EQ("worker-src 'none'", policy);
+}
+
+TEST(Core_AdBlock, Snippets)
+{
+    AdBlock adblock;
+
+    auto const path = projectRoot / "test/data/elementary.txt";
+    ASSERT_TRUE(fs::exists(path));
+
+    adblock.addFilterList(path);
+
+    auto const rules = adblock.snippets("http://example.com");
+    ASSERT_EQ(1, rules.size());
+}
+
 TEST(Core_AdBlock, Statistics)
 {
-    std::locale locale { "" };
-    std::locale::global(locale);
-    std::cout.imbue(locale);
-
     auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
+    ASSERT_TRUE(fs::exists(path));
 
     AdBlock adBlock;
     adBlock.addFilterList(path);
 
     auto const& stats = adBlock.statistics();
-    //boost::property_tree::write_json(std::cout, stats);
 
     EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
     EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
+    EXPECT_EQ(0,     stats.get<size_t>("Snippet rule"));
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
-}
-
-TEST(Core_AdBlock, DISABLED_EasyList)
-{
-    auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
-
-    boost::timer::cpu_timer t;
-    AdBlock adBlock;
-    adBlock.addFilterList(path);
-    t.stop();
-    std::cout << t.format();
-}
-
-TEST(Core_AdBlock, DISABLED_Fanboy)
-{
-    auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
-
-    AdBlock adBlock;
-    adBlock.addFilterList(path);
-}
-
-TEST(Core_AdBlock, DISABLED_elementHideRule)
-{
-    auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
-
-    AdBlock adBlock;
-    adBlock.addFilterList(path);
-    boost::timer::cpu_timer t;
-    auto const& css = adBlock.elementHideSelectors("http://www.adblockplus.org/"_u);
-    t.stop();
-    std::cout << css.size() << "\n" << t.format();
 }
 
 TEST(Core_AdBlock, Reload)
@@ -78,25 +144,15 @@ TEST(Core_AdBlock, Reload)
     auto const& path = projectRoot / "test/data/easylist.txt";
     ASSERT_TRUE(fs::exists(path)) << path;
 
-    boost::timer::cpu_timer t;
-
     AdBlock adBlock;
     adBlock.addFilterList(path);
-
-    t.stop();
-    std::cout << t.format();
 
     auto stats = adBlock.statistics();
     EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
     EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 
-    t.start();
-
     adBlock.reload();
-
-    t.stop();
-    std::cout << t.format();
 
     stats = adBlock.statistics();
     EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
@@ -104,91 +160,11 @@ TEST(Core_AdBlock, Reload)
     EXPECT_EQ(54322, stats.get<size_t>("Total"));
 }
 
-TEST(Core_AdBlock, FilterLists)
-{
-    AdBlock adBlock;
-
-    auto const& path1 = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path1)) << path1;
-
-    adBlock.addFilterList(path1);
-
-    auto const& path2 = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(fs::exists(path2)) << path2;
-
-    adBlock.addFilterList(path2);
-
-    auto const& path3 = projectRoot / "test/data/customlist.txt";
-    ASSERT_TRUE(fs::exists(path3)) << path3;
-
-    adBlock.addFilterList(path3);
-
-    auto const& filterLists = adBlock.filterLists();
-    EXPECT_EQ(3, filterLists.size());
-
-    auto it = boost::find_if(filterLists,
-        [&](auto& filterList) {
-            return path1 == filterList.path();
-        });
-    EXPECT_NE(it, filterLists.end());
-
-    it = boost::find_if(filterLists,
-        [&](auto& filterList) {
-            return path2 == filterList.path();
-        });
-    EXPECT_NE(it, filterLists.end());
-
-    it = boost::find_if(filterLists,
-        [&](auto& filterList) {
-            return path3 == filterList.path();
-        });
-    EXPECT_NE(it, filterLists.end());
-}
-
-TEST(Core_AdBlock, RemoveFilterList)
-{
-    AdBlock adBlock;
-
-    auto const& path1 = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path1)) << path1;
-
-    adBlock.addFilterList(path1);
-
-    auto const& path2 = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(fs::exists(path2)) << path2;
-
-    adBlock.addFilterList(path2);
-
-    EXPECT_EQ(2, adBlock.filterLists().size());
-
-    auto const& beforeStats = adBlock.statistics();
-    //std::cout << beforeStats.get<size_t>("Total") << "\n";
-    ASSERT_EQ(66244, beforeStats.get<size_t>("Total"));
-
-    auto it = boost::find_if(adBlock.filterLists(),
-        [&](auto& filterList) {
-            return path1 == filterList.path();
-        });
-    EXPECT_NE(it, adBlock.filterLists().end());
-
-    adBlock.removeFilterList(*it);
-
-    EXPECT_EQ(1, adBlock.filterLists().size());
-
-    auto const& afterStats = adBlock.statistics();
-    //std::cout << afterStats.get<size_t>("Total") << "\n";
-    ASSERT_EQ(11922, afterStats.get<size_t>("Total"));
-
-    adBlock.removeFilterList(adBlock.filterLists().front());
-    EXPECT_EQ(0, adBlock.filterLists().size());
-    ASSERT_EQ(0, adBlock.statistics().get<size_t>("Total"));
-}
-
 TEST(Core_AdBlock, FilterList)
 {
     AdBlock adBlock;
 
-    auto const& path = projectRoot / "test/data/easylist.txt";
+    auto const& path = projectRoot / "test/data/elementary.txt";
     ASSERT_TRUE(fs::exists(path)) << path;
 
     adBlock.addFilterList(path);

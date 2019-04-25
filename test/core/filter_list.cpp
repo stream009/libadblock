@@ -23,8 +23,8 @@ TEST(Core_FilterList, Elementary)
 
     auto const lines = boost::count(filterList, '\n');
 
-    EXPECT_EQ(32, lines);
-    EXPECT_EQ(31, filterList.rules().size());
+    EXPECT_EQ(39, lines);
+    EXPECT_EQ(37, filterList.rules().size());
 }
 
 TEST(Core_FilterList, FileDoesNotExist)
@@ -49,11 +49,11 @@ TEST(Core_FilterList, Statistics)
 
     auto const& stats = filterList.statistics();
 
-    EXPECT_EQ(9, stats.get<size_t>("Basic filter rule"));
+    EXPECT_EQ(10, stats.get<size_t>("Basic filter rule"));
     EXPECT_EQ(9, stats.get<size_t>("Exception filter rule"));
     EXPECT_EQ(6, stats.get<size_t>("Basic element hide rule"));
     EXPECT_EQ(6, stats.get<size_t>("Exception element hide rule"));
-    EXPECT_EQ(1, stats.get<size_t>("Comment rule"));
+    EXPECT_EQ(4, stats.get<size_t>("Comment rule"));
 }
 
 TEST(Core_FilterList, DISABLED_EasyList)

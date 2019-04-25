@@ -47,7 +47,7 @@ public:
         snippets(Uri const&, StringRange siteKey = {}) const;
 
     FilterListRng filterLists() const;
-    FilterList* filterList(Path const& filePath) const;
+    FilterList const* filterList(Path const& filePath) const;
 
     boost::property_tree::ptree statistics() const;
 

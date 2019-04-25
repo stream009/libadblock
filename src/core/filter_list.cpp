@@ -9,6 +9,8 @@
 #include "rule/comment_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/exception_filter_rule.hpp"
+#include "rule/exception_filter_rule.hpp"
+#include "rule/extended_element_hide_rule.hpp"
 #include "rule/snippet_rule.hpp"
 
 #include <regex>
@@ -80,6 +82,7 @@ struct Statistics
     FilterRule      exceptionFilterRule;
     ElementHideRule basicElementHideRule;
     ElementHideRule exceptionElementHideRule;
+    ElementHideRule extendedElementHideRule;
     SnippetRule     snippetRule;
     size_t          commentRule = 0u;
 
@@ -116,6 +119,11 @@ Statistics(FilterList::Rules const& rules)
                            dynamic_cast<ExceptionElementHideRule*>(&*ptr)) //TODO ptr.get()
         {
             countElementHideRule(*rule, exceptionElementHideRule);
+        }
+        else if (auto* const rule =
+                           dynamic_cast<ExtendedElementHideRule*>(ptr.get()))
+        {
+            countElementHideRule(*rule, extendedElementHideRule);
         }
         else if (auto* const rule =
             dynamic_cast<adblock::SnippetRule*>(ptr.get()))
@@ -284,6 +292,8 @@ statistics() const
     populateElementHideRule(stats.basicElementHideRule, basicElementHideRule);
     populateElementHideRule(
                 stats.exceptionElementHideRule, exceptionElementHideRule);
+    populateElementHideRule(
+                stats.extendedElementHideRule, exceptionElementHideRule);
 
     snippetRule.put<size_t>("Generic", stats.snippetRule.generic);
     snippetRule.put<size_t>("Domain specific", stats.snippetRule.domainSpecific);
@@ -297,6 +307,8 @@ statistics() const
     result.put("Basic element hide rule", stats.basicElementHideRule.total);
     result.put("Exception element hide rule",
                                       stats.exceptionElementHideRule.total);
+    result.put("Extended element hide rule",
+                                      stats.extendedElementHideRule.total);
     result.put("Snippet rule",   stats.snippetRule.generic
                                + stats.snippetRule.domainSpecific);
     result.put("Comment rule", stats.commentRule);
@@ -304,6 +316,7 @@ statistics() const
     detail.put_child("Basic filter rule", basicFilterRule);
     detail.put_child("Exceptin filter rule", exceptionFilterRule);
     detail.put_child("Basic element hide rule", basicElementHideRule);
+    detail.put_child("Exception element hide rule", exceptionElementHideRule);
     detail.put_child("Exception element hide rule", exceptionElementHideRule);
     detail.put_child("Snippet rule", snippetRule);
 

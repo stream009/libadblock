@@ -30,3 +30,10 @@ search.safefinder.com,search.snap.do,search.snapdo.com###ATopD
 #@##AD_banner
 #@##AdColumn
 #@##AdContainer
+! extended element hide rule
+aliexpress.com#?#.list-item:-abp-has(span.sponsored)
+! content security policy
+$csp=worker-src 'none'
+! snippet
+#$#log 'hello'
+

@@ -102,21 +102,21 @@ Statistics(FilterList::Rules const& rules)
 {
     for (auto const& ptr: rules) {
         assert(ptr);
-        if (auto* const rule = dynamic_cast<BasicFilterRule*>(&*ptr)) {
+        if (auto* const rule = dynamic_cast<BasicFilterRule*>(ptr.get())) {
             countFilterRule(*rule, basicFilterRule);
         }
         else if (auto* const rule =
-                           dynamic_cast<ExceptionFilterRule*>(&*ptr))
+                           dynamic_cast<ExceptionFilterRule*>(ptr.get()))
         {
             countFilterRule(*rule, exceptionFilterRule);
         }
         else if (auto* const rule =
-                            dynamic_cast<BasicElementHideRule*>(&*ptr))
+                            dynamic_cast<BasicElementHideRule*>(ptr.get()))
         {
             countElementHideRule(*rule, basicElementHideRule);
         }
         else if (auto* const rule =
-                           dynamic_cast<ExceptionElementHideRule*>(&*ptr)) //TODO ptr.get()
+                           dynamic_cast<ExceptionElementHideRule*>(ptr.get()))
         {
             countElementHideRule(*rule, exceptionElementHideRule);
         }

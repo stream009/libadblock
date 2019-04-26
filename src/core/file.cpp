@@ -26,7 +26,7 @@ reload()
 
     buf << input.rdbuf();
 
-    m_data = std::move(buf.str());
+    m_data = buf.str();
 }
 
 

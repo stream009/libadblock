@@ -45,7 +45,7 @@ public:
     bool isPing() const override { return m_type == request_type::ping; }
     bool isWebRtc() const override { return m_type == request_type::web_rtc; }
 
-    StringRange siteKey() const { return m_site_key; }
+    StringRange siteKey() const override { return m_site_key; }
 
 private:
     request_type m_type;

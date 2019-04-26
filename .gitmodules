@@ -1,9 +1,8 @@
 [submodule "third_party/adblock_parser"]
 	path = third_party/adblock_parser
 	url = git@gitlab.com:stream9/adblock_parser.git
+	shallow = true
 [submodule "third_party/radix_tree"]
 	path = third_party/radix_tree
 	url = git@gitlab.com:stream9/radix_tree.git
-[submodule "third_party/json"]
-	path = third_party/json
-	url = git@gitlab.com:stream9/json.git
+	shallow = true

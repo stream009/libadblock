@@ -18,19 +18,23 @@ match(Uri const& target, bool const caseSensitive/*= false*/) const
 
     try {
         if (!m_regEx || caseSensitive != m_regExCaseSensitivity) {
-            m_regEx.emplace(
+
+            auto syntax = std::regex::ECMAScript;
+            if (!caseSensitive) {
+                syntax |= std::regex::icase;
+            }
+
+            m_regEx = std::make_unique<std::regex>(
                 m_pattern.begin(), m_pattern.end(),
-                caseSensitive ? boost::regex::normal : boost::regex::icase
+                syntax
             );
+
             m_regExCaseSensitivity = caseSensitive;
         }
-        return boost::regex_match(target.begin(), target.end(), *m_regEx);
+        return std::regex_match(target.begin(), target.end(), *m_regEx);
     }
     catch (std::exception const& e) {
-        std::cerr << "Problem has occur while processing an regex pattern.\n"
-                  << "Pattern: " << m_pattern << "\n"
-                  << "  Error: " << e.what() << "\n"
-                  << "This pattern is disabled from now.\n";
+        std::cerr << "regex error: " << m_pattern << ":" << e.what() << "\n";
         m_disabled = true;
         return false;
     }

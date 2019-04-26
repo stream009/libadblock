@@ -6,9 +6,8 @@
 #include "core/string_range.hpp"
 
 #include <iosfwd>
-#include <optional>
-
-#include <boost/regex.hpp>
+#include <memory>
+#include <regex>
 
 namespace adblock {
 
@@ -27,7 +26,7 @@ private:
 
 private:
     StringRange m_pattern;
-    mutable std::optional<boost::regex> m_regEx;
+    mutable std::unique_ptr<std::regex> m_regEx;
     mutable bool m_regExCaseSensitivity = false;
     mutable bool m_disabled = false;
 };

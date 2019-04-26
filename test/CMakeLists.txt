@@ -13,6 +13,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 add_definitions(-DPROJECT_ROOT=\"${CMAKE_SOURCE_DIR}\")
 
+add_subdirectory(api)
 add_subdirectory(core)
 add_subdirectory(parser)
 add_subdirectory(rule)
@@ -27,6 +28,7 @@ add_executable(test_all
 )
 target_link_libraries(test_all
     -Wl,--whole-archive
+        api_test
         core_test
         parser_test
         rule_test

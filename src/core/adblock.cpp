@@ -198,6 +198,7 @@ reload()
 {
     m_filterRuleBase.clear();
     m_elementHideRuleBase.clear();
+    m_snippetRuleBase.clear();
 
     for (auto const& filterList: m_filterLists) {
         filterList->reload();

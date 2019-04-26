@@ -24,7 +24,6 @@ add_subdirectory(index)
 add_executable(test_all
     reg_dom.cpp
     domain_data_base.cpp
-    api.cpp
 )
 target_link_libraries(test_all
     -Wl,--whole-archive

@@ -6,7 +6,6 @@
 #include <memory>
 #include <vector>
 
-#include <boost/container/flat_set.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 
 #include <radix_tree/radix_tree.hpp>
@@ -22,7 +21,7 @@ public:
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
     using Map = radix_tree::RadixTree<ReverseStringRange, ElementHideRule const*>;
-    using ExceptionOnlyRules = boost::container::flat_set<ElementHideRule const*>;
+    using ExceptionOnlyRules = std::vector<ElementHideRule const*>;
 
 public:
     // query

@@ -35,11 +35,7 @@ put(ElementHideRule const& rule)
     }
 
     if (hasExclude && !hasInclude) {
-        for (auto& dom: *domains) {
-            ReverseStringRange const revDom { dom.end(), dom.begin() };
-
-            m_exception.insert(&rule);
-        }
+        m_exception.push_back(&rule);
     }
 }
 

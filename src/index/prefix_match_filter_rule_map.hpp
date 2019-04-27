@@ -17,7 +17,7 @@ class PrefixMatchFilterRuleMap : public FilterRuleMap
     using Base = FilterRuleMap;
 public:
     using Base::FilterRules;
-    using Map = radix_tree::RadixTree<StringRange, FilterRule const*>;
+    using Map = radix_tree::tree<StringRange, FilterRule const*>;
 
 private:
     void doPut(FilterRule const&) override;

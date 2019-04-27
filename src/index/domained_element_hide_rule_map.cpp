@@ -1,14 +1,14 @@
 #include "domained_element_hide_rule_map.hpp"
 
+#include "statistics.hpp"
+
 #include "core/json.hpp"
 #include "core/uri.hpp"
 
 #include <iterator>
-#include <sstream>
 #include <string>
 
 #include <boost/algorithm/cxx11/copy_if.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 namespace adblock {
 
@@ -59,7 +59,7 @@ query(Uri const& uri) const
 
     m_normal.traverse(reverseHostR,
         [&](auto& node, auto&) {
-            if (node.hasValue()) {
+            if (node.has_value()) {
                 ba::copy_if(node.values(), inserter,
                     [&] (auto* rule) {
                         return rule->match(uri);
@@ -89,11 +89,7 @@ clear()
 json::object DomainedElementHideRuleMap::
 statistics() const
 {
-    std::ostringstream oss;
-
-    boost::property_tree::write_json(oss, m_normal.statistics());
-
-    auto result = json::parse(oss.str()).get_object();
+    auto result = radixTreeStatistics(m_normal);
 
     //TODO json::object::insert
     result["Exception only rules"] = static_cast<double>(m_exception.size());

@@ -248,7 +248,8 @@ adblock_remove_filter_set(adblock_t adblock,
 
     auto const& filterLists = adBlock->filterLists();
 
-    auto const it = boost::find_if(filterLists,
+    auto const it = std::find_if(
+        filterLists.begin(), filterLists.end(),
         [&path, &len](auto& filterList) {
             auto* const c_str = filterList.path().c_str();
             return c_str[len] == '\0' &&

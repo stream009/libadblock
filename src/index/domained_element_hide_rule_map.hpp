@@ -19,7 +19,7 @@ public:
     using ElementHideRules = std::vector<ElementHideRule const*>;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
-    using Map = radix_tree::RadixTree<ReverseStringRange, ElementHideRule const*>;
+    using Map = radix_tree::tree<ReverseStringRange, ElementHideRule const*>;
     using ExceptionOnlyRules = std::vector<ElementHideRule const*>;
 
 public:

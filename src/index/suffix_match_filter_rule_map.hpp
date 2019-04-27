@@ -20,7 +20,7 @@ public:
     using Base::FilterRules;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
-    using Map = radix_tree::RadixTree<ReverseStringRange, FilterRule const*>;
+    using Map = radix_tree::tree<ReverseStringRange, FilterRule const*>;
 
 private:
     void doPut(FilterRule const&) override;

@@ -1,5 +1,6 @@
 #include "domain_match_filter_rule_map.hpp"
 
+#include "statistics.hpp"
 #include "utility.hpp"
 
 #include "core/json.hpp"
@@ -8,10 +9,8 @@
 
 #include <cassert>
 #include <iterator>
-#include <ostream>
 
 #include <boost/range/algorithm.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 namespace adblock {
 
@@ -43,7 +42,7 @@ doQuery(Uri const& uri) const
 
         m_rules.traverse(suffix,
             [&](auto& node, auto&) {
-                if (node.hasValue()) {
+                if (node.has_value()) {
                     boost::copy(node.values(), inserter);
                 }
                 return false;
@@ -57,11 +56,7 @@ doQuery(Uri const& uri) const
 json::object DomainMatchFilterRuleMap::
 doStatistics() const
 {
-    std::ostringstream oss;
-
-    boost::property_tree::write_json(oss, m_rules.statistics());
-
-    return json::parse(oss.str()).get_object();
+    return radixTreeStatistics(m_rules);
 }
 
 void DomainMatchFilterRuleMap::

@@ -14,12 +14,12 @@
 #include "rule/rule.hpp"
 #include "rule/snippet_rule.hpp"
 
+#include <algorithm>
 #include <memory>
+#include <utility>
+#include <vector>
 
 namespace adblock {
-
-using FilterListPtr = AdBlock::FilterListPtr;
-using FilterListRng = AdBlock::FilterListRng;
 
 AdBlock::
 AdBlock()
@@ -101,10 +101,16 @@ snippets(Uri const& uri, StringRange const siteKey/*= {}*/) const
     return m_snippetRuleBase.lookup(uri, siteKey);
 }
 
-FilterListRng AdBlock::
+std::vector<FilterList const*> AdBlock::
 filterLists() const
 {
-    return boost::adaptors::indirect(m_filterLists);
+    std::vector<FilterList const*> result;
+
+    for (auto const& list: m_filterLists) {
+        result.push_back(list.get());
+    }
+
+    return result;
 }
 
 FilterList const* AdBlock::

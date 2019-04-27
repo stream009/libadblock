@@ -93,7 +93,6 @@ statistics() const
 {
     auto result = radixTreeStatistics(m_normal);
 
-    //TODO json::object::insert
     result["Exception only rules"] = static_cast<double>(m_exception.size());
 
     return result;

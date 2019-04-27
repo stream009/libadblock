@@ -11,8 +11,6 @@
 #include <memory>
 #include <vector>
 
-#include <boost/range/adaptor/indirected.hpp>
-
 namespace adblock {
 
 class Context;
@@ -24,7 +22,6 @@ class AdBlock
 public:
     using FilterListPtr = std::unique_ptr<FilterList>;
     using FilterListPtrs = std::vector<FilterListPtr>;
-    using FilterListRng = boost::indirected_range<FilterListPtrs const>;
     using Path = std::filesystem::path;
 
 public:
@@ -46,7 +43,7 @@ public:
     std::vector<SnippetRule const*>
         snippets(Uri const&, StringRange siteKey = {}) const;
 
-    FilterListRng filterLists() const;
+    std::vector<FilterList const*> filterLists() const;
     FilterList const* filterList(Path const& filePath) const;
 
     json::object statistics() const;

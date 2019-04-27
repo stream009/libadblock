@@ -5,10 +5,9 @@
 #include "core/json.hpp"
 #include "core/uri.hpp"
 
+#include <algorithm>
 #include <iterator>
 #include <string>
-
-#include <boost/algorithm/cxx11/copy_if.hpp>
 
 namespace adblock {
 
@@ -44,8 +43,6 @@ put(ElementHideRule const& rule)
 DomainedElementHideRuleMap::ElementHideRules DomainedElementHideRuleMap::
 query(Uri const& uri) const
 {
-    namespace ba = boost::algorithm;
-
     auto const& host = uri.host();
     if (host.empty()) return {};
 
@@ -60,7 +57,10 @@ query(Uri const& uri) const
     m_normal.traverse(reverseHostR,
         [&](auto& node, auto&) {
             if (node.has_value()) {
-                ba::copy_if(node.values(), inserter,
+                auto const& v = node.values();
+
+                std::copy_if(
+                    v.begin(), v.end(), inserter,
                     [&] (auto* rule) {
                         return rule->match(uri);
                     }
@@ -70,7 +70,9 @@ query(Uri const& uri) const
         }
     );
 
-    ba::copy_if(m_exception, inserter,
+    std::copy_if(
+        m_exception.begin(), m_exception.end(),
+        inserter,
         [&](auto* rule) {
             return rule->match(uri);
         }

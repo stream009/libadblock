@@ -10,8 +10,6 @@
 #include <cassert>
 #include <iterator>
 
-#include <boost/range/algorithm.hpp>
-
 namespace adblock {
 
 void PrefixMatchFilterRuleMap::
@@ -40,7 +38,8 @@ doQuery(Uri const& uri) const
     m_rules.traverse(uriR,
         [&](auto& node, auto&) {
             if (node.has_value()) {
-                boost::copy(node.values(), inserter);
+                auto const& v = node.values();
+                std::copy(v.begin(), v.end(), inserter);
             }
             return false;
         }

@@ -16,8 +16,6 @@
 
 #include <memory>
 
-#include <boost/range/algorithm.hpp>
-
 namespace adblock {
 
 using FilterListPtr = AdBlock::FilterListPtr;
@@ -165,7 +163,8 @@ addFilterList(Path const& filePath)
 void AdBlock::
 removeFilterList(Path const& filePath)
 {
-    auto const it = boost::find_if(m_filterLists,
+    auto const it = std::find_if(
+        m_filterLists.begin(), m_filterLists.end(),
         [&](auto& ptr) {
             return ptr->path() == filePath;
         });
@@ -180,7 +179,8 @@ removeFilterList(Path const& filePath)
 void AdBlock::
 removeFilterList(FilterList const& filterList)
 {
-    auto const it = boost::find_if(m_filterLists,
+    auto const it = std::find_if(
+        m_filterLists.begin(), m_filterLists.end(),
         [&](auto& ptr) {
             return ptr.get() == &filterList;
         });

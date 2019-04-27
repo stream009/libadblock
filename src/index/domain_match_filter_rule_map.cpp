@@ -7,10 +7,9 @@
 #include "core/uri.hpp"
 #include "pattern/domain_match_pattern.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <iterator>
-
-#include <boost/range/algorithm.hpp>
 
 namespace adblock {
 
@@ -43,7 +42,12 @@ doQuery(Uri const& uri) const
         m_rules.traverse(suffix,
             [&](auto& node, auto&) {
                 if (node.has_value()) {
-                    boost::copy(node.values(), inserter);
+                    auto const& values = node.values();
+
+                    std::copy(
+                        values.begin(), values.end(),
+                        inserter
+                    );
                 }
                 return false;
             }

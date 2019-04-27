@@ -3,9 +3,9 @@
 
 #include "filter_rule_map.hpp"
 
-#include <iterator>
+#include "core/json_fwd.hpp"
 
-#include <boost/property_tree/ptree_fwd.hpp>
+#include <iterator>
 
 #include <radix_tree/radix_tree.hpp>
 
@@ -25,7 +25,7 @@ public:
 private:
     void doPut(FilterRule const&) override;
     FilterRules doQuery(Uri const&) const override;
-    boost::property_tree::ptree doStatistics() const override;
+    json::object doStatistics() const override;
     void doClear() override;
 
 private:

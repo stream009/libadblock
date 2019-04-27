@@ -5,12 +5,12 @@
 #include "filter_rule_base.hpp"
 #include "snippet_rule_base.hpp"
 #include "string_range.hpp"
+#include "json_fwd.hpp"
 
 #include <filesystem>
 #include <memory>
 #include <vector>
 
-#include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/range/adaptor/indirected.hpp>
 
 namespace adblock {
@@ -49,7 +49,7 @@ public:
     FilterListRng filterLists() const;
     FilterList const* filterList(Path const& filePath) const;
 
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
     // modifier
     void addFilterList(Path const& filePath);

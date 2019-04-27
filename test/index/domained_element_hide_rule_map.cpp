@@ -1,5 +1,6 @@
 #include "../parse_rule.hpp"
 
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "index/domained_element_hide_rule_map.hpp"
@@ -124,30 +125,30 @@ TEST(Index_DomainedElementHideRuleMap, Statistics)
 
     auto const& stats = ruleSet.statistics();
 
-    EXPECT_EQ(1, stats.get<size_t>("Number of leaf"));
-    EXPECT_EQ(2, stats.get<size_t>("Number of branch"));
-    EXPECT_EQ(3, stats.get<size_t>("Number of nodes"));
-    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
+    EXPECT_EQ(1, to_number(stats["Number of leaf"]));
+    EXPECT_EQ(2, to_number(stats["Number of branch"]));
+    EXPECT_EQ(3, to_number(stats["Number of nodes"]));
+    EXPECT_EQ(2, to_number(stats["Number of values"]));
 
-    auto child = stats.get_child("Branches by children");
+    auto child = stats["Branches by children"].get_object();
     EXPECT_EQ(1, child.size());
-    EXPECT_EQ(2, child.get<size_t>("1"));
+    EXPECT_EQ(2, to_number(child["1"]));
 
-    child = stats.get_child("Branches by level");
+    child = stats["Branches by level"].get_object();
     EXPECT_EQ(2, child.size());
-    EXPECT_EQ(1, child.get<size_t>("0"));
-    EXPECT_EQ(1, child.get<size_t>("1"));
+    EXPECT_EQ(1, to_number(child["0"]));
+    EXPECT_EQ(1, to_number(child["1"]));
 
-    child = stats.get_child("Leaves by level");
+    child = stats["Leaves by level"].get_object();
     EXPECT_EQ(1, child.size());
-    EXPECT_EQ(1, child.get<size_t>("2"));
+    EXPECT_EQ(1, to_number(child["2"]));
 
-    child = stats.get_child("Nodes by values");
+    child = stats["Nodes by values"].get_object();
     EXPECT_EQ(2, child.size());
-    EXPECT_EQ(1, child.get<size_t>("0"));
-    EXPECT_EQ(2, child.get<size_t>("1"));
+    EXPECT_EQ(1, to_number(child["0"]));
+    EXPECT_EQ(2, to_number(child["1"]));
 
-    EXPECT_EQ(1, stats.get<size_t>("Exception only rules"));
+    EXPECT_EQ(1, to_number(stats["Exception only rules"]));
 }
 
 TEST(Index_DomainedElementHideRuleMap, Clear)
@@ -165,12 +166,12 @@ TEST(Index_DomainedElementHideRuleMap, Clear)
     ruleSet.put(*rule3);
 
     auto stats = ruleSet.statistics();
-    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
-    EXPECT_EQ(1, stats.get<size_t>("Exception only rules"));
+    EXPECT_EQ(2, to_number(stats["Number of values"]));
+    EXPECT_EQ(1, to_number(stats["Exception only rules"]));
 
     ruleSet.clear();
 
     stats = ruleSet.statistics();
-    EXPECT_EQ(0, stats.get<size_t>("Number of values"));
-    EXPECT_EQ(0, stats.get<size_t>("Exception only rules"));
+    EXPECT_EQ(0, to_number(stats["Number of values"]));
+    EXPECT_EQ(0, to_number(stats["Exception only rules"]));
 }

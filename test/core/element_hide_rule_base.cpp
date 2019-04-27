@@ -2,6 +2,7 @@
 
 #include "core/element_hide_rule_base.hpp"
 #include "core/filter_rule_base.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "rule/basic_element_hide_rule.hpp"
@@ -137,12 +138,12 @@ TEST(Core_ElementHideRuleBase, Clear)
     ruleBase.put(*rule2);
 
     auto stats = ruleBase.statistics();
-    EXPECT_EQ(2, stats.get<size_t>("Total"));
+    EXPECT_EQ(2, to_number(stats["Total"]));
 
     ruleBase.clear();
 
     stats = ruleBase.statistics();
-    EXPECT_EQ(0, stats.get<size_t>("Total"));
+    EXPECT_EQ(0, to_number(stats["Total"]));
 }
 
 TEST(Core_ElementHideRuleBase, ExtendedRule)
@@ -262,10 +263,10 @@ TEST(Core_ElementHideRuleBase, ExtendedRule_Clear)
     ruleBase.put(*rule2);
 
     auto stats = ruleBase.statistics();
-    EXPECT_EQ(2, stats.get<size_t>("Total"));
+    EXPECT_EQ(2, to_number(stats["Total"]));
 
     ruleBase.clear();
 
     stats = ruleBase.statistics();
-    EXPECT_EQ(0, stats.get<size_t>("Total"));
+    EXPECT_EQ(0, to_number(stats["Total"]));
 }

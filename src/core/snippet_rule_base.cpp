@@ -1,6 +1,7 @@
 #include "snippet_rule_base.hpp"
 
 #include "core/filter_rule_base.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "rule/snippet_rule.hpp"
@@ -8,8 +9,6 @@
 #include <algorithm>
 #include <iterator>
 #include <memory>
-
-#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
@@ -40,22 +39,21 @@ lookup(Uri const& uri, StringRange const siteKey/*= {}*/) const
     return result;
 }
 
-boost::property_tree::ptree SnippetRuleBase::
+json::object SnippetRuleBase::
 statistics() const
 {
-    boost::property_tree::ptree result;
+    json::object result;
 
-    size_t total = 0u;
+    double total = 0;
 
-    auto num = m_genericRules.size();
+    auto num = static_cast<double>(m_genericRules.size());
     total += num;
-    result.put("Generic snippet rule", num);
+    result["Generic snippet rule"] = num;
 
-    num = m_specificRules.size();
+    num = static_cast<double>(m_specificRules.size());
     total += num;
-    result.put("Specific snippet rule", num);
-
-    result.put("Total", total);
+    result["Specific snippet rule"] = num;
+    result["Total"] = total;
 
     return result;
 }

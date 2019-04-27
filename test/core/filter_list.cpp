@@ -1,11 +1,10 @@
 #include "core/filter_list.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 
-#include <exception>
 #include <filesystem>
 
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include <gtest/gtest.h>
@@ -49,25 +48,11 @@ TEST(Core_FilterList, Statistics)
 
     auto const& stats = filterList.statistics();
 
-    EXPECT_EQ(10, stats.get<size_t>("Basic filter rule"));
-    EXPECT_EQ(9, stats.get<size_t>("Exception filter rule"));
-    EXPECT_EQ(6, stats.get<size_t>("Basic element hide rule"));
-    EXPECT_EQ(6, stats.get<size_t>("Exception element hide rule"));
-    EXPECT_EQ(4, stats.get<size_t>("Comment rule"));
-}
-
-TEST(Core_FilterList, DISABLED_EasyList)
-{
-    auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
-    FilterList filterList { path };
-
-    //const auto lines = boost::count(filterList, '\n');
-
-    //EXPECT_EQ(46671, lines); // last line doesn't have '\n'
-    //EXPECT_EQ(46671, filterList.rules().size());
-
-    //boost::property_tree::write_json(std::cout, filterList.statistics());
+    EXPECT_EQ(10, to_number(stats["Basic filter rule"]));
+    EXPECT_EQ(9, to_number(stats["Exception filter rule"]));
+    EXPECT_EQ(6, to_number(stats["Basic element hide rule"]));
+    EXPECT_EQ(6, to_number(stats["Exception element hide rule"]));
+    EXPECT_EQ(4, to_number(stats["Comment rule"]));
 }
 
 TEST(Core_FilterList, Parameter)

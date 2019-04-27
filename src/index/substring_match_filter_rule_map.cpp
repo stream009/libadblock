@@ -2,13 +2,15 @@
 
 #include "utility.hpp"
 
+#include "core/json.hpp"
 #include "core/uri.hpp"
 #include "pattern/base_match_pattern.hpp"
 
 #include <cassert>
 #include <iterator>
-#include <ostream>
+#include <sstream>
 
+#include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
@@ -49,10 +51,14 @@ doQuery(Uri const& uri) const
     return results;
 }
 
-boost::property_tree::ptree SubstringMatchFilterRuleMap::
+json::object SubstringMatchFilterRuleMap::
 doStatistics() const
 {
-    return m_rules.statistics();
+    std::ostringstream oss;
+
+    boost::property_tree::write_json(oss, m_rules.statistics());
+
+    return json::parse(oss.str()).get_object();
 }
 
 void SubstringMatchFilterRuleMap::

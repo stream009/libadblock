@@ -1,12 +1,11 @@
 #ifndef ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 #define ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 
+#include "core/json_fwd.hpp"
 #include "rule/element_hide_rule.hpp"
 
-#include <memory>
+#include <iterator>
 #include <vector>
-
-#include <boost/property_tree/ptree_fwd.hpp>
 
 #include <radix_tree/radix_tree.hpp>
 
@@ -26,7 +25,7 @@ public:
 public:
     // query
     ElementHideRules query(Uri const&) const;
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
     // modifier
     void put(ElementHideRule const&);

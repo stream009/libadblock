@@ -1,15 +1,14 @@
 #include "filter_rule_index.hpp"
 
 #include "core/context.hpp"
+#include "core/json.hpp"
 #include "core/uri.hpp"
-#include "rule/filter_rule.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
+#include "rule/filter_rule.hpp"
 
 #include <cassert>
-
-#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
@@ -74,44 +73,43 @@ clear()
     m_regex.clear();
 }
 
-boost::property_tree::ptree FilterRuleIndex::
+json::object FilterRuleIndex::
 statistics() const
 {
-    boost::property_tree::ptree result, detail;
+    json::object result, detail;
 
-    size_t total = 0u;
+    double total = 0;
 
     auto child = m_prefix.statistics();
-    auto num = child.get<size_t>("Number of values");
+    auto num = to_number(child["Number of values"]);
     total += num;
-    result.put("Prefix match pattern", num);
-    detail.put_child("Prefix match pattern", child);
+    result["Prefix match pattern"] = num;
+    detail["Prefix match pattern"] = child;
 
     child = m_suffix.statistics();
-    num = child.get<size_t>("Number of values");
+    num = to_number(child["Number of values"]);
     total += num;
-    result.put("Suffix match pattern", num);
-    detail.put_child("Suffix match pattern", child);
+    result["Suffix match pattern"] = num;
+    detail["Suffix match pattern"] = child;
 
     child = m_substring.statistics();
-    num = child.get<size_t>("Number of values");
+    num = to_number(child["Number of values"]);
     total += num;
-    result.put("Substring match pattern", num);
-    detail.put_child("Substring match pattern", child);
+    result["Substring match pattern"] = num;
+    detail["Substring match pattern"] = child;
 
     child = m_domain.statistics();
-    num = child.get<size_t>("Number of values");
+    num = to_number(child["Number of values"]);
     total += num;
-    result.put("Domain match pattern", num);
-    detail.put_child("Domain match pattern", child);
+    result["Domain match pattern"] = num;
+    detail["Domain match pattern"] = child;
 
-    num = m_regex.size();
+    num = static_cast<double>(m_regex.size());
     total += num;
-    result.put("Regex pattern", num);
+    result["Regex pattern"] = num;
 
-    result.put("Total", total);
-
-    result.put_child("detail", detail);
+    result["Total"] = total;
+    result["detail"] = detail;
 
     return result;
 }

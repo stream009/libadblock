@@ -1,5 +1,6 @@
 #include "../parse_rule.hpp"
 
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "index/substring_match_filter_rule_map.hpp"
@@ -96,10 +97,10 @@ TEST(Index_SubstringMatchFilterRuleMap, Clear)
     ruleSet.put(*rule2);
 
     auto stats = ruleSet.statistics();
-    EXPECT_EQ(2, stats.get<size_t>("Number of values"));
+    EXPECT_EQ(2, to_number(stats["Number of values"]));
 
     ruleSet.clear();
 
     stats = ruleSet.statistics();
-    EXPECT_EQ(0, stats.get<size_t>("Number of values"));
+    EXPECT_EQ(0, to_number(stats["Number of values"]));
 }

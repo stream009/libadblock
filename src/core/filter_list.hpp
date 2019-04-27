@@ -2,6 +2,7 @@
 #define ADBLOCK_FILTER_LIST_HPP
 
 #include "file.hpp"
+#include "json_fwd.hpp"
 #include "string_range.hpp"
 
 #include "rule/rule.hpp"
@@ -11,7 +12,6 @@
 #include <vector>
 
 #include <boost/container/flat_map.hpp>
-#include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/range/adaptor/indirected.hpp>
 
 namespace adblock {
@@ -40,7 +40,7 @@ public:
     // query
     Parameters parameters() const;
 
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
     // modifier
     void reload();

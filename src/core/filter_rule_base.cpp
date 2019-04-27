@@ -1,6 +1,7 @@
 #include "filter_rule_base.hpp"
 
 #include "context.hpp"
+#include "json.hpp"
 #include "string_range.hpp"
 #include "uri.hpp"
 #include "white_list_query_context.hpp"
@@ -12,7 +13,6 @@
 #include <utility>
 
 #include <boost/format.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
@@ -139,28 +139,27 @@ getGenericHideDisabler(Uri const& uri, StringRange const siteKey) const
     return m_exception.query(uri, context);
 }
 
-boost::property_tree::ptree FilterRuleBase::
+json::object FilterRuleBase::
 statistics() const
 {
-    boost::property_tree::ptree result, detail;
+    json::object result, detail;
 
-    size_t total = 0u;
+    double total = 0;
 
     auto stats = m_normal.statistics();
-    auto num = stats.get<size_t>("Total");
+    auto num = to_number(stats["Total"]);
     total += num;
-    result.put("Basic match pattern", num);
-    detail.put_child("Basic match pattern", stats);
+    result["Basic match pattern"] = num;
+    detail["Basic match pattern"] = stats;
 
     stats = m_exception.statistics();
-    num = stats.get<size_t>("Total");
+    num = to_number(stats["Total"]);
     total += num;
-    result.put("Exception match pattern", num);
-    detail.put_child("Exception match pattern", stats);
+    result["Exception match pattern"] = num;
+    detail["Exception match pattern"] = stats;
 
-    result.put("Total", total);
-
-    result.put_child("detail", detail);
+    result["Total"] = total;
+    result["detail"] = detail;
 
     return result;
 }

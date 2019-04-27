@@ -1,5 +1,7 @@
 #include "filter_list.hpp"
 
+#include "json.hpp"
+
 #include "parser/parser.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
@@ -15,7 +17,6 @@
 
 #include <regex>
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/range/adaptor/filtered.hpp>
 
 namespace adblock {
@@ -260,33 +261,31 @@ reload()
     parse(m_file.data(), m_file.size());
 }
 
-boost::property_tree::ptree FilterList::
+json::object FilterList::
 statistics() const
 {
-    using ptree = boost::property_tree::ptree;
-
-    ptree basicFilterRule, exceptionFilterRule,
-          basicElementHideRule, exceptionElementHideRule,
-          snippetRule;
+    json::object basicFilterRule, exceptionFilterRule,
+                 basicElementHideRule, exceptionElementHideRule,
+                 snippetRule;
 
     Statistics stats { m_rules };
 
     auto populateFilterRule =
-        [](Statistics::FilterRule const& rule, ptree &tree) {
-            tree.put<size_t>("Basic match pattern", rule.basicMatchPattern);
-            tree.put<size_t>("Domain match pattern", rule.domainMatchPattern);
-            tree.put<size_t>("Regex pattern", rule.regexPattern);
-            tree.put<size_t>("Total", rule.total);
+        [](auto& rule, auto& obj) {
+            obj["Basic match pattern"] = static_cast<double>(rule.basicMatchPattern);
+            obj["Domain match pattern"] = static_cast<double>(rule.domainMatchPattern);
+            obj["Regex pattern"] = static_cast<double>(rule.regexPattern);
+            obj["Total"] = static_cast<double>(rule.total);
         };
 
     populateFilterRule(stats.basicFilterRule, basicFilterRule);
     populateFilterRule(stats.exceptionFilterRule, exceptionFilterRule);
 
     auto populateElementHideRule =
-        [](Statistics::ElementHideRule const& rule, ptree &tree) {
-            tree.put<size_t>("Basic", rule.basic);
-            tree.put<size_t>("Domain restricted", rule.domainRestricted);
-            tree.put<size_t>("Total", rule.total);
+        [](auto& rule, auto& obj) {
+            obj["Generic"] = static_cast<double>(rule.basic);
+            obj["Domain specific"] = static_cast<double>(rule.domainRestricted);
+            obj["Total"] = static_cast<double>(rule.total);
         };
 
     populateElementHideRule(stats.basicElementHideRule, basicElementHideRule);
@@ -295,32 +294,30 @@ statistics() const
     populateElementHideRule(
                 stats.extendedElementHideRule, exceptionElementHideRule);
 
-    snippetRule.put<size_t>("Generic", stats.snippetRule.generic);
-    snippetRule.put<size_t>("Domain specific", stats.snippetRule.domainSpecific);
-    snippetRule.put<size_t>("Total",   stats.snippetRule.generic
-                                     + stats.snippetRule.domainSpecific);
+    snippetRule["Generic"] = static_cast<double>(stats.snippetRule.generic);
+    snippetRule["Domain specific"] = static_cast<double>(stats.snippetRule.domainSpecific);
+    snippetRule["Total"] = static_cast<double>(
+        stats.snippetRule.generic + stats.snippetRule.domainSpecific);
 
-    ptree result, detail;
+    json::object result, detail;
 
-    result.put("Basic filter rule", stats.basicFilterRule.total);
-    result.put("Exception filter rule", stats.exceptionFilterRule.total);
-    result.put("Basic element hide rule", stats.basicElementHideRule.total);
-    result.put("Exception element hide rule",
-                                      stats.exceptionElementHideRule.total);
-    result.put("Extended element hide rule",
-                                      stats.extendedElementHideRule.total);
-    result.put("Snippet rule",   stats.snippetRule.generic
-                               + stats.snippetRule.domainSpecific);
-    result.put("Comment rule", stats.commentRule);
+    result["Basic filter rule"] = static_cast<double>(stats.basicFilterRule.total);
+    result["Exception filter rule"] = static_cast<double>(stats.exceptionFilterRule.total);
+    result["Basic element hide rule"] = static_cast<double>(stats.basicElementHideRule.total);
+    result["Exception element hide rule"] = static_cast<double>(stats.exceptionElementHideRule.total);
+    result["Extended element hide rule"] = static_cast<double>(stats.extendedElementHideRule.total);
+    result["Snippet rule"] =  static_cast<double>(
+        stats.snippetRule.generic + stats.snippetRule.domainSpecific);
+    result["Comment rule"] = static_cast<double>(stats.commentRule);
 
-    detail.put_child("Basic filter rule", basicFilterRule);
-    detail.put_child("Exceptin filter rule", exceptionFilterRule);
-    detail.put_child("Basic element hide rule", basicElementHideRule);
-    detail.put_child("Exception element hide rule", exceptionElementHideRule);
-    detail.put_child("Exception element hide rule", exceptionElementHideRule);
-    detail.put_child("Snippet rule", snippetRule);
+    detail["Basic filter rule"] = basicFilterRule;
+    detail["Exceptin filter rule"] = exceptionFilterRule;
+    detail["Basic element hide rule"] = basicElementHideRule;
+    detail["Exception element hide rule"] = exceptionElementHideRule;
+    detail["Exception element hide rule"] = exceptionElementHideRule;
+    detail["Snippet rule"] = snippetRule;
 
-    result.put_child("detail", detail);
+    result["detail"] = detail;
 
     return result;
 }

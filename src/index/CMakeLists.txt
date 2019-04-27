@@ -9,4 +9,5 @@ add_library(index
 target_link_libraries(index
     radix_tree
     rule
+    json
 )

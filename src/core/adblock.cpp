@@ -2,6 +2,7 @@
 
 #include "context.hpp"
 #include "filter_list.hpp"
+#include "json.hpp"
 #include "uri.hpp"
 
 #include "parser/parser.hpp"
@@ -15,7 +16,6 @@
 
 #include <memory>
 
-#include <boost/property_tree/ptree.hpp>
 #include <boost/range/algorithm.hpp>
 
 namespace adblock {
@@ -121,34 +121,33 @@ filterList(Path const& filePath) const
     return nullptr;
 }
 
-boost::property_tree::ptree AdBlock::
+json::object AdBlock::
 statistics() const
 {
-    boost::property_tree::ptree result, detail;
+    json::object result, detail;
 
-    size_t total = 0u;
+    double total = 0;
 
     auto stats = m_filterRuleBase.statistics();
-    auto num = stats.get<size_t>("Total");
+    auto num = to_number(stats["Total"]);
     total += num;
-    result.put("Filter rule", num);
-    detail.put_child("Filter rule", stats);
+    result["Filter rule"] = num;
+    detail["Filter rule"] = stats;
 
     stats = m_elementHideRuleBase.statistics();
-    num = stats.get<size_t>("Total");
+    num = to_number(stats["Total"]);
     total += num;
-    result.put("Element hide rule", num);
-    detail.put_child("Element hide rule", stats);
+    result["Element hide rule"] = num;
+    detail["Element hide rule"] = stats;
 
     stats = m_snippetRuleBase.statistics();
-    num = stats.get<size_t>("Total");
+    num = to_number(stats["Total"]);
     total += num;
-    result.put("Snippet rule", num);
-    detail.put_child("Snippet rule", stats);
+    result["Snippet rule"] = num;
+    detail["Snippet rule"] = stats;
 
-    result.put("Total", total);
-
-    result.put_child("detail", detail);
+    result["Total"] = total;
+    result["detail"] = detail;
 
     return result;
 }

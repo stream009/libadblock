@@ -1,14 +1,13 @@
 #include "../parse_rule.hpp"
 
 #include "core/filter_rule_base.hpp"
+#include "core/json.hpp"
 #include "core/snippet_rule_base.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "rule/snippet_rule.hpp"
 
 #include <gtest/gtest.h>
-
-#include <boost/property_tree/ptree.hpp>
 
 using namespace adblock;
 
@@ -173,9 +172,9 @@ TEST(Core_SnippetRuleBase, Statistics)
     rb.put(*rule2);
 
     auto const stats = rb.statistics();
-    EXPECT_EQ(1, stats.get<size_t>("Generic snippet rule"));
-    EXPECT_EQ(1, stats.get<size_t>("Specific snippet rule"));
-    EXPECT_EQ(2, stats.get<size_t>("Total"));
+    EXPECT_EQ(1, to_number(stats["Generic snippet rule"]));
+    EXPECT_EQ(1, to_number(stats["Specific snippet rule"]));
+    EXPECT_EQ(2, to_number(stats["Total"]));
 }
 
 TEST(Core_SnippetRuleBase, Clear)
@@ -194,12 +193,12 @@ TEST(Core_SnippetRuleBase, Clear)
     rb.put(*rule2);
 
     auto const before = rb.statistics();
-    EXPECT_EQ(1, before.get<size_t>("Generic snippet rule"));
-    EXPECT_EQ(1, before.get<size_t>("Specific snippet rule"));
-    EXPECT_EQ(2, before.get<size_t>("Total"));
+    EXPECT_EQ(1, to_number(before["Generic snippet rule"]));
+    EXPECT_EQ(1, to_number(before["Specific snippet rule"]));
+    EXPECT_EQ(2, to_number(before["Total"]));
 
     rb.clear();
 
     auto const after = rb.statistics();
-    EXPECT_EQ(0, after.get<size_t>("Total"));
+    EXPECT_EQ(0, to_number(after["Total"]));
 }

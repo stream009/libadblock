@@ -11,6 +11,6 @@ target_link_libraries(core
     index
     parser
     uri
-    ${Boost_LIBRARIES}
+    json
     stdc++fs
 )

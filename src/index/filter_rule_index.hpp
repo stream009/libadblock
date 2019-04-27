@@ -6,9 +6,9 @@
 #include "substring_match_filter_rule_map.hpp"
 #include "domain_match_filter_rule_map.hpp"
 
-#include <vector>
+#include "core/json_fwd.hpp"
 
-#include <boost/property_tree/ptree_fwd.hpp>
+#include <vector>
 
 namespace adblock {
 
@@ -28,7 +28,7 @@ public:
     void put(FilterRule const&);
     void clear();
 
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
 private:
     PrefixMatchFilterRuleMap m_prefix;

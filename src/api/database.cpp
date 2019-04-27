@@ -3,18 +3,16 @@
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_list.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "lib/uri/parser.hpp"
 #include "rule/snippet_rule.hpp"
 
 #include <memory>
-#include <sstream>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include <boost/property_tree/json_parser.hpp>
 
 namespace adblock {
 
@@ -186,12 +184,9 @@ filter_list_parameters(std::filesystem::path const& path) const
 std::string database::
 statistics() const
 {
-    auto const& ptree = m_adblock->statistics();
+    auto const& stats = m_adblock->statistics();
 
-    std::ostringstream oss;
-    boost::property_tree::write_json(oss, ptree, false);
-
-    return oss.str();
+    return json::stringify(stats);
 }
 
 void database::

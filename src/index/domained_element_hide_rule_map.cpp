@@ -1,12 +1,14 @@
 #include "domained_element_hide_rule_map.hpp"
 
+#include "core/json.hpp"
 #include "core/uri.hpp"
 
-#include <ostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 
 #include <boost/algorithm/cxx11/copy_if.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 namespace adblock {
 
@@ -84,20 +86,17 @@ clear()
     m_exception.clear();
 }
 
-boost::property_tree::ptree DomainedElementHideRuleMap::
+json::object DomainedElementHideRuleMap::
 statistics() const
 {
-    auto &&result = m_normal.statistics();
+    std::ostringstream oss;
 
-    auto assocIt = result.find("Number of values");
-    assert(assocIt != result.not_found());
-    auto &&it = result.to_iterator(assocIt);
-    ++it; // insert AFTER "Number of values"
+    boost::property_tree::write_json(oss, m_normal.statistics());
 
-    namespace bfp = boost::property_tree;
-    bfp::ptree value { std::to_string(m_exception.size()) };
-    bfp::ptree::value_type item { "Exception only rules", value };
-    result.insert(it, item);
+    auto result = json::parse(oss.str()).get_object();
+
+    //TODO json::object::insert
+    result["Exception only rules"] = static_cast<double>(m_exception.size());
 
     return result;
 }

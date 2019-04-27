@@ -3,6 +3,7 @@
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_list.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 
 #include <algorithm>
@@ -10,11 +11,8 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
-
-#include <boost/property_tree/json_parser.hpp>
 
 static std::string
 joinSelectors(std::vector<adblock::StringRange> const& selectors)
@@ -447,10 +445,7 @@ adblock_statistics(adblock_t adblock, char const** json, size_t* json_len)
 
     auto const& stats = adBlock->statistics();
 
-    std::ostringstream oss;
-    boost::property_tree::write_json(oss, stats, false);
-
-    auto &&string = oss.str();
+    auto string = json::stringify(stats);
     assert(!string.empty());
 
     s_strings.emplace_back(string.begin(), string.end());

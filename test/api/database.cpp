@@ -1,14 +1,14 @@
 #include <adblock/database.hpp>
 
+#include "core/json.hpp"
+
 #include <iostream>
 
 #include <gtest/gtest.h>
 
-#include <json/json.hpp>
-#include <json/value.hpp>
-#include <json/object.hpp>
-
 namespace fs = std::filesystem;
+
+using namespace adblock;
 
 static fs::path
 dataPath(std::string_view const filePath)
@@ -26,12 +26,12 @@ TEST(Api_Database, AddFilterList)
     ASSERT_TRUE(fs::exists(path1)) << path1;
 
     auto const before = json::parse(db.statistics()).get_object();
-    EXPECT_EQ("0", before["Total"].get_string());
+    EXPECT_EQ(0, to_number(before["Total"]));
 
     db.add_filter_list(path1);
 
     auto const after = json::parse(db.statistics()).get_object();
-    EXPECT_EQ("34", after["Total"].get_string());
+    EXPECT_EQ(34, to_number(after["Total"]));
 }
 
 TEST(Api_Database, RemoveFilterList)
@@ -44,12 +44,12 @@ TEST(Api_Database, RemoveFilterList)
     db.add_filter_list(path1);
 
     auto const before = json::parse(db.statistics()).get_object();
-    EXPECT_EQ("34", before["Total"].get_string());
+    EXPECT_EQ(34, to_number(before["Total"]));
 
     db.remove_filter_list(path1);
 
     auto const after = json::parse(db.statistics()).get_object();
-    EXPECT_EQ("0", after["Total"].get_string());
+    EXPECT_EQ(0, to_number(after["Total"]));
 }
 
 TEST(Api_Database, ShouldBlockRequest)

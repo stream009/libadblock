@@ -1,9 +1,9 @@
 #ifndef ADBLOCK_FILTER_RULE_BASE_HPP
 #define ADBLOCK_FILTER_RULE_BASE_HPP
 
-#include "index/filter_rule_index.hpp"
+#include "json_fwd.hpp"
 
-#include <boost/property_tree/ptree_fwd.hpp>
+#include "index/filter_rule_index.hpp"
 
 namespace adblock {
 
@@ -28,7 +28,7 @@ public:
     FilterRule const* getGenericHideDisabler(
                           Uri const&, StringRange siteKey) const;
 
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
     // modifier
     void put(FilterRule const&);

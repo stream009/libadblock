@@ -2,6 +2,7 @@
 #include "../parse_rule.hpp"
 
 #include "core/filter_rule_base.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 #include "pattern/basic_match_pattern.hpp"
@@ -186,14 +187,14 @@ TEST(Core_FilterRuleBase, Clear)
     rb.put(*rule4);
 
     const auto &before = rb.statistics();
-    EXPECT_EQ(4, before.get<size_t>("Total"));
-    EXPECT_EQ(2, before.get<size_t>("Basic match pattern"));
-    EXPECT_EQ(2, before.get<size_t>("Exception match pattern"));
+    EXPECT_EQ(4, to_number(before["Total"]));
+    EXPECT_EQ(2, to_number(before["Basic match pattern"]));
+    EXPECT_EQ(2, to_number(before["Exception match pattern"]));
 
     rb.clear();
 
     const auto &after = rb.statistics();
-    EXPECT_EQ(0, after.get<size_t>("Total"));
-    EXPECT_EQ(0, after.get<size_t>("Basic match pattern"));
-    EXPECT_EQ(0, after.get<size_t>("Exception match pattern"));
+    EXPECT_EQ(0, to_number(after["Total"]));
+    EXPECT_EQ(0, to_number(after["Basic match pattern"]));
+    EXPECT_EQ(0, to_number(after["Exception match pattern"]));
 }

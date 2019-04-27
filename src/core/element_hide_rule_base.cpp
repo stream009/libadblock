@@ -1,14 +1,13 @@
 #include "element_hide_rule_base.hpp"
 
 #include "filter_rule_base.hpp"
+#include "json.hpp"
 #include "string_range.hpp"
 #include "uri.hpp"
 
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
 #include "rule/extended_element_hide_rule.hpp"
-
-#include <boost/property_tree/ptree.hpp>
 
 namespace adblock {
 
@@ -127,44 +126,44 @@ put(ElementHideRule const& rule)
     }
 }
 
-boost::property_tree::ptree ElementHideRuleBase::
+json::object ElementHideRuleBase::
 statistics() const
 {
-    boost::property_tree::ptree result, detail;
+    json::object result, detail;
 
-    size_t total = 0u;
+    double total = 0;
 
-    auto num = m_genericBlackList.size();
+    auto num = static_cast<double>(m_genericBlackList.size());
     total += num;
-    result.put("Normal element hide rule", num);
+    result["Normal element hide rule"] = num;
 
     auto stats = m_domainedBlackList.statistics();
-    num = stats.get<size_t>("Number of values");
-    num += stats.get<size_t>("Exception only rules");
+    num = to_number(stats["Number of values"]);
+    num += to_number(stats["Exception only rules"]);
     total += num;
-    result.put("Domained black list", num);
-    detail.put_child("Domained black list", stats);
+    result["Domained black list"] = num;
+    detail["Domained black list"] = stats;
 
     stats = m_domainedWhiteList.statistics();
-    num = stats.get<size_t>("Number of values");
-    num += stats.get<size_t>("Exception only rules");
+    num = to_number(stats["Number of values"]);
+    num += to_number(stats["Exception only rules"]);
     total += num;
-    result.put("Domained white list", num);
-    detail.put_child("Domained white list", stats);
+    result["Domained white list"] = num;
+    detail["Domained white list"] = stats;
 
-    num = m_genericExtendedBlackList.size();
+    num = static_cast<double>(m_genericExtendedBlackList.size());
     total += num;
-    result.put("Extended element hide rule", num);
+    result["Extended element hide rule"] = num;
 
     stats = m_domainedExtendedBlackList.statistics();
-    num = stats.get<size_t>("Number of values");
-    num += stats.get<size_t>("Exception only rules");
+    num = to_number(stats["Number of values"]);
+    num += to_number(stats["Exception only rules"]);
     total += num;
-    result.put("Domained extended black list", num);
-    detail.put_child("Domained extended black list", stats);
+    result["Domained extended black list"] = num;
+    detail["Domained extended black list"] = stats;
 
-    result.put("Total", total);
-    result.put_child("detail", detail);
+    result["Total"] = total;
+    result["detail"] = detail;
 
     return result;
 }

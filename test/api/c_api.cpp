@@ -1,17 +1,19 @@
 #include <adblock/api.h>
 
+#include "core/json.hpp"
+
 #include <cassert>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string_view>
-
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include <gtest/gtest.h>
 
 namespace fs = std::filesystem;
 static const fs::path projectRoot { PROJECT_ROOT };
+
+using adblock::to_number;
 
 class FilterFile : public std::ofstream
 {
@@ -157,55 +159,36 @@ TEST_F(API_F, statistics)
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
 
-    std::istringstream iss { std::string { json, json_len } };
+    auto const stats = json::parse(std::string_view(json, json_len)).get_object();
 
-    namespace bpt = boost::property_tree;
-
-    bpt::ptree stats;
-    boost::property_tree::read_json(iss, stats);
-
-    EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
-    EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
-    EXPECT_EQ(54322, stats.get<size_t>("Total"));
+    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
+    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
+    EXPECT_EQ(54322, to_number(stats["Total"]));
 
     adblock_free(json);
 }
 
-static boost::property_tree::ptree
-parseJsonStats(char const* const json, size_t const json_len)
-{
-    namespace bpt = boost::property_tree;
-
-    std::istringstream iss { std::string { json, json_len } };
-    bpt::ptree result;
-    bpt::read_json(iss, result);
-
-    return result;
-}
-
 TEST_F(API_F, reload) //TODO more reliable test
 {
-    namespace bpt = boost::property_tree;
-
     char const* json = nullptr;
     size_t json_len = 0;
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-    auto const& before = parseJsonStats(json, json_len);
+    auto const before = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
 
     ::adblock_reload(this->adblock());
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-    auto const& after = parseJsonStats(json, json_len);
+    auto const after = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
 
-    EXPECT_EQ(after.get<size_t>("Filter rule"),
-              before.get<size_t>("Filter rule"));
-    EXPECT_EQ(after.get<size_t>("Element hide rule"),
-              before.get<size_t>("Element hide rule"));
-    EXPECT_EQ(after.get<size_t>("Total"),
-              before.get<size_t>("Total"));
+    EXPECT_EQ(to_number(after["Filter rule"]),
+              to_number(before["Filter rule"]));
+    EXPECT_EQ(to_number(after["Element hide rule"]),
+              to_number(before["Element hide rule"]));
+    EXPECT_EQ(to_number(after["Total"]),
+              to_number(before["Total"]));
 }
 
 TEST_F(API_F, remove_filter_set)
@@ -220,20 +203,20 @@ TEST_F(API_F, remove_filter_set)
     size_t json_len = 0u;
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-
-    auto const& before = parseJsonStats(json, json_len);
+    auto const before = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
-    EXPECT_EQ(66244, before.get<size_t>("Total"));
+
+    EXPECT_EQ(66244, to_number(before["Total"]));
 
     auto const& rc = ::adblock_remove_filter_set(
                         this->adblock(), path.c_str(), strlen(path.c_str()));
     EXPECT_TRUE(rc);
 
     ::adblock_statistics(this->adblock(), &json, &json_len);
-
-    auto const& after = parseJsonStats(json, json_len);
+    auto const after = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
-    EXPECT_EQ(54322, after.get<size_t>("Total"));
+
+    EXPECT_EQ(54322, to_number(after["Total"]));
 }
 
 TEST(Main_API, adblock_create)

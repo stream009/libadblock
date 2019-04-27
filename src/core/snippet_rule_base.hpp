@@ -1,11 +1,10 @@
 #ifndef ADBLOCK_CORE_SNIPPET_RULE_BASE_HPP
 #define ADBLOCK_CORE_SNIPPET_RULE_BASE_HPP
 
+#include "core/json_fwd.hpp"
 #include "core/string_range.hpp"
 
 #include <vector>
-
-#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace adblock {
 
@@ -25,7 +24,7 @@ public:
     // query
     Rules lookup(Uri const&, StringRange siteKey = {}) const;
 
-    boost::property_tree::ptree statistics() const;
+    json::object statistics() const;
 
     // modifier
     void put(SnippetRule const&);

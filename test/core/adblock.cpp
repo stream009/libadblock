@@ -3,6 +3,7 @@
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_list.hpp"
+#include "core/json.hpp"
 #include "core/uri.hpp"
 
 #include <filesystem>
@@ -133,10 +134,10 @@ TEST(Core_AdBlock, Statistics)
 
     auto const& stats = adBlock.statistics();
 
-    EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
-    EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
-    EXPECT_EQ(0,     stats.get<size_t>("Snippet rule"));
-    EXPECT_EQ(54322, stats.get<size_t>("Total"));
+    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
+    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
+    EXPECT_EQ(0,     to_number(stats["Snippet rule"]));
+    EXPECT_EQ(54322, to_number(stats["Total"]));
 }
 
 TEST(Core_AdBlock, Reload)
@@ -148,16 +149,16 @@ TEST(Core_AdBlock, Reload)
     adBlock.addFilterList(path);
 
     auto stats = adBlock.statistics();
-    EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
-    EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
-    EXPECT_EQ(54322, stats.get<size_t>("Total"));
+    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
+    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
+    EXPECT_EQ(54322, to_number(stats["Total"]));
 
     adBlock.reload();
 
     stats = adBlock.statistics();
-    EXPECT_EQ(20757, stats.get<size_t>("Filter rule"));
-    EXPECT_EQ(33565, stats.get<size_t>("Element hide rule"));
-    EXPECT_EQ(54322, stats.get<size_t>("Total"));
+    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
+    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
+    EXPECT_EQ(54322, to_number(stats["Total"]));
 }
 
 TEST(Core_AdBlock, FilterList)

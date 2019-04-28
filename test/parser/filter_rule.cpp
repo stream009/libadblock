@@ -1,4 +1,4 @@
-#include "parser/parser.hpp"
+#include "../parse_rule.hpp"
 
 #include "core/string_range.hpp"
 #include "pattern/basic_match_pattern.hpp"
@@ -17,78 +17,66 @@ using namespace adblock;
 
 TEST(Parser_BasicFilterRule, Basic)
 {
-    auto const& line = "adblock.org"_r;
+    auto const line = "adblock.org"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<BasicFilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<BasicFilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
     auto* const pattern =
-        dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
+        dynamic_cast<BasicMatchPattern const*>(&rule->pattern());
     ASSERT_TRUE(pattern);
 
-    ASSERT_EQ(0, filter->numOptions());
+    ASSERT_EQ(0, rule->numOptions());
 }
 
 TEST(Parser_BasicFilterRule, OneOption)
 {
-    auto const& line = "||adblock.org$match-case"_r;
+    auto const line = "||adblock.org$match-case"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<BasicFilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<BasicFilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
     auto* const pattern =
-        dynamic_cast<DomainMatchPattern const*>(&filter->pattern());
+        dynamic_cast<DomainMatchPattern const*>(&rule->pattern());
     ASSERT_TRUE(pattern);
 
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::MatchCase));
 }
 
 TEST(Parser_BasicFilterRule, TwoOptions)
 {
-    auto const& line = "adblock.org$~script,match-case"_r;
+    auto const line = "adblock.org$~script,match-case"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<BasicFilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<BasicFilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
     auto* const pattern =
-        dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
+        dynamic_cast<BasicMatchPattern const*>(&rule->pattern());
     ASSERT_TRUE(pattern);
 
-    ASSERT_EQ(2, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
-    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
+    EXPECT_TRUE(rule->hasOption(FilterOption::MatchCase));
 }
 
 TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
 {
-    auto const& line = "$domain=foo,match-case"_r;
+    auto const line = "$domain=foo,match-case"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<BasicFilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<BasicFilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
     auto* const pattern =
-        dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
+        dynamic_cast<BasicMatchPattern const*>(&rule->pattern());
     ASSERT_TRUE(pattern);
     EXPECT_EQ(""_r, pattern->pattern());
 
-    ASSERT_EQ(2, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Domain));
-    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Domain));
+    EXPECT_TRUE(rule->hasOption(FilterOption::MatchCase));
 
-    auto* const domains = filter->domains();
+    auto* const domains = rule->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
     EXPECT_EQ("foo"_r, (*domains)[0]);
@@ -96,18 +84,15 @@ TEST(Parser_BasicFilterRule, EmptyPatternWithOption)
 
 TEST(Parser_ExceptionFilterRule, Basic)
 {
-    auto const& line = "@@adblock.org"_r;
+    auto const line = "@@adblock.org"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<ExceptionFilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<ExceptionFilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
     auto* const pattern =
-        dynamic_cast<BasicMatchPattern const*>(&filter->pattern());
+        dynamic_cast<BasicMatchPattern const*>(&rule->pattern());
     ASSERT_TRUE(pattern);
     EXPECT_EQ("adblock.org", boost::lexical_cast<std::string>(*pattern));
 
-    ASSERT_EQ(0, filter->numOptions());
+    ASSERT_EQ(0, rule->numOptions());
 }

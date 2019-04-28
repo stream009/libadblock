@@ -1,3 +1,5 @@
+#include "parse_error.hpp"
+
 #include "core/string_range.hpp"
 #include "rule/rule.hpp"
 #include "rule/filter_option.hpp"
@@ -19,8 +21,8 @@ class RuleBuilder : public adblock_parser::event_handler
     using PatternPtr = std::unique_ptr<Pattern>;
 
 public:
-    RuleBuilder(FilterList const&, std::vector<RulePtr>&);
-    RuleBuilder(std::vector<RulePtr>&);
+    RuleBuilder(FilterList const&, std::vector<RulePtr>&, std::vector<ParseError>&);
+    RuleBuilder(std::vector<RulePtr>&, std::vector<ParseError>&);
 
     ~RuleBuilder() override;
 
@@ -132,6 +134,7 @@ private:
 private:
     FilterList const* const m_filterList = nullptr;
     std::vector<RulePtr>& m_rules;
+    std::vector<ParseError>& m_errors;
 
     PatternPtr m_pattern;
     FilterOptionSet m_options;

@@ -1,4 +1,4 @@
-#include "parser/parser.hpp"
+#include "../parse_rule.hpp"
 
 #include "core/string_range.hpp"
 #include "rule/filter_option.hpp"
@@ -12,422 +12,319 @@ using namespace adblock;
 
 TEST(Parser_FilterOption, Script_Normal)
 {
-    auto const& line = "adblock$script"_r;
+    auto const line = "adblock$script"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Script));
 }
 
 TEST(Parser_FilterOption, Script_Inverse)
 {
-    auto const& line = "adblock$~script"_r;
+    auto const line = "adblock$~script"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
 }
 
 TEST(Parser_FilterOption, Image_Normal)
 {
-    auto const& line = "adblock$image"_r;
+    auto const line = "adblock$image"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Image));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Image));
 }
 
 TEST(Parser_FilterOption, Image_Inverse)
 {
-    auto const& line = "adblock$~image"_r;
+    auto const line = "adblock$~image"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ImageInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ImageInv));
 }
 
 TEST(Parser_FilterOption, StyleSheet_Normal)
 {
-    auto const& line = "adblock$stylesheet"_r;
+    auto const line = "adblock$stylesheet"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::StyleSheet));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::StyleSheet));
 }
 
 TEST(Parser_FilterOption, StyleSheet_Inverse)
 {
-    auto const& line = "adblock$~stylesheet"_r;
+    auto const line = "adblock$~stylesheet"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::StyleSheetInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::StyleSheetInv));
 }
 
 TEST(Parser_FilterOption, Object_Normal)
 {
-    auto const& line = "adblock$object"_r;
+    auto const line = "adblock$object"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Object));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Object));
 }
 
 TEST(Parser_FilterOption, Object_Inverse)
 {
-    auto const& line = "adblock$~object"_r;
+    auto const line = "adblock$~object"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ObjectInv));
 }
 
 TEST(Parser_FilterOption, XmlHttpRequest_Normal)
 {
-    auto const& line = "adblock$xmlhttprequest"_r;
+    auto const line = "adblock$xmlhttprequest"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequest));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::XmlHttpRequest));
 }
 
 TEST(Parser_FilterOption, XmlHttpRequest_Inverse)
 {
-    auto const& line = "adblock$~xmlhttprequest"_r;
+    auto const line = "adblock$~xmlhttprequest"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::XmlHttpRequestInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::XmlHttpRequestInv));
 }
 
 TEST(Parser_FilterOption, ObjectSubrequest_Normal)
 {
-    auto const& line = "adblock$object-subrequest"_r;
+    auto const line = "adblock$object-subrequest"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubrequest));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ObjectSubrequest));
 }
 
 TEST(Parser_FilterOption, ObjectSubrequest_Inverse)
 {
-    auto const& line = "adblock$~object-subrequest"_r;
+    auto const line = "adblock$~object-subrequest"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ObjectSubrequestInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ObjectSubrequestInv));
 }
 
 TEST(Parser_FilterOption, Subdocument_Normal)
 {
-    auto const& line = "adblock$subdocument"_r;
+    auto const line = "adblock$subdocument"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Subdocument));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Subdocument));
 }
 
 TEST(Parser_FilterOption, Subdocument_Inverse)
 {
-    auto const& line = "adblock$~subdocument"_r;
+    auto const line = "adblock$~subdocument"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::SubdocumentInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::SubdocumentInv));
 }
 
 TEST(Parser_FilterOption, Other_Normal)
 {
-    auto const& line = "adblock$other"_r;
+    auto const line = "adblock$other"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Other));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Other));
 }
 
 TEST(Parser_FilterOption, Other_Inverse)
 {
-    auto const& line = "adblock$~other"_r;
+    auto const line = "adblock$~other"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::OtherInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::OtherInv));
 }
 
 TEST(Parser_FilterOption, ThirdParty_Normal)
 {
-    auto const& line = "adblock$third-party"_r;
+    auto const line = "adblock$third-party"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ThirdParty));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ThirdParty));
 }
 
 TEST(Parser_FilterOption, ThirdParty_Inverse)
 {
-    auto const& line = "adblock$~third-party"_r;
+    auto const line = "adblock$~third-party"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::SameOrigin));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::SameOrigin));
 }
 
 TEST(Parser_FilterOption, MatchCase)
 {
-    auto const& line = "adblock$match-case"_r;
+    auto const line = "adblock$match-case"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::MatchCase));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::MatchCase));
 }
 
 TEST(Parser_FilterOption, Collapse_Normal)
 {
-    auto const& line = "adblock$collapse"_r;
+    auto const line = "adblock$collapse"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::AlwaysCollapse));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::AlwaysCollapse));
 }
 
 TEST(Parser_FilterOption, Collapse_Inverse)
 {
-    auto const& line = "adblock$~collapse"_r;
+    auto const line = "adblock$~collapse"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::NeverCollapse));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::NeverCollapse));
 }
-#if 0
-TEST(Parser_FilterOption, DoNotTrack)
-{
-    auto const& line = "adblock$donottrack"_r;
 
-    auto const rule = parser::parse(line);
-    ASSERT_TRUE(rule);
-
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    auto const& options = filter->options();
-    ASSERT_EQ(options.size(), 1);
-
-    auto* const option = dynamic_cast<DoNotTrackOption const*>(options.front());
-    EXPECT_TRUE(option);
-}
-#endif
 TEST(Parser_FilterOption, Popup)
 {
-    auto const& line = "adblock$popup"_r;
+    auto const line = "adblock$popup"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Popup));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Popup));
 }
 
 TEST(Parser_FilterOption, Media_Normal)
 {
-    auto const& line = "adblock$media"_r;
+    auto const line = "adblock$media"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Media));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Media));
 }
 
 TEST(Parser_FilterOption, Media_Inverse)
 {
-    auto const& line = "adblock$~media"_r;
+    auto const line = "adblock$~media"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::MediaInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::MediaInv));
 }
 
 TEST(Parser_FilterOption, Font_Normal)
 {
-    auto const& line = "adblock$font"_r;
+    auto const line = "adblock$font"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Font));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Font));
 }
 
 TEST(Parser_FilterOption, Font_Inverse)
 {
-    auto const& line = "adblock$~font"_r;
+    auto const line = "adblock$~font"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(1, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::FontInv));
+    ASSERT_EQ(1, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::FontInv));
 }
 
 TEST(Parser_FilterOption, Multiple)
 {
-    auto const& line = "adblock$script,image"_r;
+    auto const line = "adblock$script,image"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(2, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::Script));
-    EXPECT_TRUE(filter->hasOption(FilterOption::Image));
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Script));
+    EXPECT_TRUE(rule->hasOption(FilterOption::Image));
 }
 
 TEST(Parser_FilterOption, Multiple_Inverse)
 {
-    auto const& line = "adblock$~script,~image"_r;
+    auto const line = "adblock$~script,~image"_r;
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<FilterRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<FilterRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    ASSERT_EQ(2, filter->numOptions());
-    EXPECT_TRUE(filter->hasOption(FilterOption::ScriptInv));
-    EXPECT_TRUE(filter->hasOption(FilterOption::ImageInv));
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
+    EXPECT_TRUE(rule->hasOption(FilterOption::ImageInv));
 }
 
 TEST(Parser_FilterOption, Rewrite)
 {
     auto const line = "/https:\\/\\/foo.com\\/file1.txt/$rewrite=/file2.txt"_r;
 
-    auto const rule = parser::parse(line);
-    //TODO check error
-    ASSERT_FALSE(rule);
+    EXPECT_THROW(parse_rule<FilterRule>(line), parse_error);
 }
 
 //TODO $script,~image

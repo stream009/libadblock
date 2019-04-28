@@ -1,5 +1,6 @@
 #include "parser.hpp"
 
+#include "parse_error.hpp"
 #include "rule_builder.hpp"
 
 #include "core/filter_list.hpp"
@@ -12,27 +13,27 @@
 namespace adblock::parser {
 
 std::vector<std::unique_ptr<Rule>>
-parse(FilterList const& set, StringRange const text)
+parse(FilterList const& list, std::vector<ParseError>& errors)
 {
     std::vector<std::unique_ptr<Rule>> rules;
-    std::string_view sv { text.begin(), text.size() };
 
-    RuleBuilder builder { set, rules };
+    RuleBuilder builder { list, rules, errors };
 
-    adblock_parser::parse_filter_list(sv, builder);
+    StringRange const text { list.begin(), list.end() };
+
+    adblock_parser::parse_filter_list(text, builder);
 
     return rules;
 }
 
 std::unique_ptr<Rule>
-parse(StringRange const line)
+parse(StringRange const line, std::vector<ParseError>& errors)
 {
     std::vector<std::unique_ptr<Rule>> rules;
-    RuleBuilder builder { rules };
 
-    std::string_view const line_ { line.begin(), line.size() };
+    RuleBuilder builder { rules, errors };
 
-    adblock_parser::parse_filter(line_, builder);
+    adblock_parser::parse_filter(line, builder);
 
     if (rules.empty()) {
         return nullptr;

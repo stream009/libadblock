@@ -193,7 +193,7 @@ FilterList::
 FilterList(Path const& filePath)
     : m_file { filePath }
 {
-    parse(m_file.data(), m_file.size());
+    parse();
 }
 
 const_iterator FilterList::
@@ -258,7 +258,7 @@ reload()
     m_file.reload();
 
     m_rules.clear();
-    parse(m_file.data(), m_file.size());
+    parse();
 }
 
 json::object FilterList::
@@ -323,10 +323,9 @@ statistics() const
 }
 
 void FilterList::
-parse(char const* const buffer, size_t const size)
+parse()
 {
-    StringRange const buf { buffer, buffer + size };
-    m_rules = parser::parse(*this, buf);
+    m_rules = parser::parse(*this, m_errors);
 }
 
 } // namespace adblock

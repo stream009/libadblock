@@ -5,6 +5,7 @@
 #include "json_fwd.hpp"
 #include "string_range.hpp"
 
+#include "parser/parse_error.hpp"
 #include "rule/rule.hpp"
 
 #include <filesystem>
@@ -38,6 +39,7 @@ public:
     Path const& path() const { return m_file.path(); }
 
     // query
+    std::vector<ParseError> errors() const { return m_errors; }
     Parameters parameters() const;
 
     json::object statistics() const;
@@ -46,11 +48,12 @@ public:
     void reload();
 
 private:
-    void parse(char const* buffer, size_t size);
+    void parse();
 
 private:
     File m_file;
     Rules m_rules;
+    std::vector<ParseError> m_errors;
 };
 
 } // namespace adblock

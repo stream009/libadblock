@@ -48,6 +48,14 @@ struct ADBLOCK_DLL_EXPORT block_result {
     std::string_view filter;
 };
 
+struct ADBLOCK_DLL_EXPORT parse_error {
+    int64_t line_no;
+    int64_t from;
+    int64_t to;
+    std::string_view line;
+    std::string_view message;
+};
+
 class AdBlock;
 
 class ADBLOCK_DLL_EXPORT database
@@ -132,6 +140,14 @@ public:
     // @return vector of key, value pair. could be empty.
     std::vector<parameter>
         filter_list_parameters(std::filesystem::path const&) const;
+
+    // Return parse error of a filter list
+    //
+    // @param path path to the filter list
+    //
+    // @return vector of parse error
+    std::vector<parse_error>
+        filter_list_errors(std::filesystem::path const&) const;
 
     // Get internal statistics
     //

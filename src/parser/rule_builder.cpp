@@ -1,5 +1,6 @@
 #include "rule_builder.hpp"
 
+#include "core/filter_list.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
 #include "pattern/regex_pattern.hpp"
@@ -12,7 +13,6 @@
 #include "rule/filter_option.hpp"
 #include "rule/snippet_rule.hpp"
 
-#include <iostream>
 #include <string>
 #include <string_view>
 
@@ -20,28 +20,26 @@
 
 namespace adblock::parser {
 
-static void
-print_error_line(std::ostream& os, StringRange const line,
-                 int64_t const column, int64_t const length)
+RuleBuilder::
+RuleBuilder(FilterList const& filterList,
+            std::vector<RulePtr>& rules,
+            std::vector<ParseError>& errors)
+    : m_filterList { &filterList }
+    , m_rules { rules }
+    , m_errors { errors }
 {
-    auto const c = static_cast<size_t>(column);
-    auto const l = static_cast<size_t>(std::max(length - 1, 0l));
-
-    os << '\t' << line << '\n'
-       << '\t' << std::string(c, ' ')
-       << '^' << std::string(l, '-') << '\n';
+    m_rules.clear();
+    m_errors.clear();
 }
 
 RuleBuilder::
-RuleBuilder(FilterList const& filterList, std::vector<RulePtr>& rules)
-    : m_filterList { &filterList }
-    , m_rules { rules }
-{}
-
-RuleBuilder::
-RuleBuilder(std::vector<RulePtr>& rules)
+RuleBuilder(std::vector<RulePtr>& rules, std::vector<ParseError>& errors)
     : m_rules { rules }
-{}
+    , m_errors { errors }
+{
+    m_rules.clear();
+    m_errors.clear();
+}
 
 RuleBuilder::~RuleBuilder() = default;
 
@@ -478,14 +476,13 @@ comment(iterator const bol, iterator const eol)
 void RuleBuilder::
 error(iterator const begin, iterator const end, std::string_view const msg)
 {
-    //TODO make error reporting testable
-    auto const column = begin - m_line.begin();
-    auto const len = end - begin;
-
-    std::cerr << '[' << m_line_no << ':' << column << ']'
-              << ": " << msg << '\n';
-
-    print_error_line(std::cerr, m_line, column, len);
+    m_errors.push_back({
+        m_line_no,
+        begin - m_line.begin(),
+        std::max(end - m_line.begin() - 1, static_cast<ptrdiff_t>(0)),
+        m_line,
+        std::string(msg)
+    });
 }
 
 void RuleBuilder::

@@ -181,6 +181,28 @@ filter_list_parameters(std::filesystem::path const& path) const
     return result;
 }
 
+std::vector<parse_error> database::
+filter_list_errors(std::filesystem::path const& path) const
+{
+    std::vector<parse_error> result;
+
+    auto* const filter_list = m_adblock->filterList(path);
+
+    if (filter_list) {
+        for (auto const& err: filter_list->errors()) {
+            result.push_back({
+                err.line_no,
+                err.from,
+                err.to,
+                err.line,
+                err.message
+            });
+        }
+    }
+
+    return result;
+}
+
 std::string database::
 statistics() const
 {

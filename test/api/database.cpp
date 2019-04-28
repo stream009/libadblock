@@ -153,3 +153,16 @@ TEST(Api_Database, FilterListParameters)
     EXPECT_EQ("Title", params[0].key);
     EXPECT_EQ("Elementary", params[0].value);
 }
+
+TEST(Api_Database, FilterListErrors)
+{
+    adblock::database db;
+
+    auto const path1 = dataPath("test/data/error.txt");
+    ASSERT_TRUE(fs::exists(path1));
+
+    db.add_filter_list(path1);
+
+    auto const errors = db.filter_list_errors(path1);
+    ASSERT_EQ(2, errors.size());
+}

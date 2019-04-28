@@ -1,4 +1,4 @@
-#include "parser/parser.hpp"
+#include "../parse_rule.hpp"
 
 #include "core/string_range.hpp"
 #include "rule/snippet_rule.hpp"
@@ -13,29 +13,23 @@ TEST(Parser_SnippetRule, NoDomain)
 {
     auto const line = "#$#log 'hello'";
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<SnippetRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<SnippetRule*>(rule.get());
-    ASSERT_TRUE(filter);
-
-    EXPECT_EQ("log 'hello'", filter->snippet());
-    EXPECT_FALSE(filter->domains());
+    EXPECT_EQ("log 'hello'", rule->snippet());
+    EXPECT_FALSE(rule->domains());
 }
 
 TEST(Parser_SnippetRule, SinglePositiveDomain)
 {
     auto const line = "example.com#$#log 'hello'";
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<SnippetRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<SnippetRule*>(rule.get());
-    ASSERT_TRUE(filter);
+    EXPECT_EQ("log 'hello'", rule->snippet());
 
-    EXPECT_EQ("log 'hello'", filter->snippet());
-
-    auto* const domains = filter->domains();
+    auto* const domains = rule->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
     EXPECT_EQ("example.com", (*domains)[0]);
@@ -45,15 +39,12 @@ TEST(Parser_SnippetRule, SingleNegativeDomain)
 {
     auto const line = "~example.com#$#log 'hello'";
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<SnippetRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<SnippetRule*>(rule.get());
-    ASSERT_TRUE(filter);
+    EXPECT_EQ("log 'hello'", rule->snippet());
 
-    EXPECT_EQ("log 'hello'", filter->snippet());
-
-    auto* const domains = filter->domains();
+    auto* const domains = rule->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(1, domains->size());
     EXPECT_EQ("~example.com", (*domains)[0]);
@@ -63,15 +54,12 @@ TEST(Parser_SnippetRule, MultipleDomain)
 {
     auto const line = "example.com,~sub.example.com#$#log 'hello'";
 
-    auto const rule = parser::parse(line);
+    auto const rule = parse_rule<SnippetRule>(line);
     ASSERT_TRUE(rule);
 
-    auto const filter = dynamic_cast<SnippetRule*>(rule.get());
-    ASSERT_TRUE(filter);
+    EXPECT_EQ("log 'hello'", rule->snippet());
 
-    EXPECT_EQ("log 'hello'", filter->snippet());
-
-    auto* const domains = filter->domains();
+    auto* const domains = rule->domains();
     ASSERT_TRUE(domains);
     ASSERT_EQ(2, domains->size());
     EXPECT_EQ("example.com", (*domains)[0]);

@@ -2,6 +2,7 @@
 #include "core/uri.hpp"
 #include "rule/basic_element_hide_rule.hpp"
 #include "rule/exception_element_hide_rule.hpp"
+#include "rule/extended_element_hide_rule.hpp"
 
 #include "../mock_context.hpp"
 #include "../parse_rule.hpp"
@@ -51,4 +52,46 @@ TEST(Rule_BasicElementHideRule, MultipleDomains)
     EXPECT_FALSE(rule->match("http://www.facebook.com"_u));
 }
 
-//TODO test exception rule
+TEST(Rule_ExceptionElementHideRule, Basic)
+{
+    auto const& line = "#@#div"_r;
+
+    auto const rule = parse_rule<ExceptionElementHideRule>(line);
+    ASSERT_TRUE(rule);
+
+    auto const& uri = "http://adblock.org"_u;
+    EXPECT_TRUE(rule->match(uri));
+}
+
+TEST(Rule_ExceptionElementHideRule, Domain)
+{
+    auto const& line = "adblock.org#@#div"_r;
+
+    auto const rule = parse_rule<ExceptionElementHideRule>(line);
+    ASSERT_TRUE(rule);
+
+    EXPECT_TRUE(rule->match("http://www.adblock.org/something.html"_u));
+    EXPECT_FALSE(rule->match("http://www.google.com"_u));
+}
+
+TEST(Rule_ExtendedElementHideRule, Basic)
+{
+    auto const& line = "#?#div"_r;
+
+    auto const rule = parse_rule<ExtendedElementHideRule>(line);
+    ASSERT_TRUE(rule);
+
+    auto const& uri = "http://adblock.org"_u;
+    EXPECT_TRUE(rule->match(uri));
+}
+
+TEST(Rule_ExtendedElementHideRule, Domain)
+{
+    auto const& line = "adblock.org#?#div"_r;
+
+    auto const rule = parse_rule<ExtendedElementHideRule>(line);
+    ASSERT_TRUE(rule);
+
+    EXPECT_TRUE(rule->match("http://www.adblock.org/something.html"_u));
+    EXPECT_FALSE(rule->match("http://www.google.com"_u));
+}

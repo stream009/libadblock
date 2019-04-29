@@ -327,7 +327,50 @@ TEST(Parser_FilterOption, Rewrite)
     EXPECT_THROW(parse_rule<FilterRule>(line), parse_error);
 }
 
-//TODO $script,~image
-//TODO $~script,image
-//TODO $~script,script
-//TODO $script,~script
+TEST(Parser_FilterOption, StrangeCombination1)
+{
+    auto const line = "adblock$script,~image";
+
+    auto const rule = parse_rule<FilterRule>(line);
+    ASSERT_TRUE(rule);
+
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Script));
+    EXPECT_TRUE(rule->hasOption(FilterOption::ImageInv));
+}
+
+TEST(Parser_FilterOption, StrangeCombination2)
+{
+    auto const line = "adblock$~script,image";
+
+    auto const rule = parse_rule<FilterRule>(line);
+    ASSERT_TRUE(rule);
+
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
+    EXPECT_TRUE(rule->hasOption(FilterOption::Image));
+}
+
+TEST(Parser_FilterOption, StrangeCombination3)
+{
+    auto const line = "adblock$script,~script";
+
+    auto const rule = parse_rule<FilterRule>(line);
+    ASSERT_TRUE(rule);
+
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::Script));
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
+}
+
+TEST(Parser_FilterOption, StrangeCombination4)
+{
+    auto const line = "adblock$~script,script";
+
+    auto const rule = parse_rule<FilterRule>(line);
+    ASSERT_TRUE(rule);
+
+    ASSERT_EQ(2, rule->numOptions());
+    EXPECT_TRUE(rule->hasOption(FilterOption::ScriptInv));
+    EXPECT_TRUE(rule->hasOption(FilterOption::Script));
+}

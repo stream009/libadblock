@@ -1,3 +1,5 @@
+#include "../filter_file.hpp"
+
 #include <adblock/api.h>
 
 #include "core/json.hpp"
@@ -14,32 +16,6 @@ namespace fs = std::filesystem;
 static const fs::path projectRoot { PROJECT_ROOT };
 
 using adblock::to_number;
-
-class FilterFile : public std::ofstream
-{
-public:
-    FilterFile()
-        : m_path { std::tmpnam(nullptr) }
-    {
-        this->open(m_path);
-        if (this->fail()) {
-            std::cout << m_path << "\n";
-            throw std::runtime_error { "file open error" };
-        }
-
-        *this << "[Adblock Plus 2.0]\n";
-    }
-
-    ~FilterFile()
-    {
-        fs::remove(m_path);
-    }
-
-    auto const& path() const { return m_path; }
-
-private:
-    fs::path m_path;
-};
 
 class API_F : public ::testing::Test
 {
@@ -168,27 +144,44 @@ TEST_F(API_F, statistics)
     adblock_free(json);
 }
 
-TEST_F(API_F, reload) //TODO more reliable test
+TEST(Api_C, reload)
 {
+    auto const handle = ::adblock_create();
+    ASSERT_TRUE(handle);
+
+    FilterFile list;
+    list << "ad\n";
+    list << "##ad\n";
+    list << std::flush;
+
+    auto const path = list.path();
+
+    auto const c_path = path.c_str();
+    auto const path_len = strlen(c_path);
+    ::adblock_add_filter_set(handle, c_path, path_len);
+
     char const* json = nullptr;
     size_t json_len = 0;
 
-    ::adblock_statistics(this->adblock(), &json, &json_len);
+    ::adblock_statistics(handle, &json, &json_len);
     auto const before = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
 
-    ::adblock_reload(this->adblock());
+    ASSERT_EQ(2, to_number(before["Total"]));
 
-    ::adblock_statistics(this->adblock(), &json, &json_len);
+    list << "foobar\n";
+    list << "#@#ad\n";
+    list << "##ac\n";
+    list << std::flush;
+    list.close();
+
+    ::adblock_reload(handle);
+
+    ::adblock_statistics(handle, &json, &json_len);
     auto const after = json::parse(std::string_view(json, json_len)).get_object();
     ::adblock_free(json);
 
-    EXPECT_EQ(to_number(after["Filter rule"]),
-              to_number(before["Filter rule"]));
-    EXPECT_EQ(to_number(after["Element hide rule"]),
-              to_number(before["Element hide rule"]));
-    EXPECT_EQ(to_number(after["Total"]),
-              to_number(before["Total"]));
+    ASSERT_EQ(5, to_number(after["Total"]));
 }
 
 TEST_F(API_F, remove_filter_set)

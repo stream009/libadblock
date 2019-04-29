@@ -31,7 +31,7 @@ TEST(Api_Database, AddFilterList)
     db.add_filter_list(path1);
 
     auto const after = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(34, to_number(after["Total"]));
+    EXPECT_EQ(37, to_number(after["Total"]));
 }
 
 TEST(Api_Database, RemoveFilterList)
@@ -44,7 +44,7 @@ TEST(Api_Database, RemoveFilterList)
     db.add_filter_list(path1);
 
     auto const before = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(34, to_number(before["Total"]));
+    EXPECT_EQ(37, to_number(before["Total"]));
 
     db.remove_filter_list(path1);
 

@@ -151,7 +151,6 @@ std::vector<std::string_view> database::
 snippets(std::string_view const url, std::string_view site_key/*= {}*/) const
 {
     try {
-        //TODO return filter list path too
         std::vector<std::string_view> result;
 
         for (auto* const s: m_adblock->snippets(url, site_key)) {

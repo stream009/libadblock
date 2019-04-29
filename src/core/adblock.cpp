@@ -85,7 +85,6 @@ contentSecurityPolicy(Uri const& uri,
         StringRange m_siteKey;
     } cxt { uri, siteKey };
 
-    //TODO what happen if multiple rules hit?
     auto const& [found, rule] = m_filterRuleBase.query(uri, cxt);
     if (!found) return {};
 

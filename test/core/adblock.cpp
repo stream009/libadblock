@@ -1,3 +1,4 @@
+#include "../filter_file.hpp"
 #include "../mock_context.hpp"
 
 #include "core/adblock.hpp"
@@ -142,23 +143,30 @@ TEST(Core_AdBlock, Statistics)
 
 TEST(Core_AdBlock, Reload)
 {
-    auto const& path = projectRoot / "test/data/easylist.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
+    FilterFile list;
+    list << "ad\n";
+    list << "##ad\n";
+    list << std::flush;
 
-    AdBlock adBlock;
-    adBlock.addFilterList(path);
+    auto const path = list.path();
 
-    auto stats = adBlock.statistics();
-    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
-    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
-    EXPECT_EQ(54322, to_number(stats["Total"]));
+    AdBlock adblock;
+    adblock.addFilterList(path);
 
-    adBlock.reload();
+    auto stats = adblock.statistics();
+    ASSERT_EQ(2, to_number(stats["Total"]));
 
-    stats = adBlock.statistics();
-    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
-    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
-    EXPECT_EQ(54322, to_number(stats["Total"]));
+    list << "foobar\n";
+    list << "#@#ad\n";
+    list << "##ac\n";
+    list << std::flush;
+    list.close();
+
+    adblock.reload();
+
+    stats = adblock.statistics();
+
+    ASSERT_EQ(5, to_number(stats["Total"]));
 }
 
 TEST(Core_AdBlock, FilterList)

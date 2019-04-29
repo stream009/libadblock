@@ -135,7 +135,11 @@ statistics() const
 
     auto num = static_cast<double>(m_genericBlackList.size());
     total += num;
-    result["Normal element hide rule"] = num;
+    result["Generic black list"] = num;
+
+    num = static_cast<double>(m_genericWhiteList.size());
+    total += num;
+    result["Generic white list"] = num;
 
     auto stats = m_domainedBlackList.statistics();
     num = to_number(stats["Number of values"]);

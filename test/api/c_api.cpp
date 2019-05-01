@@ -6,8 +6,6 @@
 
 #include <cassert>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <string_view>
 
 #include <gtest/gtest.h>
@@ -17,155 +15,242 @@ static const fs::path projectRoot { PROJECT_ROOT };
 
 using adblock::to_number;
 
+static adblock_string_t
+to_string_t(std::string_view const s)
+{
+    return { s.data(), s.size() };
+}
+
+static std::string_view
+to_string_view(adblock_string_t const s)
+{
+    return { s.ptr, s.length };
+}
+
 class API_F : public ::testing::Test
 {
 public:
     static void SetUpTestCase()
     {
-        m_adblock = ::adblock_create();
-        ASSERT_TRUE(m_adblock);
+        m_db = ::adblock_db_new();
+        ASSERT_TRUE(m_db);
 
         auto const& path1 = projectRoot / "test/data/easylist.txt";
         ASSERT_TRUE(fs::exists(path1)) << path1;
 
-        ::adblock_add_filter_set(m_adblock, path1.c_str(), strlen(path1.c_str()));
+        adblock_error_t* err {};
+        auto const p = to_string_t(path1.native());
+
+        ::adblock_add_filter_list(m_db, &p, &err);
+
+        ASSERT_FALSE(err);
     }
 
-    static adblock_t adblock() { return m_adblock; }
+    static adblock_db_t* db() { return m_db; }
 
     static void TearDownTestCase()
     {
-        ::adblock_destroy(m_adblock);
+        ::adblock_db_free(m_db);
     }
 
-    static adblock_t m_adblock;
+    static adblock_db_t* m_db;
 };
 
-adblock_t API_F::m_adblock = nullptr;
+adblock_db_t* API_F::m_db = nullptr;
+
 
 TEST_F(API_F, adblock_should_block)
 {
-    adblock_context_t context;
-    memset(&context, 0, sizeof(context));
+    auto const origin = to_string_t("http://www.adblock.org");
+    auto const url1 = to_string_t("http://a.kickass.to/sc-b98b537.js");
+    adblock_string_t filter_list {}, reason {};
+    adblock_error_t* err = nullptr;
 
-    context.origin = "http://www.adblock.org";
-    context.origin_len = strlen(context.origin);
+    auto block = adblock_should_block(this->db(),
+        &url1,
+        ADBLOCK_REQUEST_SCRIPT,
+        &origin,
+        nullptr,
+        &filter_list,
+        &reason,
+        &err
+    );
+    ASSERT_EQ(nullptr, err);
 
-    context.content_type = TYPE_SCRIPT;
+    ASSERT_TRUE(block);
+    EXPECT_NE(nullptr, filter_list.ptr);
+    EXPECT_NE(0, filter_list.length);
+    EXPECT_NE(nullptr, reason.ptr);
+    EXPECT_NE(0, reason.length);
 
-    std::string const uri1 { "http://a.kickass.to/sc-b98b537.js" };
+    adblock_string_free(&filter_list);
+    adblock_string_free(&reason);
 
-    char const* filterList = nullptr;
-    size_t filterListLen = 0;
-    char const* reason = nullptr;
-    size_t reasonLen = 0;
-    bool rv = ::adblock_should_block(this->adblock(),
-                uri1.c_str(), uri1.size(), &context,
-                &filterList, &filterListLen, &reason, &reasonLen);
-    ASSERT_TRUE(rv);
-    EXPECT_NE(nullptr, filterList);
-    EXPECT_NE(0, filterListLen);
-    EXPECT_NE(nullptr, reason);
-    EXPECT_NE(0, reasonLen);
+    auto const url2 = to_string_t("http://barhbarhbarh.com");
 
-    context.content_type = TYPE_DOCUMENT;
+    block = adblock_should_block(this->db(),
+        &url2,
+        ADBLOCK_REQUEST_SCRIPT,
+        &origin,
+        nullptr,
+        &filter_list,
+        &reason,
+        &err
+    );
+    ASSERT_EQ(nullptr, err);
 
-    std::string const uri2 { "http://barhbarhbarh.com" };
-    rv = ::adblock_should_block(this->adblock(),
-                uri2.c_str(), uri2.size(), &context,
-                &filterList, &filterListLen, &reason, &reasonLen);
-    ASSERT_FALSE(rv);
-    EXPECT_EQ(nullptr, filterList);
-    EXPECT_EQ(0, filterListLen);
-    EXPECT_EQ(nullptr, reason);
-    EXPECT_EQ(0, reasonLen);
+    ASSERT_FALSE(block);
+    EXPECT_EQ(nullptr, filter_list.ptr);
+    EXPECT_EQ(0, filter_list.length);
+    EXPECT_EQ(nullptr, reason.ptr);
+    EXPECT_EQ(0, reason.length);
 }
 
-TEST_F(API_F, adblock_element_hide_css)
+TEST_F(API_F, adblock_element_hiding_selectors)
 {
-    std::string const uri { "http://www.adblockplus.org/" };
+    auto const url = to_string_t("http://www.adblockplus.org/");
+    adblock_str_array_t selectors;
+    adblock_error_t *error = nullptr;
 
-    char const* css = nullptr;
-    size_t cssLen = 0;
-
-    ::adblock_element_hide_css(
-            this->adblock(),
-            uri.data(), uri.size(),
-            &css, &cssLen
+    adblock_element_hiding_selectors(this->db(),
+        &url, nullptr, &selectors, &error
     );
 
-    ASSERT_NE(0, cssLen);
-    adblock_free(css);
+    ASSERT_EQ(nullptr, error);
+    ASSERT_NE(0, selectors.length);
+
+    adblock_str_array_free(&selectors);
 }
 
-TEST_F(API_F, adblock_free)
+TEST_F(API_F, adblock_extended_element_hiding_selectors)
 {
-    std::string const uri1 { "http://www.adblockplus.org/" };
-    char const* css1 = nullptr;
-    size_t css1Len = 0;
+    auto const url = to_string_t("http://www.adblockplus.org/");
+    adblock_str_array_t selectors {};
+    adblock_error_t *error = nullptr;
 
-    adblock_element_hide_css(
-            this->adblock(),
-            uri1.data(), uri1.size(),
-            &css1, &css1Len
+    adblock_extended_element_hiding_selectors(this->db(),
+        &url, nullptr, &selectors, &error
     );
-    ASSERT_NE(0, css1Len);
 
-    std::string const uri2 { "http://www.google.org/" };
-    char const* css2 = nullptr;
-    size_t css2Len = 0;
+    ASSERT_EQ(nullptr, error);
+    ASSERT_EQ(0, selectors.length);
+    ASSERT_EQ(nullptr, selectors.ptr);
+}
 
-    adblock_element_hide_css(
-            this->adblock(),
-            uri2.data(), uri2.size(),
-            &css2, &css2Len
+TEST_F(API_F, adblock_content_security_policy)
+{
+    FilterFile fs;
+
+    fs << "||adblock.com$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
+    fs << "@@||adblock.com/search=$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
+    fs << std::flush;
+
+    auto const path = to_string_t(fs.path().native());
+    auto const url = to_string_t("http://www.adblock.com");
+    adblock_error_t* err = nullptr;
+
+    auto const db = adblock_db_new();
+
+    adblock_add_filter_list(db, &path, &err);
+    ASSERT_EQ(nullptr, err);
+
+    adblock_string_t policy {};
+
+    adblock_content_security_policy(db, &url, nullptr, &policy, &err);
+    ASSERT_EQ(nullptr, err);
+
+    EXPECT_TRUE(to_string_view(policy) == "script-src 'self' * 'unsafe-inline' 'unsafe-eval'");
+
+    adblock_remove_filter_list(db, &path, &err);
+    ASSERT_EQ(nullptr, err);
+}
+
+TEST_F(API_F, adblock_snippets)
+{
+    auto const url = to_string_t("http://www.adblockplus.org/");
+    adblock_str_array_t snippets {};
+    adblock_error_t *error = nullptr;
+
+    adblock_snippets(this->db(),
+        &url, nullptr, &snippets, &error
     );
-    ASSERT_NE(0, css2Len);
 
-    EXPECT_TRUE(adblock_free(css1));
-    EXPECT_FALSE(adblock_free("some random pointer"));
-    EXPECT_FALSE(adblock_free(nullptr));
-    EXPECT_TRUE(adblock_free(css2));
+    ASSERT_EQ(nullptr, error);
+    ASSERT_EQ(0, snippets.length);
+    ASSERT_EQ(nullptr, snippets.ptr);
 }
 
-TEST_F(API_F, statistics)
+static bool
+operator==(std::string_view const s1, adblock_string_t const s2)
 {
-    char const* json = nullptr;
-    size_t json_len = 0;
-
-    ::adblock_statistics(this->adblock(), &json, &json_len);
-
-    auto const stats = json::parse(std::string_view(json, json_len)).get_object();
-
-    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
-    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
-    EXPECT_EQ(54322, to_number(stats["Total"]));
-
-    adblock_free(json);
+    return s1 == std::string_view(s2.ptr, s2.length);
 }
 
-TEST(Api_C, reload)
+TEST_F(API_F, adblock_filter_list_parameters)
 {
-    auto const handle = ::adblock_create();
-    ASSERT_TRUE(handle);
+    auto const& p = projectRoot / "test/data/fanboy.txt";
+    ASSERT_TRUE(fs::exists(p));
+
+    auto const path = to_string_t(p.native());
+    adblock_error_t* err = nullptr;
+
+    adblock_add_filter_list(this->db(), &path, &err);
+    ASSERT_EQ(nullptr, err);
+
+    adblock_str_array_t keys {}, values {};
+
+    adblock_filter_list_parameters(this->db(), &path, &keys, &values, &err);
+    ASSERT_EQ(nullptr, err);
+
+    EXPECT_EQ(5, keys.length);
+    EXPECT_EQ(5, values.length);
+
+    EXPECT_EQ("Checksum", keys.ptr[0]);
+    EXPECT_EQ("PHWcd7bbJ8yORZTp1Xg3pQ", values.ptr[0]);
+
+    EXPECT_EQ("Expires", keys.ptr[1]);
+    EXPECT_EQ("4 days (update frequency)", values.ptr[1]);
+
+    EXPECT_EQ("Homepage", keys.ptr[2]);
+    EXPECT_EQ("https://easylist.adblockplus.org/", values.ptr[2]);
+
+    EXPECT_EQ("Title", keys.ptr[3]);
+    EXPECT_EQ("Fanboy's Social Blocking List", values.ptr[3]);
+
+    EXPECT_EQ("Version", keys.ptr[4]);
+    EXPECT_EQ("201505071651", values.ptr[4]);
+
+    adblock_str_array_free(&keys);
+    adblock_str_array_free(&values);
+
+    adblock_remove_filter_list(this->db(), &path, &err);
+    ASSERT_EQ(nullptr, err);
+}
+
+TEST(API_C, reload)
+{
+    auto const db = adblock_db_new();
+    ASSERT_TRUE(db);
 
     FilterFile list;
     list << "ad\n";
     list << "##ad\n";
     list << std::flush;
 
-    auto const path = list.path();
+    auto const path = to_string_t(list.path().native());
+    adblock_error_t* err = nullptr;
 
-    auto const c_path = path.c_str();
-    auto const path_len = strlen(c_path);
-    ::adblock_add_filter_set(handle, c_path, path_len);
+    adblock_add_filter_list(db, &path, &err);
+    ASSERT_EQ(nullptr, err);
 
-    char const* json = nullptr;
-    size_t json_len = 0;
+    adblock_string_t json {};
 
-    ::adblock_statistics(handle, &json, &json_len);
-    auto const before = json::parse(std::string_view(json, json_len)).get_object();
-    ::adblock_free(json);
+    adblock_statistics(db, &json, &err);
+    ASSERT_EQ(nullptr, err);
+
+    auto const before = json::parse(to_string_view(json)).get_object();
+
+    adblock_string_free(&json);
 
     ASSERT_EQ(2, to_number(before["Total"]));
 
@@ -175,140 +260,72 @@ TEST(Api_C, reload)
     list << std::flush;
     list.close();
 
-    ::adblock_reload(handle);
+    adblock_reload(db, &err);
+    ASSERT_EQ(nullptr, err);
 
-    ::adblock_statistics(handle, &json, &json_len);
-    auto const after = json::parse(std::string_view(json, json_len)).get_object();
-    ::adblock_free(json);
+    adblock_statistics(db, &json, &err);
+    ASSERT_EQ(nullptr, err);
+
+    auto const after = json::parse(to_string_view(json)).get_object();
+
+    adblock_string_free(&json);
 
     ASSERT_EQ(5, to_number(after["Total"]));
 }
 
+TEST_F(API_F, statistics)
+{
+    adblock_string_t json {};
+    adblock_error_t* err = nullptr;
+
+    adblock_statistics(this->db(), &json, &err);
+
+    auto const stats = json::parse(to_string_view(json)).get_object();
+
+    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
+    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
+    EXPECT_EQ(54322, to_number(stats["Total"]));
+
+    adblock_string_free(&json);
+}
+
 TEST_F(API_F, remove_filter_set)
 {
-    auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
+    auto const& p = projectRoot / "test/data/fanboy.txt";
+    ASSERT_TRUE(fs::exists(p));
 
-    ::adblock_add_filter_set(
-                this->adblock(), path.c_str(), strlen(path.c_str()));
+    auto const path = to_string_t(p.native());
+    adblock_error_t* err = nullptr;
 
-    char const* json = nullptr;
-    size_t json_len = 0u;
+    adblock_add_filter_list(this->db(), &path, &err);
+    ASSERT_EQ(nullptr, err);
 
-    ::adblock_statistics(this->adblock(), &json, &json_len);
-    auto const before = json::parse(std::string_view(json, json_len)).get_object();
-    ::adblock_free(json);
+    adblock_string_t json {};
+
+    adblock_statistics(this->db(), &json, &err);
+    ASSERT_EQ(nullptr, err);
+
+    auto const before = json::parse(to_string_view(json)).get_object();
+    adblock_string_free(&json);
 
     EXPECT_EQ(66244, to_number(before["Total"]));
 
-    auto const& rc = ::adblock_remove_filter_set(
-                        this->adblock(), path.c_str(), strlen(path.c_str()));
-    EXPECT_TRUE(rc);
+    adblock_remove_filter_list(this->db(), &path, &err);
+    ASSERT_EQ(nullptr, err);
 
-    ::adblock_statistics(this->adblock(), &json, &json_len);
-    auto const after = json::parse(std::string_view(json, json_len)).get_object();
-    ::adblock_free(json);
+    adblock_statistics(this->db(), &json, &err);
+    ASSERT_EQ(nullptr, err);
+
+    auto const after = json::parse(to_string_view(json)).get_object();
+    adblock_string_free(&json);
 
     EXPECT_EQ(54322, to_number(after["Total"]));
 }
 
-TEST(Main_API, adblock_create)
+TEST_F(API_F, adblock_db_free)
 {
-    auto const adblock = ::adblock_create();
-    EXPECT_NE(nullptr, adblock);
-}
+    auto const db = adblock_db_new();
+    EXPECT_NE(nullptr, db);
 
-TEST(Main_API, adblock_destroy)
-{
-    auto const adblock = ::adblock_create();
-    EXPECT_NE(nullptr, adblock);
-
-    auto const rc = ::adblock_destroy(adblock);
-    EXPECT_TRUE(rc);
-}
-
-TEST_F(API_F, adblock_filter_set_parameters)
-{
-    auto const& path = projectRoot / "test/data/fanboy.txt";
-    ASSERT_TRUE(fs::exists(path)) << path;
-
-    ::adblock_add_filter_set(
-                this->adblock(), path.c_str(), strlen(path.c_str()));
-
-
-    ::adblock_string_t fsPath;
-    fsPath.ptr = path.c_str();
-    fsPath.length = path.native().size();
-
-    ::adblock_string_t *keys = nullptr, *values = nullptr;
-    size_t keys_len = 0, values_len = 0;
-
-    auto ok = ::adblock_filter_set_parameters(
-        this->adblock(),
-        &fsPath,
-        &keys, &keys_len,
-        &values, &values_len
-    );
-
-    ASSERT_TRUE(ok);
-
-    EXPECT_EQ(5, keys_len);
-    EXPECT_EQ(5, values_len);
-
-    auto to_sv = [](auto const& str) {
-        return std::string_view(str.ptr, str.length);
-    };
-
-    EXPECT_EQ("Checksum", to_sv(keys[0]));
-    EXPECT_EQ("PHWcd7bbJ8yORZTp1Xg3pQ", to_sv(values[0]));
-
-    EXPECT_EQ("Expires", to_sv(keys[1]));
-    EXPECT_EQ("4 days (update frequency)", to_sv(values[1]));
-
-    EXPECT_EQ("Homepage", to_sv(keys[2]));
-    EXPECT_EQ("https://easylist.adblockplus.org/", to_sv(values[2]));
-
-    EXPECT_EQ("Title", to_sv(keys[3]));
-    EXPECT_EQ("Fanboy's Social Blocking List", to_sv(values[3]));
-
-    EXPECT_EQ("Version", to_sv(keys[4]));
-    EXPECT_EQ("201505071651", to_sv(values[4]));
-
-    ok = ::adblock_free_keys(keys);
-    EXPECT_TRUE(ok);
-
-    ok = ::adblock_free_values(values);
-    EXPECT_TRUE(ok);
-}
-
-TEST(Main_API, ContentSecurityPolicy)
-{
-    FilterFile fs;
-
-    fs << "||adblock.com$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
-    fs << "@@||adblock.com/search=$csp=script-src 'self' * 'unsafe-inline' 'unsafe-eval'\n";
-    fs << std::flush;
-
-    auto const& path = fs.path().string();
-    std::string_view const uri { "http://www.adblock.com" };
-
-    auto to_string_view = [](auto const& str) {
-        return std::string_view(str.ptr, str.length);
-    };
-
-    auto const handle = adblock_create();
-
-    adblock_add_filter_set(handle, path.data(), path.size());
-
-    adblock_string_t u;
-    u.ptr = uri.begin(); u.length = uri.size();
-
-    adblock_string_t p;
-    p.ptr = nullptr; p.length = 0;
-
-    adblock_content_security_policy(handle, &u, &p);
-
-    ASSERT_TRUE(p.ptr != nullptr);
-    ASSERT_TRUE(p.length != 0);
-    EXPECT_TRUE(to_string_view(p) == "script-src 'self' * 'unsafe-inline' 'unsafe-eval'");
+    adblock_db_free(db);
 }

@@ -5,6 +5,8 @@
 #include "core/filter_list.hpp"
 #include "core/json.hpp"
 #include "core/string_range.hpp"
+#include "lib/uri/parser.hpp"
+#include "rule/snippet_rule.hpp"
 
 #include <algorithm>
 #include <cstring>
@@ -14,39 +16,21 @@
 #include <string>
 #include <vector>
 
-static std::string
-joinSelectors(std::vector<adblock::StringRange> const& selectors)
-{
-    std::string result;
+namespace fs = std::filesystem;
 
-    if (selectors.empty()) return result;
+static adblock::StringRange to_string_range(adblock_string_t const*);
 
-    constexpr auto unit = 200;
-    auto const len = selectors.size();
+class adblock_db : public adblock::AdBlock {};
 
-    for (size_t i = 0; i < len; i += unit) {
-        result.append(selectors[i]);
-
-        auto const to = std::min(len, i + unit);
-        for (auto j = i + 1; j < to; ++j) {
-            result.append(", ");
-            result.append(selectors[j]);
-        }
-        result.append(" { display: none !important } ");
-    }
-
-    return result;
-}
-
-class Context : public adblock::Context
+class context : public adblock::Context
 {
 public:
-    using StringRange = adblock::StringRange;
-public:
-    Context(struct adblock_context const& cxt)
-        : m_cxt { cxt },
-          m_origin { m_cxt.origin, m_cxt.origin_len },
-          m_siteKey { m_cxt.site_key, m_cxt.site_key + m_cxt.site_key_len }
+    context(request_type const type,
+            adblock_string_t const* const origin,
+            adblock_string_t const* const site_key)
+        : m_request_type { type }
+        , m_origin { to_string_range(origin) }
+        , m_site_key { to_string_range(site_key) }
     {}
 
     adblock::Uri const& origin() const override
@@ -56,472 +40,668 @@ public:
 
     bool fromScriptTag() const override
     {
-        return m_cxt.content_type == TYPE_SCRIPT;
+        return m_request_type == ADBLOCK_REQUEST_SCRIPT;
     }
 
     bool fromImageTag() const override
     {
-        return m_cxt.content_type == TYPE_IMAGE;
+        return m_request_type == ADBLOCK_REQUEST_IMAGE;
     }
 
     bool fromAudioVideoTag() const override
     {
-        return m_cxt.content_type == TYPE_MEDIA;
+        return m_request_type == ADBLOCK_REQUEST_MEDIA;
     }
 
     bool isExternalStyleSheet() const override
     {
-        return m_cxt.content_type == TYPE_STYLESHEET;
+        return m_request_type == ADBLOCK_REQUEST_STYLE_SHEET;
     }
 
     bool fromObjectTag() const override
     {
-        return m_cxt.content_type == TYPE_OBJECT;
+        return m_request_type == ADBLOCK_REQUEST_OBJECT;
     }
 
     bool fromXmlHttpRequest() const override
     {
-        return m_cxt.content_type == TYPE_XMLHTTPREQUEST;
+        return m_request_type == ADBLOCK_REQUEST_XML_HTTP_REQUEST;
     }
 
     bool fromPlugins() const override
     {
-        return m_cxt.content_type == TYPE_OBJECT_SUBREQUEST;
+        return m_request_type == ADBLOCK_REQUEST_OBJECT_SUBREQUEST;
     }
 
     bool isSubdocument() const override
     {
-        return m_cxt.content_type == TYPE_SUBDOCUMENT;
+        return m_request_type == ADBLOCK_REQUEST_SUBDOCUMENT;
     }
 
     bool isPopup() const override
     {
-        return m_cxt.is_popup;
+        return m_request_type == ADBLOCK_REQUEST_POPUP;
     }
 
     bool isFont() const override
     {
-        return m_cxt.content_type == TYPE_FONT;
+        return m_request_type == ADBLOCK_REQUEST_FONT;
     }
 
     bool isWebSocket() const override
     {
-        return m_cxt.content_type == TYPE_WEBSOCKET;
+        return m_request_type == ADBLOCK_REQUEST_WEB_SOCKET;
     }
 
     bool isPing() const override
     {
-        return m_cxt.content_type == TYPE_PING;
+        return m_request_type == ADBLOCK_REQUEST_PING;
     }
 
     bool isWebRtc() const override
     {
-        return m_cxt.content_type == TYPE_WEBRTC;
+        return m_request_type == ADBLOCK_REQUEST_WEB_RTC;
     }
 
     adblock::StringRange siteKey() const override
     {
-        return m_siteKey;
+        return m_site_key;
     }
 
 private:
-    struct adblock_context const& m_cxt;
+    request_type m_request_type;
     adblock::Uri m_origin;
-    adblock::StringRange m_siteKey;
+    adblock::StringRange m_site_key;
 };
 
+static std::vector<std::unique_ptr<adblock_db_t>> s_databases;
 static std::vector<std::vector<char>> s_strings;
-static std::vector<std::unique_ptr<adblock::AdBlock>> s_adBlocks;
 static std::vector<std::vector<adblock_string_t>> s_stringVectors;
+static std::vector<std::unique_ptr<adblock_error_t>> s_errors;
 
-adblock_t
-adblock_create()
+static adblock::StringRange
+to_string_range(adblock_string_t const* const s)
 {
-    s_adBlocks.emplace_back(std::make_unique<adblock::AdBlock>());
-
-    return reinterpret_cast<adblock_t>(s_adBlocks.back().get());
+    if (s == nullptr) {
+        return {};
+    }
+    else {
+        return { s->ptr, s->length };
+    }
 }
 
-bool
-adblock_destroy(adblock_t adblock)
+static adblock_string_t
+to_string_t(adblock::StringRange const s)
 {
-    const auto it = std::find_if(s_adBlocks.begin(), s_adBlocks.end(),
-        [&adblock](const std::unique_ptr<adblock::AdBlock> &adBlockPtr) {
-            return reinterpret_cast<adblock_t>(adBlockPtr.get())
-                                                            == adblock;
-        });
-    if (it == s_adBlocks.end()) return false;
+    return { s.data(), s.size() };
+}
 
-    s_adBlocks.erase(it);
+static fs::path
+to_path(adblock_string_t const* const s) {
+    if (s == nullptr) {
+        return {};
+    }
+    else {
+        return { s->ptr, s->ptr + s->length };
+    }
+}
 
-    return true;
+static adblock_string_t
+adblock_string_new(std::string_view const s)
+{
+    s_strings.emplace_back(s.begin(), s.end());
+    auto& v = s_strings.back();
+
+    return { v.data(), v.size() };
+}
+
+static adblock_str_array_t
+adblock_str_array_new(size_t const size)
+{
+    s_stringVectors.emplace_back();
+    auto& v = s_stringVectors.back();
+
+    v.reserve(size);
+
+    return { v.data(), v.size() };
+}
+
+static std::ostream&
+operator<<(std::ostream& os, adblock_string_t const* const s)
+{
+    return os << to_string_range(s);
+}
+
+template<typename... S>
+adblock_error_t*
+adblock_error_new(S&&... s)
+{
+    std::ostringstream oss;
+    (oss << ... << s);
+
+    s_errors.emplace_back();
+    auto& e = s_errors.back();
+    e->message = adblock_string_new(oss.str());
+
+    return e.get();
+}
+
+template<typename... S>
+void
+report_error(adblock_error_t** const error, S&&... s)
+{
+    if (error) {
+        *error = adblock_error_new(std::forward<S>(s)...);
+    }
+    else {
+        (std::cerr << ... << s) << "\n";
+    }
+}
+
+adblock_db_t *
+adblock_db_new()
+{
+    s_databases.push_back(std::make_unique<adblock_db_t>());
+    return s_databases.back().get();
 }
 
 void
-adblock_add_filter_set(adblock_t adblock,
-                       char const* path_in_utf8, size_t const len)
+adblock_db_free(adblock_db_t* const db)
 {
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
+    auto const it = std::remove_if(
+        s_databases.begin(), s_databases.end(),
+        [&](auto& ptr) { return ptr.get() == db; }
+    );
 
-    namespace fs = std::filesystem;
+    s_databases.erase(it, s_databases.end());
+}
+
+void
+adblock_add_filter_list(adblock_db_t* const db,
+        adblock_string_t const* const path,
+        adblock_error_t** error)
+{
     try {
-        adblock::AdBlock::Path const path {
-                                    path_in_utf8, path_in_utf8 + len };
-        if (!fs::exists(path)) {
-            std::cerr << __func__ << ": File doesn't exists: "
-                                  << path << "\n";
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
             return;
         }
-        adBlock->addFilterList(path);
+        if (path == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: path");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
+
+        auto const p = to_path(path);
+
+        if (!fs::exists(p)) {
+            report_error(error, __func__, ": File doesn't exists: ", p);
+            return;
+        }
+
+        db->addFilterList(p);
     }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
+    }
+}
+
+void
+adblock_remove_filter_list(adblock_db_t* const db,
+        adblock_string_t const* const path,
+        adblock_error_t** error)
+{
+    try {
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (path == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: path");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
+
+        auto const p = to_path(path);
+
+        db->removeFilterList(p);
+    }
+    catch (std::exception const& e) {
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
+    }
+    catch (...) {
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
 }
 
 bool
-adblock_should_block(adblock_t adblock,
-                     char const* uri_in_utf8, size_t const len,
-                     struct adblock_context const* cxt,
-                     char const** filter_set, size_t *filter_set_len,
-                     char const** reason, size_t *reason_len)
+adblock_should_block(adblock_db_t* const db,
+        adblock_string_t const* const url,
+        request_type const type,
+        adblock_string_t const* const origin,
+        adblock_string_t const* const site_key,
+        adblock_string_t* const filter_list /* OUT */,
+        adblock_string_t* const reason /* OUT */,
+        adblock_error** error/* OUT */)
 {
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
-
     try {
-        *filter_set = nullptr;
-        *filter_set_len = 0;
-        *reason = nullptr;
-        *reason_len = 0;
-
-        adblock::Uri const uri { uri_in_utf8, len };
-
-        if (cxt == nullptr) {
-            std::cerr << __func__ << ": Null context is given.\n";
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
             return false;
         }
-
-        Context const context { *cxt };
-
-        auto const& rv = adBlock->shouldBlock(uri, context);
-        auto const& shouldBlock = rv.first;
-        auto const& reasonRule = rv.second;
-
-        if (reasonRule) {
-            auto* const filterListP = reasonRule->filterList();
-            if (filterListP) {
-                auto const& path = filterListP->path();
-                *filter_set = path.c_str();
-                *filter_set_len = std::strlen(path.c_str());
-            }
-
-            *reason = reasonRule->line().begin();
-            *reason_len = reasonRule->line().size();
+        if (url == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: url");
+            return false;
+        }
+        if (origin == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: origin");
+            return false;
+        }
+        if (filter_list != nullptr) {
+            *filter_list = {};
+        }
+        if (reason != nullptr) {
+            *reason = {};
+        }
+        if (error != nullptr) {
+            *error = nullptr;
         }
 
-        return shouldBlock;
+        adblock::Uri const uri { url->ptr, url->length };
+
+        context const cxt { type, origin, site_key };
+
+        auto const& [should_block, reason_rule] = db->shouldBlock(uri, cxt);
+
+        if (reason_rule) {
+            auto* const filter_list_p = reason_rule->filterList();
+            if (filter_list_p && filter_list) {
+                auto const& path = filter_list_p->path();
+
+                filter_list->ptr = path.c_str();
+                filter_list->length = std::strlen(path.c_str());
+            }
+
+            if (reason) {
+                auto const& line = reason_rule->line();
+
+                reason->ptr = line.begin();
+                reason->length = line.size();
+            }
+        }
+
+        return should_block;
+    }
+    catch (uri::parse_error const& e) {
+        report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
 
     return false;
 }
 
-bool
-adblock_remove_filter_set(adblock_t adblock,
-                          char const* path, size_t const len)
-{
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
-    assert(path);
-
-    auto const& filterLists = adBlock->filterLists();
-
-    auto const it = std::find_if(
-        filterLists.begin(), filterLists.end(),
-        [&path, &len](auto* const filterList) {
-            auto* const c_str = filterList->path().c_str();
-            return c_str[len] == '\0' &&
-                   std::strncmp(c_str, path, len) == 0;
-        });
-    if (it == filterLists.end()) return false;
-
-    adBlock->removeFilterList(**it);
-
-    return true;
-}
-
 void
-adblock_element_hide_css(adblock_t adblock,
-        char const* uri_in_utf8, size_t const uri_len,
-        char const** css, size_t* css_len)
+adblock_element_hiding_selectors(adblock_db_t* const db,
+        adblock_string_t const* const url,
+        adblock_string_t const* const site_key,
+        adblock_str_array_t* const selectors /* OUT */,
+        adblock_error_t** error /* OUT */)
 {
-    *css = nullptr;
-    *css_len = 0;
-
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
-
     try {
-        adblock::Uri const uri { uri_in_utf8, uri_len };
-
-        auto cssStr = joinSelectors(adBlock->elementHideSelectors(uri));
-
-        if (!cssStr.empty()) {
-            s_strings.emplace_back(cssStr.begin(), cssStr.end());
-            auto const& str = s_strings.back();
-            *css = str.data();
-            *css_len = str.size();
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
         }
-    }
-    catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
-    }
-    catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
-    }
-}
+        if (url == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: url");
+            return;
+        }
+        if (selectors == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: selectors");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
 
-void
-adblock_extended_element_hide_selectors(adblock_t adblock,
-        adblock_string_t const* uri_in_utf8,
-        adblock_string_t** out_selectors,
-        size_t* out_selector_count)
-{
-    *out_selectors = nullptr;
-    *out_selector_count = 0;
+        adblock::Uri const uri { url->ptr, url->length };
+        *selectors = {};
 
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
+        auto const sels = db->elementHideSelectors(uri, to_string_range(site_key));
 
-    try {
-        adblock::Uri const uri { uri_in_utf8->ptr, uri_in_utf8->length };
+        if (!sels.empty()) {
+            *selectors = adblock_str_array_new(sels.size());
 
-        auto results = adBlock->extendedElementHideSelectors(uri);
-
-        if (!results.empty()) {
-            std::vector<adblock_string_t> strings;
-            strings.reserve(results.size());
-
-            std::transform(results.begin(), results.end(),
-                           std::back_inserter(strings),
-                [](auto const& selector) -> adblock_string_t {
-                    return { selector.begin(), selector.size() };
+            std::transform(sels.begin(), sels.end(),
+                           selectors->ptr,
+                [](auto const s) -> adblock_string_t {
+                    return { s.begin(), s.size() };
                 }
             );
 
-            s_stringVectors.push_back(std::move(strings));
-
-            *out_selectors = s_stringVectors.back().data();
-            *out_selector_count = s_stringVectors.back().size();
+            selectors->length = sels.size();
         }
     }
+    catch (uri::parse_error const& e) {
+        report_error(error, __func__, ": URL parse error: ", url);
+    }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
 }
 
 void
-adblock_content_security_policy(adblock_t handle,
-            adblock_string_t const* uri_in_utf8,
-            adblock_string_t* policy /* OUT */)
+adblock_extended_element_hiding_selectors(adblock_db_t* const db,
+        adblock_string_t const* const url,
+        adblock_string_t const* const site_key,
+        adblock_str_array_t* const selectors /* OUT */,
+        adblock_error_t** error /* OUT */)
 {
     try {
-        auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
-        if (!adBlock) throw "wrong handle";
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (url == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: url");
+            return;
+        }
+        if (selectors == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: selectors");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
 
-        adblock::Uri const uri { uri_in_utf8->ptr, uri_in_utf8->length };
+        adblock::Uri const uri { url->ptr, url->length };
+        *selectors = {};
 
-        auto const p = adBlock->contentSecurityPolicy(uri);
+        auto const v =
+            db->extendedElementHideSelectors(uri, to_string_range(site_key));
 
-        policy->ptr = p.begin();
+        if (!v.empty()) {
+            *selectors = adblock_str_array_new(v.size());
+
+            std::transform(v.begin(), v.end(), selectors->ptr, to_string_t);
+
+            selectors->length = v.size();
+        }
+    }
+    catch (uri::parse_error const& e) {
+        report_error(error, __func__, ": URL parse error: ", url);
+    }
+    catch (std::exception const& e) {
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
+    }
+    catch (...) {
+        report_error(error, __func__, ": Unknown exception is caught.");
+    }
+}
+
+void
+adblock_content_security_policy(adblock_db_t* const db,
+        adblock_string_t const* const url,
+        adblock_string_t const* const site_key,
+        adblock_string_t* policy /* OUT */,
+        adblock_error_t** error /* OUT */)
+{
+    try {
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (url == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: url");
+            return;
+        }
+        if (policy == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: policy");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
+
+        adblock::Uri const uri { url->ptr, url->length };
+
+        auto const p = db->contentSecurityPolicy(uri, to_string_range(site_key));
+
+        policy->ptr = p.data();
         policy->length = p.size();
     }
-    catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+    catch (uri::parse_error const& e) {
+        report_error(error, __func__, ": URL parse error: ", url);
     }
-    catch (char const* const msg) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  msg << "\n";
+    catch (std::exception const& e) {
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
 }
 
-bool
-adblock_filter_set_parameters(
-        adblock_t handle,
-        adblock_string_t const* const filepath_in_utf8,
-        adblock_string_t** keys, /* OUT */
-        size_t* keys_len, /* OUT */
-        adblock_string_t** values /* OUT */,
-        size_t* values_len /* OUT */)
+void
+adblock_snippets(adblock_db_t* const db,
+        adblock_string_t const* const url,
+        adblock_string_t const* const site_key,
+        adblock_str_array_t* snippets /* OUT */,
+        adblock_error_t** error /* OUT */)
 {
     try {
-        auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(handle);
-        if (!adBlock) throw "wrong handle";
-
-        adblock::AdBlock::Path const filePath {
-            filepath_in_utf8->ptr,
-            filepath_in_utf8->ptr + filepath_in_utf8->length };
-
-        auto const& filterList = adBlock->filterList(filePath);
-        if (!filterList) throw "invalid path";
-
-        auto const& params = filterList->parameters();
-
-        std::vector<adblock_string_t> keysVector;
-        keysVector.reserve(params.size());
-
-        std::vector<adblock_string_t> valuesVector;
-        valuesVector.reserve(params.size());
-
-        for (auto const& [key, value]: params) {
-            keysVector.push_back({ key.begin(), key.size() });
-            valuesVector.push_back({ value.begin(), value.size() });
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (url == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: url");
+            return;
+        }
+        if (snippets == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: snippets");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
         }
 
-        s_stringVectors.push_back(std::move(keysVector));
-        auto& keysRef = s_stringVectors.back();
+        adblock::Uri const uri { url->ptr, url->length };
+        *snippets = {};
 
-        *keys = keysRef.data();
-        *keys_len = keysRef.size();
+        auto const v = db->snippets(uri, to_string_range(site_key));
 
-        s_stringVectors.push_back(std::move(valuesVector));
-        auto& valuesRef = s_stringVectors.back();
+        if (!v.empty()) {
+            *snippets = adblock_str_array_new(v.size());
 
-        *values = valuesRef.data();
-        *values_len = valuesRef.size();
+            std::transform(v.begin(), v.end(), snippets->ptr,
+                [&](auto s) { return to_string_t(s->snippet()); }
+            );
 
-        return true;
+            snippets->length = v.size();
+        }
+    }
+    catch (uri::parse_error const& e) {
+        report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
-        return false;
-    }
-    catch (char const* const msg) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  msg << "\n";
-        return false;
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
-        return false;
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
 }
 
 void
-adblock_reload(adblock_t adblock)
+adblock_filter_list_parameters(adblock_db_t* const db,
+        adblock_string_t const* const path,
+        adblock_str_array_t* keys /* OUT */,
+        adblock_str_array_t* values /* OUT */,
+        adblock_error_t** error /* OUT */)
 {
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
+    try {
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (path == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: path");
+            return;
+        }
+        if (keys == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: keys");
+            return;
+        }
+        if (values == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: values");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
 
-    adBlock->reload();
+        auto const p = to_path(path);
+
+        auto* const filter_list = db->filterList(p);
+        if (filter_list == nullptr) {
+            report_error(error, __func__, ": Invalid path: ", p);
+            return;
+        }
+
+        auto const& params = filter_list->parameters();
+        *keys = {};
+        *values = {};
+
+        if (!params.empty()) {
+            *keys = adblock_str_array_new(params.size());
+            *values = adblock_str_array_new(params.size());
+
+            size_t i = 0;
+            for (auto const [key, value]: params) {
+                keys->ptr[i] = to_string_t(key);
+                values->ptr[i] = to_string_t(value);
+
+                ++i;
+            }
+
+            keys->length = params.size();
+            values->length = params.size();
+        }
+    }
+    catch (std::exception const& e) {
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
+    }
+    catch (...) {
+        report_error(error, __func__, ": Unknown exception is caught.");
+    }
 }
 
 void
-adblock_statistics(adblock_t adblock, char const** json, size_t* json_len)
-{
-    auto* const adBlock = reinterpret_cast<adblock::AdBlock*>(adblock);
-    assert(adBlock);
-
-    auto const& stats = adBlock->statistics();
-
-    auto string = json::stringify(stats);
-    assert(!string.empty());
-
-    s_strings.emplace_back(string.begin(), string.end());
-
-    auto const& saved = s_strings.back();
-
-    *json = saved.data();
-    *json_len = saved.size();
-}
-
-bool
-adblock_free(char const* ptr)
+adblock_reload(adblock_db_t* const db,
+    adblock_error_t** error /* OUT */)
 {
     try {
-        auto const begin = s_strings.begin(), end = s_strings.end();
-        auto const it = std::remove_if(begin, end,
-            [ptr](auto& str) {
-                return str.data() == ptr;
-            }
-        );
-        s_strings.erase(it, end);
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
 
-        return it != end;
+        db->reload();
     }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
-    return false;
 }
 
-static bool
-removeStringVector(adblock_string_t* const ptr)
+void
+adblock_statistics(adblock_db_t* const db,
+    adblock_string_t* const json /* OUT */,
+    adblock_error_t** error /* OUT */)
 {
     try {
-        if (ptr == nullptr) return false;
+        if (db == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: db");
+            return;
+        }
+        if (json == nullptr) {
+            report_error(error, __func__, ": Invalid parameter: json");
+            return;
+        }
+        if (error != nullptr) {
+            *error = nullptr;
+        }
 
-        auto const end = s_stringVectors.end();
-        auto const it = std::remove_if(
-            s_stringVectors.begin(), end,
-            [&](auto& v) {
-                return !v.empty() && &v.front() == ptr;
-            }
-        );
-        s_stringVectors.erase(it, end);
+        auto const& stats = db->statistics();
 
-        return it != end;
+        auto s = json::stringify(stats);
+
+        *json = adblock_string_new(s);
     }
     catch (std::exception const& e) {
-        std::cerr << __func__ << ": "
-                  << "Uncaught exception: " <<  e.what() << "\n";
+        report_error(error, __func__, ": Uncaught exception: ", e.what());
     }
     catch (...) {
-        std::cerr << __func__ << ": Unknown exception is caught.\n";
+        report_error(error, __func__, ": Unknown exception is caught.");
     }
-    return false;
 }
 
-bool
-adblock_free_selectors(adblock_string_t* const ptr)
+void
+adblock_string_free(adblock_string_t* const s)
 {
-    return removeStringVector(ptr);
+    if (s == nullptr) return;
+
+    auto const it = std::remove_if(
+        s_strings.begin(), s_strings.end(),
+        [&](auto& v) { return v.data() == s->ptr; }
+    );
+
+    s_strings.erase(it, s_strings.end());
 }
 
-bool
-adblock_free_keys(adblock_string_t* const ptr)
+void
+adblock_str_array_free(adblock_str_array_t* const array)
 {
-    return removeStringVector(ptr);
+    if (array == nullptr) return;
+
+    auto const it = std::remove_if(
+        s_stringVectors.begin(), s_stringVectors.end(),
+        [&](auto& v) { return v.data() == array->ptr; }
+    );
+
+    s_stringVectors.erase(it, s_stringVectors.end());
 }
 
-bool
-adblock_free_values(adblock_string_t* const ptr)
+void
+adblock_error_free(adblock_error_t* const e)
 {
-    return removeStringVector(ptr);
+    if (e == nullptr) return;
+
+    adblock_string_free(&e->message);
+
+    auto const it = std::remove_if(
+        s_errors.begin(), s_errors.end(),
+        [&](auto& ptr) { return ptr.get() == e; }
+    );
+
+    s_errors.erase(it, s_errors.end());
 }

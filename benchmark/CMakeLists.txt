@@ -5,6 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wconversion -Wsign-conver
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 
 add_definitions(-DPROJECT_ROOT=\"${CMAKE_SOURCE_DIR}\")
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(memory_usage
     memory_usage.cpp

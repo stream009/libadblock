@@ -28,7 +28,7 @@ install(TARGETS adblock
 )
 
 install(
-    FILES ${PROJECT_SOURCE_DIR}/include/api.h
-          ${PROJECT_SOURCE_DIR}/include/database.hpp
+    FILES ${PROJECT_SOURCE_DIR}/include/adblock/database.h
+          ${PROJECT_SOURCE_DIR}/include/adblock/database.hpp
     DESTINATION include/adblock
 )

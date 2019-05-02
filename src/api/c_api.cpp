@@ -1,4 +1,4 @@
-#include <adblock/api.h>
+#include <adblock/database.h>
 
 #include "core/adblock.hpp"
 #include "core/context.hpp"

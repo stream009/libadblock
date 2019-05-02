@@ -1,6 +1,6 @@
 #include "../filter_file.hpp"
 
-#include <adblock/api.h>
+#include <adblock/database.h>
 
 #include "core/json.hpp"
 

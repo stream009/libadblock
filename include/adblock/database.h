@@ -1,5 +1,5 @@
-#ifndef ADBLOCK_API_HPP
-#define ADBLOCK_API_HPP
+#ifndef ADBLOCK_DATABASE_H
+#define ADBLOCK_DATABASE_H
 
 #include "dll.hpp"
 
@@ -260,4 +260,4 @@ ADBLOCK_DLL_EXPORT void adblock_error_free(adblock_error_t *);
 } // extern "C"
 #endif
 
-#endif // ADBLOCK_API_HPP
+#endif // ADBLOCK_DATABASE_H

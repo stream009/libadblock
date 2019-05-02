@@ -17,6 +17,7 @@
 #include <string_view>
 
 #include <boost/algorithm/string/split.hpp>
+#include <boost/regex.hpp>
 
 namespace adblock::parser {
 

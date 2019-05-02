@@ -7,7 +7,8 @@
 
 #include <iosfwd>
 #include <memory>
-#include <regex>
+
+#include <boost/regex_fwd.hpp>
 
 namespace adblock {
 
@@ -26,7 +27,7 @@ private:
 
 private:
     StringRange m_pattern;
-    mutable std::unique_ptr<std::regex> m_regEx;
+    mutable std::unique_ptr<boost::regex> m_regEx;
     mutable bool m_regExCaseSensitivity = false;
     mutable bool m_disabled = false;
 };

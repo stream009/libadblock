@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include <boost/regex.hpp>
+
 namespace adblock {
 
 RegexPattern::
@@ -19,19 +21,19 @@ match(Uri const& target, bool const caseSensitive/*= false*/) const
     try {
         if (!m_regEx || caseSensitive != m_regExCaseSensitivity) {
 
-            auto syntax = std::regex::ECMAScript;
+            auto syntax = boost::regex::ECMAScript;
             if (!caseSensitive) {
-                syntax |= std::regex::icase;
+                syntax = boost::regex::icase;
             }
 
-            m_regEx = std::make_unique<std::regex>(
+            m_regEx = std::make_unique<boost::regex>(
                 m_pattern.begin(), m_pattern.end(),
                 syntax
             );
 
             m_regExCaseSensitivity = caseSensitive;
         }
-        return std::regex_match(target.begin(), target.end(), *m_regEx);
+        return boost::regex_match(target.begin(), target.end(), *m_regEx);
     }
     catch (std::exception const& e) {
         std::cerr << "regex error: " << m_pattern << ":" << e.what() << "\n";

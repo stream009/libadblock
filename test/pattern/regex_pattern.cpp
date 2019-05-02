@@ -3,6 +3,8 @@
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 
+#include <boost/regex.hpp>
+
 #include <gtest/gtest.h>
 
 namespace adblock {

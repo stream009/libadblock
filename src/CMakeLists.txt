@@ -1,7 +1,5 @@
-find_package(Boost 1.57 REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARIES_DIRS})
 set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost 1.57 REQUIRED COMPONENTS regex)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)

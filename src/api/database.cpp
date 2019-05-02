@@ -72,7 +72,7 @@ should_block_request(std::string_view const url,
 
         auto const& [block, rule] = m_adblock->shouldBlock(url, cxt);
 
-        block_result result;
+        block_result result {};
 
         result.block = block;
 

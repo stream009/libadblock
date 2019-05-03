@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_DATABASE_HPP
 #define ADBLOCK_DATABASE_HPP
 
-#include "dll.hpp"
+#include "dll.h"
 
 #include <filesystem>
 #include <memory>

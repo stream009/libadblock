@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_DATABASE_H
 #define ADBLOCK_DATABASE_H
 
-#include "dll.hpp"
+#include "dll.h"
 
 #include <stdbool.h>
 #include <stddef.h>

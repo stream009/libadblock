@@ -6,16 +6,12 @@ namespace adblock {
 class StringRange;
 class Uri;
 
-class DomainDataBase
-{
-public:
-    DomainDataBase();
+namespace domain_db {
 
-    StringRange getRegisteredDomain(Uri const&) const;
+StringRange getRegisteredDomain(Uri const&);
 
-private:
-    static void* m_tree;
-};
+
+} // namespace domain_db
 
 } // namespace adblock
 

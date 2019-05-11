@@ -102,18 +102,16 @@ bool FilterRule::
 matchOrigin(Uri const& uri, Context const& cxt) const
 {
     if (m_options.test(FilterOption::SameOrigin)) {
-        DomainDataBase const ddb;
 
-        auto const uriDomain = ddb.getRegisteredDomain(uri);
-        auto const originDomain = ddb.getRegisteredDomain(cxt.origin());
+        auto const uriDomain = domain_db::getRegisteredDomain(uri);
+        auto const originDomain = domain_db::getRegisteredDomain(cxt.origin());
 
         return uriDomain == originDomain;
     }
     else if (m_options.test(FilterOption::ThirdParty)) {
-        DomainDataBase const ddb;
 
-        auto const uriDomain = ddb.getRegisteredDomain(uri);
-        auto const originDomain = ddb.getRegisteredDomain(cxt.origin());
+        auto const uriDomain = domain_db::getRegisteredDomain(uri);
+        auto const originDomain = domain_db::getRegisteredDomain(cxt.origin());
 
         return uriDomain != originDomain;
     }

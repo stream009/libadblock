@@ -39,7 +39,7 @@ public:
     Path const& path() const { return m_file.path(); }
 
     // query
-    std::vector<ParseError> errors() const { return m_errors; }
+    std::vector<ParseError> const& errors() const { return m_errors; }
     Parameters parameters() const;
 
     json::object statistics() const;

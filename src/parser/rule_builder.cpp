@@ -477,10 +477,15 @@ comment(iterator const bol, iterator const eol)
 void RuleBuilder::
 error(iterator const begin, iterator const end, std::string_view const msg)
 {
+    auto const from = begin - m_line.begin();
+    auto to = end - m_line.begin();
+
     m_errors.push_back({
         m_line_no,
-        begin - m_line.begin(),
-        std::max(end - m_line.begin() - 1, static_cast<ptrdiff_t>(0)),
+        from,
+        to,
+        //begin - m_line.begin(),
+        //std::max(end - m_line.begin() - 1, static_cast<ptrdiff_t>(0)),
         m_line,
         std::string(msg)
     });

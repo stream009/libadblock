@@ -5,5 +5,5 @@ add_library(pattern
     regex_pattern.cpp
 )
 target_link_libraries(pattern
-    Boost::regex
+    ${boost_libs}
 )

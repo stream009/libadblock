@@ -591,7 +591,7 @@ adblock_filter_list_parameters(adblock_db_t* const db,
             *values = adblock_str_array_new(params.size());
 
             size_t i = 0;
-            for (auto const [key, value]: params) {
+            for (auto const& [key, value]: params) {
                 keys->ptr[i] = to_string_t(key);
                 values->ptr[i] = to_string_t(value);
 

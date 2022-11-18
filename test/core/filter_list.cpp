@@ -82,13 +82,13 @@ TEST(Core_FilterList, Errors)
     ASSERT_EQ(2, errors.size());
     EXPECT_EQ(3, errors[0].line_no);
     EXPECT_EQ(3, errors[0].from);
-    EXPECT_EQ(8, errors[0].to);
+    EXPECT_EQ(9, errors[0].to);
     EXPECT_EQ("ad$foobar", errors[0].line);
     EXPECT_EQ("invalid option", errors[0].message);
 
     EXPECT_EQ(4, errors[1].line_no);
     EXPECT_EQ(3, errors[1].from);
-    EXPECT_EQ(8, errors[1].to);
+    EXPECT_EQ(9, errors[1].to);
     EXPECT_EQ("ad$domain", errors[1].line);
     EXPECT_EQ("option must have value", errors[1].message);
 }

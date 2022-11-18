@@ -26,7 +26,7 @@ TEST(Parser_ParseError, Basic)
         auto const& err = errors[0];
         EXPECT_EQ(1, err.line_no);
         EXPECT_EQ(3, err.from);
-        EXPECT_EQ(8, err.to);
+        EXPECT_EQ(9, err.to);
         EXPECT_EQ(line, err.line);
         EXPECT_EQ("invalid option", err.message);
     }

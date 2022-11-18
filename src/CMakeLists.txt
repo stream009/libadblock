@@ -1,6 +1,3 @@
-set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost 1.57 REQUIRED COMPONENTS regex)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -9,6 +6,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wfatal-errors")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
+set(boost_dir ${CMAKE_CURRENT_SOURCE_DIR}/lib/boost_1_59_0)
+#set(boost_dir ${CMAKE_CURRENT_SOURCE_DIR}/lib/boost_1_69_0)
+include_directories(SYSTEM ${boost_dir})
+set(boost_lib_dir ${boost_dir}/stage/lib)
+link_directories(boost_lib_dir)
+set(boost_libs "${boost_lib_dir}/libboost_regex.a")
 
 add_subdirectory(core)
 add_subdirectory(rule)

@@ -7,7 +7,7 @@
 
 #include <iosfwd>
 
-#include <boost/container/small_vector.hpp>
+#include <vector>
 
 namespace adblock {
 
@@ -17,7 +17,7 @@ class BaseMatchPattern : public Pattern
 {
 protected:
     using Token = StringRange;
-    using Tokens = boost::container::small_vector<Token, 3>;
+    using Tokens = std::vector<Token>;
 
 public:
     bool match(Uri const& url, bool caseSensitive = false) const override

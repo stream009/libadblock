@@ -1,20 +1,17 @@
 #ifndef ADBLOCK_CORE_URI_HPP
 #define ADBLOCK_CORE_URI_HPP
 
-#include "url/url.hpp"
-#include "url/error.hpp"
+#include <stream9/url.hpp>
 
 namespace adblock {
 
-class Uri : public urls::url
+class Uri : public stream9::url
 {
-    using Base = urls::url;
+    using Base = stream9::url;
 public:
     using Base::Base;
     using Base::operator=;
 };
-
-using uri_error = urls::error;
 
 inline Uri
 operator"" _u(char const* str, size_t const len)

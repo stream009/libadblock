@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include <stream9/errors.hpp>
+
 namespace fs = std::filesystem;
 
 static adblock::StringRange to_string_range(adblock_string_t const*);
@@ -339,8 +341,11 @@ adblock_should_block(adblock_db_t* const db,
 
         return should_block;
     }
-    catch (adblock::uri_error const&) {
-        report_error(error, __func__, ": URL parse error: ", url);
+    catch (stream9::error const& e) {
+        auto o_url = adblock::json::find_string(e.context(), "url");
+        if (o_url) {
+            report_error(error, __func__, ": URL parse error: ", o_url);
+        }
     }
     catch (std::exception const& e) {
         report_error(error, __func__, ": Uncaught exception: ", e.what());
@@ -394,8 +399,11 @@ adblock_element_hiding_selectors(adblock_db_t* const db,
             selectors->length = sels.size();
         }
     }
-    catch (adblock::uri_error const& e) {
-        report_error(error, __func__, ": URL parse error: ", url);
+    catch (stream9::error const& e) {
+        auto o_url = adblock::json::find_string(e.context(), "url");
+        if (o_url) {
+            report_error(error, __func__, ": URL parse error: ", o_url);
+        }
     }
     catch (std::exception const& e) {
         report_error(error, __func__, ": Uncaught exception: ", e.what());
@@ -443,8 +451,11 @@ adblock_extended_element_hiding_selectors(adblock_db_t* const db,
             selectors->length = v.size();
         }
     }
-    catch (adblock::uri_error const& e) {
-        report_error(error, __func__, ": URL parse error: ", url);
+    catch (stream9::error const& e) {
+        auto o_url = adblock::json::find_string(e.context(), "url");
+        if (o_url) {
+            report_error(error, __func__, ": URL parse error: ", o_url);
+        }
     }
     catch (std::exception const& e) {
         report_error(error, __func__, ": Uncaught exception: ", e.what());
@@ -485,8 +496,11 @@ adblock_content_security_policy(adblock_db_t* const db,
         policy->ptr = p.data();
         policy->length = p.size();
     }
-    catch (adblock::uri_error const& e) {
-        report_error(error, __func__, ": URL parse error: ", url);
+    catch (stream9::error const& e) {
+        auto o_url = adblock::json::find_string(e.context(), "url");
+        if (o_url) {
+            report_error(error, __func__, ": URL parse error: ", o_url);
+        }
     }
     catch (std::exception const& e) {
         report_error(error, __func__, ": Uncaught exception: ", e.what());
@@ -535,8 +549,11 @@ adblock_snippets(adblock_db_t* const db,
             snippets->length = v.size();
         }
     }
-    catch (adblock::uri_error const& e) {
-        report_error(error, __func__, ": URL parse error: ", url);
+    catch (stream9::error const& e) {
+        auto o_url = adblock::json::find_string(e.context(), "url");
+        if (o_url) {
+            report_error(error, __func__, ": URL parse error: ", o_url);
+        }
     }
     catch (std::exception const& e) {
         report_error(error, __func__, ": Uncaught exception: ", e.what());

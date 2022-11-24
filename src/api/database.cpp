@@ -1,5 +1,7 @@
 #include <adblock/database.hpp>
 
+#include "error.hpp"
+
 #include "core/adblock.hpp"
 #include "core/context.hpp"
 #include "core/filter_list.hpp"
@@ -86,8 +88,8 @@ should_block_request(std::string_view const url,
 
         return result;
     }
-    catch (adblock::uri_error const& e) {
-        throw url_parse_error { e.url(), e.what(), e.location() };
+    catch (stream9::error const& e) {
+        throw_url_parse_error(e);
     }
 }
 
@@ -107,8 +109,8 @@ element_hiding_selectors(std::string_view const url,
 
         return result;
     }
-    catch (adblock::uri_error const& e) {
-        throw url_parse_error { e.url(), e.what(), e.location() };
+    catch (stream9::error const& e) {
+        throw_url_parse_error(e);
     }
 }
 
@@ -129,8 +131,8 @@ extended_element_hiding_selectors(std::string_view const url,
 
         return result;
     }
-    catch (adblock::uri_error const& e) {
-        throw url_parse_error { e.url(), e.what(), e.location() };
+    catch (stream9::error const& e) {
+        throw_url_parse_error(e);
     }
 }
 
@@ -141,8 +143,8 @@ content_security_policy(std::string_view const url,
     try {
         return m_adblock->contentSecurityPolicy(url, site_key);
     }
-    catch (adblock::uri_error const& e) {
-        throw url_parse_error { e.url(), e.what(), e.location() };
+    catch (stream9::error const& e) {
+        throw_url_parse_error(e);
     }
 }
 
@@ -158,8 +160,8 @@ snippets(std::string_view const url, std::string_view site_key/*= {}*/) const
 
         return result;
     }
-    catch (adblock::uri_error const& e) {
-        throw url_parse_error { e.url(), e.what(), e.location() };
+    catch (stream9::error const& e) {
+        throw_url_parse_error(e);
     }
 }
 

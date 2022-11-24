@@ -6,9 +6,10 @@ project('libadblock', 'cpp', 'c',
 # private_deps will suffice.
 public_deps = []
 private_deps = [
+  dependency('stream9_core'),
   dependency('adblock_parser'),
   dependency('stream9_radix_tree'),
-  dependency('url'),
+  dependency('stream9_url'),
 ]
 
 # include directories, external and internal ones

@@ -1,13 +1,15 @@
 #ifndef ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 #define ADBLOCK_DOMAINED_ELEMENT_HIDE_RULE_MAP_HPP
 
-#include "core/json_fwd.hpp"
+#include "namespace.hpp"
+
+#include "core/json.hpp"
 #include "rule/element_hide_rule.hpp"
 
 #include <iterator>
 #include <vector>
 
-#include <radix_tree/radix_tree.hpp>
+#include <stream9/radix_tree.hpp>
 
 namespace adblock {
 
@@ -19,7 +21,7 @@ public:
     using ElementHideRules = std::vector<ElementHideRule const*>;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
-    using Map = radix_tree::tree<ReverseStringRange, ElementHideRule const*>;
+    using Map = st9::radix_tree::tree<ReverseStringRange, ElementHideRule const*>;
     using ExceptionOnlyRules = std::vector<ElementHideRule const*>;
 
 public:

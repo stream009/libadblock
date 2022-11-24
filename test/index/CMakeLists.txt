@@ -7,5 +7,5 @@ add_library(index_test STATIC
 )
 target_link_libraries(index_test
     index
-    uri
+    core
 )

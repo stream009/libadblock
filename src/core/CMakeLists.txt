@@ -10,7 +10,6 @@ target_link_libraries(core
     rule
     index
     parser
-    uri
+    url
     json
-    stdc++fs
 )

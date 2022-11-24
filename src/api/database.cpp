@@ -6,7 +6,6 @@
 #include "core/json.hpp"
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
-#include "lib/uri/parser.hpp"
 #include "rule/snippet_rule.hpp"
 
 #include <memory>
@@ -87,8 +86,8 @@ should_block_request(std::string_view const url,
 
         return result;
     }
-    catch (uri::parse_error const& e) {
-        throw url_parse_error { e.uri(), e.what(), e.location() };
+    catch (adblock::uri_error const& e) {
+        throw url_parse_error { e.url(), e.what(), e.location() };
     }
 }
 
@@ -108,8 +107,8 @@ element_hiding_selectors(std::string_view const url,
 
         return result;
     }
-    catch (uri::parse_error const& e) {
-        throw url_parse_error { e.uri(), e.what(), e.location() };
+    catch (adblock::uri_error const& e) {
+        throw url_parse_error { e.url(), e.what(), e.location() };
     }
 }
 
@@ -130,8 +129,8 @@ extended_element_hiding_selectors(std::string_view const url,
 
         return result;
     }
-    catch (uri::parse_error const& e) {
-        throw url_parse_error { e.uri(), e.what(), e.location() };
+    catch (adblock::uri_error const& e) {
+        throw url_parse_error { e.url(), e.what(), e.location() };
     }
 }
 
@@ -142,8 +141,8 @@ content_security_policy(std::string_view const url,
     try {
         return m_adblock->contentSecurityPolicy(url, site_key);
     }
-    catch (uri::parse_error const& e) {
-        throw url_parse_error { e.uri(), e.what(), e.location() };
+    catch (adblock::uri_error const& e) {
+        throw url_parse_error { e.url(), e.what(), e.location() };
     }
 }
 
@@ -159,8 +158,8 @@ snippets(std::string_view const url, std::string_view site_key/*= {}*/) const
 
         return result;
     }
-    catch (uri::parse_error const& e) {
-        throw url_parse_error { e.uri(), e.what(), e.location() };
+    catch (adblock::uri_error const& e) {
+        throw url_parse_error { e.url(), e.what(), e.location() };
     }
 }
 
@@ -207,7 +206,7 @@ statistics() const
 {
     auto const& stats = m_adblock->statistics();
 
-    return json::stringify(stats);
+    return stats.to_string();
 }
 
 void database::

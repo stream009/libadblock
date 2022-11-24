@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_ELEMENT_HIDE_RULE_BASE_HPP
 #define ADBLOCK_ELEMENT_HIDE_RULE_BASE_HPP
 
-#include "core/json_fwd.hpp"
+#include "core/json.hpp"
 #include "index/domained_element_hide_rule_map.hpp"
 
 #include <vector>

@@ -13,6 +13,6 @@ add_library(rule
 )
 target_link_libraries(rule
     pattern
-    uri
+    core
     reg_dom
 )

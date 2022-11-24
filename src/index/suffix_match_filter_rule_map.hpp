@@ -2,12 +2,13 @@
 #define ADBLOCK_SUFFIX_MATCH_FILTER_RULE_MAP_HPP
 
 #include "filter_rule_map.hpp"
+#include "namespace.hpp"
 
-#include "core/json_fwd.hpp"
+#include "core/json.hpp"
 
 #include <iterator>
 
-#include <radix_tree/radix_tree.hpp>
+#include <stream9/radix_tree.hpp>
 
 namespace adblock {
 
@@ -20,7 +21,7 @@ public:
     using Base::FilterRules;
     using ReverseStringRange =
         boost::iterator_range<std::reverse_iterator<char const*>>;
-    using Map = radix_tree::tree<ReverseStringRange, FilterRule const*>;
+    using Map = st9::radix_tree::tree<ReverseStringRange, FilterRule const*>;
 
 private:
     void doPut(FilterRule const&) override;

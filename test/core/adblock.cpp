@@ -135,10 +135,10 @@ TEST(Core_AdBlock, Statistics)
 
     auto const& stats = adBlock.statistics();
 
-    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
-    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
-    EXPECT_EQ(0,     to_number(stats["Snippet rule"]));
-    EXPECT_EQ(54322, to_number(stats["Total"]));
+    EXPECT_EQ(20757, to_number(stats.at("Filter rule")));
+    EXPECT_EQ(33565, to_number(stats.at("Element hide rule")));
+    EXPECT_EQ(0,     to_number(stats.at("Snippet rule")));
+    EXPECT_EQ(54322, to_number(stats.at("Total")));
 }
 
 TEST(Core_AdBlock, Reload)
@@ -154,7 +154,7 @@ TEST(Core_AdBlock, Reload)
     adblock.addFilterList(path);
 
     auto stats = adblock.statistics();
-    ASSERT_EQ(2, to_number(stats["Total"]));
+    ASSERT_EQ(2, to_number(stats.at("Total")));
 
     list << "foobar\n";
     list << "#@#ad\n";
@@ -166,7 +166,7 @@ TEST(Core_AdBlock, Reload)
 
     stats = adblock.statistics();
 
-    ASSERT_EQ(5, to_number(stats["Total"]));
+    ASSERT_EQ(5, to_number(stats.at("Total")));
 }
 
 TEST(Core_AdBlock, FilterList)

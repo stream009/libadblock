@@ -6,5 +6,5 @@ add_library(rule_test STATIC
 )
 target_link_libraries(rule_test
     rule
-    uri
+    core
 )

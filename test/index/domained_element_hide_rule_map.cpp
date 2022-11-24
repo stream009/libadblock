@@ -125,30 +125,30 @@ TEST(Index_DomainedElementHideRuleMap, Statistics)
 
     auto const& stats = ruleSet.statistics();
 
-    EXPECT_EQ(1, to_number(stats["Number of leaf"]));
-    EXPECT_EQ(2, to_number(stats["Number of branch"]));
-    EXPECT_EQ(3, to_number(stats["Number of nodes"]));
-    EXPECT_EQ(2, to_number(stats["Number of values"]));
+    EXPECT_EQ(1, to_number(stats.at("Number of leaf")));
+    EXPECT_EQ(2, to_number(stats.at("Number of branch")));
+    EXPECT_EQ(3, to_number(stats.at("Number of nodes")));
+    EXPECT_EQ(2, to_number(stats.at("Number of values")));
 
-    auto child = stats["Branches by children"].get_object();
+    auto child = stats.at("Branches by children").get_object();
     EXPECT_EQ(1, child.size());
     EXPECT_EQ(2, to_number(child["1"]));
 
-    child = stats["Branches by level"].get_object();
+    child = stats.at("Branches by level").get_object();
     EXPECT_EQ(2, child.size());
     EXPECT_EQ(1, to_number(child["0"]));
     EXPECT_EQ(1, to_number(child["1"]));
 
-    child = stats["Leaves by level"].get_object();
+    child = stats.at("Leaves by level").get_object();
     EXPECT_EQ(1, child.size());
     EXPECT_EQ(1, to_number(child["2"]));
 
-    child = stats["Nodes by values"].get_object();
+    child = stats.at("Nodes by values").get_object();
     EXPECT_EQ(2, child.size());
     EXPECT_EQ(1, to_number(child["0"]));
     EXPECT_EQ(2, to_number(child["1"]));
 
-    EXPECT_EQ(1, to_number(stats["Exception only rules"]));
+    EXPECT_EQ(1, to_number(stats.at("Exception only rules")));
 }
 
 TEST(Index_DomainedElementHideRuleMap, Clear)
@@ -166,12 +166,12 @@ TEST(Index_DomainedElementHideRuleMap, Clear)
     ruleSet.put(*rule3);
 
     auto stats = ruleSet.statistics();
-    EXPECT_EQ(2, to_number(stats["Number of values"]));
-    EXPECT_EQ(1, to_number(stats["Exception only rules"]));
+    EXPECT_EQ(2, to_number(stats.at("Number of values")));
+    EXPECT_EQ(1, to_number(stats.at("Exception only rules")));
 
     ruleSet.clear();
 
     stats = ruleSet.statistics();
-    EXPECT_EQ(0, to_number(stats["Number of values"]));
-    EXPECT_EQ(0, to_number(stats["Exception only rules"]));
+    EXPECT_EQ(0, to_number(stats.at("Number of values")));
+    EXPECT_EQ(0, to_number(stats.at("Exception only rules")));
 }

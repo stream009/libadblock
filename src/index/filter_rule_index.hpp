@@ -6,7 +6,7 @@
 #include "substring_match_filter_rule_map.hpp"
 #include "domain_match_filter_rule_map.hpp"
 
-#include "core/json_fwd.hpp"
+#include "core/json.hpp"
 
 #include <vector>
 

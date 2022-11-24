@@ -5,5 +5,5 @@ add_library(pattern_test STATIC
 )
 target_link_libraries(pattern_test
     pattern
-    uri
+    core
 )

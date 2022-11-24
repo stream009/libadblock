@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_CORE_SNIPPET_RULE_BASE_HPP
 #define ADBLOCK_CORE_SNIPPET_RULE_BASE_HPP
 
-#include "core/json_fwd.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 
 #include <vector>

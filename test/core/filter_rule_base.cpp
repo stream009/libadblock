@@ -187,14 +187,14 @@ TEST(Core_FilterRuleBase, Clear)
     rb.put(*rule4);
 
     const auto &before = rb.statistics();
-    EXPECT_EQ(4, to_number(before["Total"]));
-    EXPECT_EQ(2, to_number(before["Basic match pattern"]));
-    EXPECT_EQ(2, to_number(before["Exception match pattern"]));
+    EXPECT_EQ(4, to_number(before.at("Total")));
+    EXPECT_EQ(2, to_number(before.at("Basic match pattern")));
+    EXPECT_EQ(2, to_number(before.at("Exception match pattern")));
 
     rb.clear();
 
     const auto &after = rb.statistics();
-    EXPECT_EQ(0, to_number(after["Total"]));
-    EXPECT_EQ(0, to_number(after["Basic match pattern"]));
-    EXPECT_EQ(0, to_number(after["Exception match pattern"]));
+    EXPECT_EQ(0, to_number(after.at("Total")));
+    EXPECT_EQ(0, to_number(after.at("Basic match pattern")));
+    EXPECT_EQ(0, to_number(after.at("Exception match pattern")));
 }

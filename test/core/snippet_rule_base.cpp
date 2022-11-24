@@ -172,9 +172,9 @@ TEST(Core_SnippetRuleBase, Statistics)
     rb.put(*rule2);
 
     auto const stats = rb.statistics();
-    EXPECT_EQ(1, to_number(stats["Generic snippet rule"]));
-    EXPECT_EQ(1, to_number(stats["Specific snippet rule"]));
-    EXPECT_EQ(2, to_number(stats["Total"]));
+    EXPECT_EQ(1, to_number(stats.at("Generic snippet rule")));
+    EXPECT_EQ(1, to_number(stats.at("Specific snippet rule")));
+    EXPECT_EQ(2, to_number(stats.at("Total")));
 }
 
 TEST(Core_SnippetRuleBase, Clear)
@@ -193,12 +193,12 @@ TEST(Core_SnippetRuleBase, Clear)
     rb.put(*rule2);
 
     auto const before = rb.statistics();
-    EXPECT_EQ(1, to_number(before["Generic snippet rule"]));
-    EXPECT_EQ(1, to_number(before["Specific snippet rule"]));
-    EXPECT_EQ(2, to_number(before["Total"]));
+    EXPECT_EQ(1, to_number(before.at("Generic snippet rule")));
+    EXPECT_EQ(1, to_number(before.at("Specific snippet rule")));
+    EXPECT_EQ(2, to_number(before.at("Total")));
 
     rb.clear();
 
     auto const after = rb.statistics();
-    EXPECT_EQ(0, to_number(after["Total"]));
+    EXPECT_EQ(0, to_number(after.at("Total")));
 }

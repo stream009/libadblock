@@ -48,11 +48,11 @@ TEST(Core_FilterList, Statistics)
 
     auto const& stats = filterList.statistics();
 
-    EXPECT_EQ(10, to_number(stats["Basic filter rule"]));
-    EXPECT_EQ(9, to_number(stats["Exception filter rule"]));
-    EXPECT_EQ(6, to_number(stats["Basic element hide rule"]));
-    EXPECT_EQ(6, to_number(stats["Exception element hide rule"]));
-    EXPECT_EQ(4, to_number(stats["Comment rule"]));
+    EXPECT_EQ(10, to_number(stats.at("Basic filter rule")));
+    EXPECT_EQ(9, to_number(stats.at("Exception filter rule")));
+    EXPECT_EQ(6, to_number(stats.at("Basic element hide rule")));
+    EXPECT_EQ(6, to_number(stats.at("Exception element hide rule")));
+    EXPECT_EQ(4, to_number(stats.at("Comment rule")));
 }
 
 TEST(Core_FilterList, Parameter)

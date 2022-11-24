@@ -1,17 +1,19 @@
 #ifndef ADBLOCK_INDEX_STATISTICS_HPP
 #define ADBLOCK_INDEX_STATISTICS_HPP
 
+#include "namespace.hpp"
+
 #include "core/json.hpp"
 
 #include <boost/container/flat_map.hpp>
 
-#include <radix_tree/radix_tree.hpp>
+#include <stream9/radix_tree.hpp>
 
 namespace adblock {
 
 template<typename Key, typename Value>
 json::object
-radixTreeStatistics(radix_tree::tree<Key, Value> const& tree)
+radixTreeStatistics(st9::radix_tree::tree<Key, Value> const& tree)
 {
     size_t numBranch = 0, numLeaf = 0;
     boost::container::flat_map<size_t, size_t> childCounts;

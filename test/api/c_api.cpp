@@ -12,6 +12,7 @@
 
 namespace fs = std::filesystem;
 static const fs::path projectRoot { PROJECT_ROOT };
+namespace json = adblock::json;
 
 using adblock::to_number;
 
@@ -252,7 +253,7 @@ TEST(API_C, reload)
 
     adblock_string_free(&json);
 
-    ASSERT_EQ(2, to_number(before["Total"]));
+    ASSERT_EQ(2, to_number(before.at("Total")));
 
     list << "foobar\n";
     list << "#@#ad\n";
@@ -270,7 +271,7 @@ TEST(API_C, reload)
 
     adblock_string_free(&json);
 
-    ASSERT_EQ(5, to_number(after["Total"]));
+    ASSERT_EQ(5, to_number(after.at("Total")));
 }
 
 TEST_F(API_F, statistics)
@@ -282,9 +283,9 @@ TEST_F(API_F, statistics)
 
     auto const stats = json::parse(to_string_view(json)).get_object();
 
-    EXPECT_EQ(20757, to_number(stats["Filter rule"]));
-    EXPECT_EQ(33565, to_number(stats["Element hide rule"]));
-    EXPECT_EQ(54322, to_number(stats["Total"]));
+    EXPECT_EQ(20757, to_number(stats.at("Filter rule")));
+    EXPECT_EQ(33565, to_number(stats.at("Element hide rule")));
+    EXPECT_EQ(54322, to_number(stats.at("Total")));
 
     adblock_string_free(&json);
 }
@@ -308,7 +309,7 @@ TEST_F(API_F, remove_filter_set)
     auto const before = json::parse(to_string_view(json)).get_object();
     adblock_string_free(&json);
 
-    EXPECT_EQ(66244, to_number(before["Total"]));
+    EXPECT_EQ(66244, to_number(before.at("Total")));
 
     adblock_remove_filter_list(this->db(), &path, &err);
     ASSERT_EQ(nullptr, err);
@@ -319,7 +320,7 @@ TEST_F(API_F, remove_filter_set)
     auto const after = json::parse(to_string_view(json)).get_object();
     adblock_string_free(&json);
 
-    EXPECT_EQ(54322, to_number(after["Total"]));
+    EXPECT_EQ(54322, to_number(after.at("Total")));
 }
 
 TEST_F(API_F, adblock_db_free)

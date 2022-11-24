@@ -1,0 +1,3 @@
+[wrap-git]
+url = https://gitlab.com/libstream9/core.git
+revision = HEAD

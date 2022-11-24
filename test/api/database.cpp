@@ -26,12 +26,12 @@ TEST(Api_Database, AddFilterList)
     ASSERT_TRUE(fs::exists(path1)) << path1;
 
     auto const before = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(0, to_number(before["Total"]));
+    EXPECT_EQ(0, to_number(before.at("Total")));
 
     db.add_filter_list(path1);
 
     auto const after = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(37, to_number(after["Total"]));
+    EXPECT_EQ(37, to_number(after.at("Total")));
 }
 
 TEST(Api_Database, RemoveFilterList)
@@ -44,12 +44,12 @@ TEST(Api_Database, RemoveFilterList)
     db.add_filter_list(path1);
 
     auto const before = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(37, to_number(before["Total"]));
+    EXPECT_EQ(37, to_number(before.at("Total")));
 
     db.remove_filter_list(path1);
 
     auto const after = json::parse(db.statistics()).get_object();
-    EXPECT_EQ(0, to_number(after["Total"]));
+    EXPECT_EQ(0, to_number(after.at("Total")));
 }
 
 TEST(Api_Database, ShouldBlockRequest)

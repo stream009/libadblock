@@ -5,7 +5,7 @@
 #include "filter_rule_base.hpp"
 #include "snippet_rule_base.hpp"
 #include "string_range.hpp"
-#include "json_fwd.hpp"
+#include "json.hpp"
 
 #include <filesystem>
 #include <memory>

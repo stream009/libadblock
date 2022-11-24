@@ -2,11 +2,12 @@
 #define ADBLOCK_PREFIX_MATCH_FILTER_RULE_MAP_HPP
 
 #include "filter_rule_map.hpp"
+#include "namespace.hpp"
 
-#include "core/json_fwd.hpp"
+#include "core/json.hpp"
 #include "core/string_range.hpp"
 
-#include <radix_tree/radix_tree.hpp>
+#include <stream9/radix_tree.hpp>
 
 namespace adblock {
 
@@ -17,7 +18,7 @@ class PrefixMatchFilterRuleMap : public FilterRuleMap
     using Base = FilterRuleMap;
 public:
     using Base::FilterRules;
-    using Map = radix_tree::tree<StringRange, FilterRule const*>;
+    using Map = st9::radix_tree::tree<StringRange, FilterRule const*>;
 
 private:
     void doPut(FilterRule const&) override;

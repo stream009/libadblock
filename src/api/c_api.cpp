@@ -5,7 +5,7 @@
 #include "core/filter_list.hpp"
 #include "core/json.hpp"
 #include "core/string_range.hpp"
-#include "lib/uri/parser.hpp"
+#include "core/uri.hpp"
 #include "rule/snippet_rule.hpp"
 
 #include <algorithm>
@@ -339,7 +339,7 @@ adblock_should_block(adblock_db_t* const db,
 
         return should_block;
     }
-    catch (uri::parse_error const& e) {
+    catch (adblock::uri_error const&) {
         report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
@@ -394,7 +394,7 @@ adblock_element_hiding_selectors(adblock_db_t* const db,
             selectors->length = sels.size();
         }
     }
-    catch (uri::parse_error const& e) {
+    catch (adblock::uri_error const& e) {
         report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
@@ -443,7 +443,7 @@ adblock_extended_element_hiding_selectors(adblock_db_t* const db,
             selectors->length = v.size();
         }
     }
-    catch (uri::parse_error const& e) {
+    catch (adblock::uri_error const& e) {
         report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
@@ -485,7 +485,7 @@ adblock_content_security_policy(adblock_db_t* const db,
         policy->ptr = p.data();
         policy->length = p.size();
     }
-    catch (uri::parse_error const& e) {
+    catch (adblock::uri_error const& e) {
         report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
@@ -535,7 +535,7 @@ adblock_snippets(adblock_db_t* const db,
             snippets->length = v.size();
         }
     }
-    catch (uri::parse_error const& e) {
+    catch (adblock::uri_error const& e) {
         report_error(error, __func__, ": URL parse error: ", url);
     }
     catch (std::exception const& e) {
@@ -653,7 +653,7 @@ adblock_statistics(adblock_db_t* const db,
 
         auto const& stats = db->statistics();
 
-        auto s = json::stringify(stats);
+        auto s = stats.to_string();
 
         *json = adblock_string_new(s);
     }

@@ -6,4 +6,5 @@ add_library(pattern
 )
 target_link_libraries(pattern
     ${boost_libs}
+    core
 )

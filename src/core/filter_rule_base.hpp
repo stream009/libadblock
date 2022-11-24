@@ -1,7 +1,7 @@
 #ifndef ADBLOCK_FILTER_RULE_BASE_HPP
 #define ADBLOCK_FILTER_RULE_BASE_HPP
 
-#include "json_fwd.hpp"
+#include "json.hpp"
 
 #include "index/filter_rule_index.hpp"
 

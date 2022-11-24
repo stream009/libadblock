@@ -2,7 +2,7 @@
 #define ADBLOCK_FILTER_LIST_HPP
 
 #include "file.hpp"
-#include "json_fwd.hpp"
+#include "json.hpp"
 #include "string_range.hpp"
 
 #include "parser/parse_error.hpp"

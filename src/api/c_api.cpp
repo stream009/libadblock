@@ -168,12 +168,6 @@ adblock_str_array_new(size_t const size)
     return { v.data(), v.size() };
 }
 
-static std::ostream&
-operator<<(std::ostream& os, adblock_string_t const* const s)
-{
-    return os << to_string_range(s);
-}
-
 template<typename... S>
 adblock_error_t*
 adblock_error_new(S&&... s)

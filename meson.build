@@ -6,6 +6,7 @@ project('libadblock', 'cpp', 'c',
 # private_deps will suffice.
 public_deps = []
 private_deps = [
+  dependency('boost', components: ['regex'], static: true),
   dependency('stream9_core'),
   dependency('adblock_parser'),
   dependency('stream9_radix_tree'),

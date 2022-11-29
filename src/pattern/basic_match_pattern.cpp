@@ -1,9 +1,14 @@
 #include "basic_match_pattern.hpp"
 
+#include "namespace.hpp"
+
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 
-#include <boost/algorithm/string.hpp>
+#include <stream9/strings/starts_with.hpp>
+#include <stream9/strings/ends_with.hpp>
+#include <stream9/strings/trim.hpp>
+#include <stream9/strings/view/split.hpp>
 
 namespace adblock {
 
@@ -13,29 +18,28 @@ BasicMatchPattern(StringRange const pattern,
                   bool const endMatch/*= false*/)
     : Base { pattern }
 {
-    namespace ba = boost::algorithm;
-
-    if (beginMatch && !ba::starts_with(pattern, "*")) {
+    if (beginMatch && !str::starts_with(pattern, "*")) {
         m_anchor = static_cast<Anchor>(m_anchor | Begin);
     }
-    if (endMatch && !ba::ends_with(pattern, "*")) {
+    if (endMatch && !str::ends_with(pattern, "*")) {
         m_anchor = static_cast<Anchor>(m_anchor | End);
     }
 }
 
 bool BasicMatchPattern::
-doMatchUrl(Uri const& uri, bool const caseSensitive) const
+doMatchUrl(Uri const& uri, bool caseSensitive) const
 {
-    namespace ba = boost::algorithm;
-
-    StringRange const target { &*uri.begin(), &*uri.end() };
+    StringRange target { &*uri.begin(), &*uri.end() };
 
     auto pattern = this->pattern();
-    auto pred = [](auto c) { return c == '*'; };
-    Base::Tokens tokens;
+    auto pred = [](char c) { return c == '*'; };
 
-    pattern = ba::trim_copy_if(pattern, pred);
-    ba::split(tokens, pattern, pred, ba::token_compress_on);
+    str::trim(pattern, pred);
+    Base::Tokens tokens = str::views::split(
+        pattern,
+        pred,
+        str::views::split_option::skip_empty_item
+    );
 
     return this->doMatch(
         target, tokens,

@@ -1,5 +1,6 @@
 #include "suffix_match_filter_rule_map.hpp"
 
+#include "namespace.hpp"
 #include "statistics.hpp"
 
 #include "core/json.hpp"
@@ -11,21 +12,19 @@
 #include <cassert>
 #include <iterator>
 
-#include <boost/algorithm/string/trim.hpp>
+#include <stream9/strings/trim.hpp>
 
 namespace adblock {
 
 static StringRange
 lastToken(StringRange pattern)
 {
-    namespace ba = boost::algorithm;
-
     auto isWildcard = [](auto c) { return c == '*'; };
 
-    pattern = ba::trim_right_copy_if(pattern, isWildcard);
+    str::trim_right(pattern, isWildcard);
 
     auto it = pattern.end();
-    auto const begin = pattern.begin();
+    auto begin = pattern.begin();
 
     while (it != begin) {
         --it;
@@ -38,7 +37,6 @@ lastToken(StringRange pattern)
     else {
         return { it + 1, pattern.end() };
     }
-
 }
 
 void SuffixMatchFilterRuleMap::

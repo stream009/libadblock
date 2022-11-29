@@ -4,6 +4,7 @@
 #include "filter_option.hpp"
 #include "rule.hpp"
 
+#include "core/array.hpp"
 #include "core/string_range.hpp"
 
 #include <cassert>
@@ -23,7 +24,7 @@ class FilterRule : public Rule
     using Base = Rule;
 public:
     using Domains = std::vector<StringRange>;
-    using SiteKeys = std::vector<StringRange>;
+    using SiteKeys = array<StringRange>;
 
 public:
     ~FilterRule() override;

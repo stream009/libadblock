@@ -1,5 +1,7 @@
 #include "rule_builder.hpp"
 
+#include "namespace.hpp"
+
 #include "core/filter_list.hpp"
 #include "pattern/basic_match_pattern.hpp"
 #include "pattern/domain_match_pattern.hpp"
@@ -16,8 +18,7 @@
 #include <string>
 #include <string_view>
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/regex.hpp>
+#include <stream9/strings/view/split.hpp>
 
 namespace adblock::parser {
 
@@ -325,13 +326,12 @@ site_key_option(iterator /*begin*/, iterator /*end*/,
 {
     m_options.set(FilterOption::SiteKey);
 
-    m_siteKeys = std::make_unique<std::vector<StringRange>>();
+    m_siteKeys = std::make_unique<array<StringRange>>();
     StringRange value { value_begin, value_end };
 
-    boost::algorithm::split(
-        *m_siteKeys,
+    *m_siteKeys = str::views::split(
         value,
-        [](auto c) { return c == '|'; }
+        [](char c) { return c == '|'; }
     );
 }
 

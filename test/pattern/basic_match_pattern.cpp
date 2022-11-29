@@ -242,7 +242,7 @@ TEST(Pattern_BasicMatchPattern, Separator)
         {
             for (auto c: list) {
                 Uri uri {
-                    str(boost::format {
+                    boost::str(boost::format {
                         "http://www.google.com/image%ctop.jpg"
                     } % c)
                 };

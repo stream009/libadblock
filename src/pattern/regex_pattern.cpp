@@ -13,6 +13,8 @@ RegexPattern(StringRange const pattern)
     : m_pattern { pattern }
 {}
 
+RegexPattern::~RegexPattern() noexcept = default;
+
 bool RegexPattern::
 match(Uri const& target, bool const caseSensitive/*= false*/) const
 {

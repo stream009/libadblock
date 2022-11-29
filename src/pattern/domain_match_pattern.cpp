@@ -1,12 +1,17 @@
 #include "domain_match_pattern.hpp"
 
+#include "namespace.hpp"
+
 #include "core/string_range.hpp"
 #include "core/uri.hpp"
 
 #include <algorithm>
 #include <utility>
 
-#include <boost/algorithm/string.hpp>
+#include <stream9/array.hpp>
+#include <stream9/strings/ends_with.hpp>
+#include <stream9/strings/trim.hpp>
+#include <stream9/strings/view/split.hpp>
 
 namespace adblock {
 
@@ -71,9 +76,7 @@ DomainMatchPattern(StringRange const pattern,
     : Base { pattern }
     , m_endAnchor { endMatch }
 {
-    namespace ba = boost::algorithm;
-
-    if (ba::ends_with(pattern, "*")) {
+    if (str::ends_with(pattern, "*")) {
         m_endAnchor = false;
     }
 }
@@ -89,8 +92,6 @@ domainPattern() const
 bool DomainMatchPattern::
 doMatchUrl(Uri const& url, bool const caseSensitive) const
 {
-    namespace ba = boost::algorithm;
-
     auto [t_host, t_path] = splitUri(url);
     if (t_host.empty()) return false;
 
@@ -102,10 +103,14 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
     bool const t_endAnchor = !p_path.empty() && p_host.back() != '*';
     bool const p_beginAnchor = !p_path.empty() && p_path.front() != '*';
 
-    p_host = ba::trim_copy_if(p_host, isWildcard);
-    p_path = ba::trim_copy_if(p_path, isWildcard);
+    str::trim(p_host, isWildcard);
+    str::trim(p_path, isWildcard);
 
-    ba::split(tokens, p_host, isWildcard, ba::token_compress_on);
+    tokens = str::views::split(
+        p_host,
+        isWildcard,
+        str::views::split_option::skip_empty_item
+    );
 
     while (true) {
         auto const match = this->doMatch(
@@ -118,8 +123,11 @@ doMatchUrl(Uri const& url, bool const caseSensitive) const
         }
     }
 
-    tokens.clear();
-    ba::split(tokens, p_path, isWildcard, ba::token_compress_on);
+    tokens = str::views::split(
+        p_path,
+        isWildcard,
+        str::views::split_option::skip_empty_item
+    );
 
     return this->doMatch(t_path, tokens, p_beginAnchor, m_endAnchor, caseSensitive);
 }

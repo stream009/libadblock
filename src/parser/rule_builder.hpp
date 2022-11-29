@@ -1,5 +1,8 @@
 #include "parse_error.hpp"
 
+#include "namespace.hpp"
+
+#include "core/array.hpp"
 #include "core/string_range.hpp"
 #include "rule/rule.hpp"
 #include "rule/filter_option.hpp"
@@ -139,7 +142,7 @@ private:
     PatternPtr m_pattern;
     FilterOptionSet m_options;
     std::unique_ptr<std::vector<StringRange>> m_domains;
-    std::unique_ptr<std::vector<StringRange>> m_siteKeys;
+    std::unique_ptr<array<StringRange>> m_siteKeys;
     std::unique_ptr<StringRange> m_cspValue;
     StringRange m_selector;
     StringRange m_snippet;

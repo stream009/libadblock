@@ -12,8 +12,6 @@
 #include <cassert>
 #include <utility>
 
-#include <boost/format.hpp>
-
 namespace adblock {
 
 class WhiteListQueryContextAdaptor : public WhiteListQueryContext

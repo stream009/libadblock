@@ -2,12 +2,12 @@
 #define BASE_MATCH_PATTERN_HPP
 
 #include "pattern.hpp"
+#include "namespace.hpp"
 
+#include "core/array.hpp"
 #include "core/string_range.hpp"
 
 #include <iosfwd>
-
-#include <vector>
 
 namespace adblock {
 
@@ -17,7 +17,7 @@ class BaseMatchPattern : public Pattern
 {
 protected:
     using Token = StringRange;
-    using Tokens = std::vector<Token>;
+    using Tokens = array<Token, 10>;
 
 public:
     bool match(Uri const& url, bool caseSensitive = false) const override

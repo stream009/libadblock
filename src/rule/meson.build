@@ -15,7 +15,7 @@ rule_src = files(
 rule_lib = static_library(
   'rule',
   rule_src,
-  include_directories: [ public_inc, private_inc, src_inc ],
+  include_directories: [ public_inc, private_inc ],
   dependencies: [ public_deps, private_deps, ],
 )
 

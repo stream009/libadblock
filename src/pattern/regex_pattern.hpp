@@ -19,6 +19,8 @@ class RegexPattern : public Pattern
 public:
     RegexPattern(StringRange const);
 
+    ~RegexPattern() noexcept override;
+
     bool match(Uri const& target, bool caseSensitive = false) const override;
 
 private:

@@ -1,17 +1,19 @@
 #ifndef RULE_HPP
 #define RULE_HPP
 
+#include "namespace.hpp"
+
 #include "core/string_range.hpp"
 
 #include <ostream>
 
-#include <boost/noncopyable.hpp>
+#include <stream9/nonmovable.hpp>
 
 namespace adblock {
 
 class FilterList;
 
-class Rule : boost::noncopyable
+class Rule : st9::nonmovable
 {
 public:
     virtual ~Rule() = default;

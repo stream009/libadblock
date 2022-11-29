@@ -22,6 +22,16 @@ project_libs = []
 
 subdir('src')
 
+project_libs += shared_library(
+  'adblock',
+  project_src,
+  include_directories: [ public_inc, private_inc ],
+  dependencies: [ public_deps, private_deps,
+    core_dep, rule_dep, index_dep, parser_dep, pattern_dep, reg_dom_dep,
+  ],
+  link_args: ['-Wl,--no-undefined', '-Wl,--exclude-libs=ALL'],
+)
+
 # dependency for client to access with get_variable('project_dep')
 project_dep = declare_dependency(
   include_directories: public_inc,
@@ -30,7 +40,7 @@ project_dep = declare_dependency(
 )
 
 impl_dep = declare_dependency(
-  include_directories: src_inc,
+  include_directories: private_inc,
   dependencies: [ private_deps,
     core_dep, rule_dep, index_dep, parser_dep, pattern_dep, reg_dom_dep, ]
 )

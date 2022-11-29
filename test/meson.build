@@ -52,5 +52,5 @@ test_exe = executable(
 )
 
 run_target('run',
-  command: [test_exe, '--color_output=no'],
+  command: [test_exe, '--gtest_brief=1'],
 )

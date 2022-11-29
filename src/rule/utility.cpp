@@ -1,6 +1,8 @@
 #include "utility.hpp"
 
-#include <boost/algorithm/string.hpp>
+#include "namespace.hpp"
+
+#include <stream9/strings/ends_with.hpp>
 
 namespace adblock {
 
@@ -8,8 +10,6 @@ bool
 matchDomain(StringRange const host,
             std::vector<StringRange> const* const domains)
 {
-    namespace ba = boost::algorithm;
-
     if (!domains) return true;
 
     bool result = false;
@@ -22,13 +22,13 @@ matchDomain(StringRange const host,
         if (dom[0] == '~') {
             hasExcludeDomain = true;
             StringRange const d { dom.begin() + 1, dom.end() };
-            if (ba::ends_with(host, d)) {
+            if (str::ends_with(host, d)) {
                 return false;
             }
         }
         else {
             hasIncludeDomain = true;
-            if (ba::ends_with(host, dom)) {
+            if (str::ends_with(host, dom)) {
                 result = true;
             }
         }

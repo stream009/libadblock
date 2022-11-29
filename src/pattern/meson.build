@@ -8,7 +8,7 @@ pattern_src = files(
 pattern_lib = static_library(
   'pattern',
   pattern_src,
-  include_directories: [ public_inc, private_inc, src_inc, ],
+  include_directories: [ public_inc, private_inc ],
   dependencies: [ public_deps, private_deps, ],
 )
 

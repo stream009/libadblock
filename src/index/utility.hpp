@@ -1,24 +1,24 @@
 #ifndef ADBLOCK_INDEX_UTILITY_HPP
 #define ADBLOCK_INDEX_UTILITY_HPP
 
+#include "namespace.hpp"
+
 #include "core/string_range.hpp"
 
 #include <algorithm>
 
-#include <boost/algorithm/string.hpp>
+#include <stream9/strings/trim.hpp>
 
 namespace adblock {
 
 inline StringRange
 firstToken(StringRange pattern)
 {
-    namespace ba = boost::algorithm;
-
     auto isWildcard = [](auto c) { return c == '*'; };
 
-    pattern = ba::trim_left_copy_if(pattern, isWildcard);
+    str::trim_left(pattern, isWildcard);
 
-    auto const it = std::find_if(pattern.begin(), pattern.end(), isWildcard);
+    auto it = std::find_if(pattern.begin(), pattern.end(), isWildcard);
 
     return { pattern.begin(), it };
 }

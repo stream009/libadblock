@@ -8,7 +8,7 @@
 
 # Maintainer: Your Name <youremail@domain.com>
 pkgname=libadblock
-pkgver=@PROJECT_VERSION@
+pkgver=@version@
 pkgrel=1
 pkgdesc="ADBlock engine"
 arch=('i686' 'x86_64')
@@ -25,13 +25,13 @@ prepare() {
 build() {
   cd "${srcdir}/libadblock"
   mkdir -p build; cd build
-  cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=Off ..
-  make
+  meson setup --buildtype=release --prefix=/usr/local
+  ninja
 }
 
 package() {
   cd "${srcdir}/libadblock/build"
-  make DESTDIR="$pkgdir/" install
+  DESTDIR="$pkgdir/" ninja install
 }
 
 # vim:set ts=2 sw=2 et:

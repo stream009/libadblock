@@ -37,6 +37,9 @@ project_libs += shared_library(
 
 install_subdir('include/adblock', install_dir: 'include')
 
+pkg = import('pkgconfig')
+pkg.generate(project_libs)
+
 subdir('arch')
 
 # dependency for client to access with get_variable('project_dep')

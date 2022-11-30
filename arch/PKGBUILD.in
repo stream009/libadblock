@@ -25,7 +25,7 @@ prepare() {
 build() {
   cd "${srcdir}/libadblock"
   mkdir -p build; cd build
-  meson setup --buildtype=release --prefix=/usr/local
+  meson setup --buildtype=release --prefix=/usr
   ninja
 }
 

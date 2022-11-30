@@ -1,5 +1,5 @@
 project('libadblock', 'cpp', 'c',
-  version: '2.0.0',
+  version: '3.0.0',
   default_options: ['cpp_std=c++20'], license: 'GPL3' )
 
 # external dependencies for external and internal ones
@@ -26,7 +26,7 @@ subdir('src')
 project_libs += shared_library(
   'adblock',
   project_src,
-  version: '2.0.0',
+  version: meson.project_version(),
   include_directories: [ public_inc, private_inc ],
   dependencies: [ public_deps, private_deps,
     core_dep, rule_dep, index_dep, parser_dep, pattern_dep, reg_dom_dep,
